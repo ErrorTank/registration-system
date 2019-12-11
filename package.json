@@ -7,7 +7,7 @@
     "dev": "gulp dev",
     "wp": "webpack --watch",
     "prod": "gulp prod",
-    "start": "cross-env NODE_ENV=production node server/server.js --ext js --exec babel-node --ignore react",
+    "start": "node server/server.js --ext js --exec babel-node --ignore react",
     "copy-assets": "node ./scripts/copy-assets",
     "heroku-postbuild": "concurrently  \"node ./scripts/copy-assets prod\" \"webpack --config ./webpack.prod.config.js\""
   },
