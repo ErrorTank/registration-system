@@ -1,6 +1,6 @@
 console.log(process.env.NODE_ENV);
 require("dotenv").config({path: process.env.NODE_ENV === "production" ? "./env/prod.env" :  "./env/dev.env"});
-const https= require("http");
+const http= require("http");
 const fs = require("fs");
 const path = require("path");
 const createExpressServer = require("./config/express");
@@ -11,7 +11,7 @@ const createErrorHandlersMiddleware = require("./utils/error/error-handlers");
 
 initDatabase().then(db => {
     let environment = process.env.NODE_ENV;
-    let server = https.createServer(
+    let server = http.createServer(
 
         app
     );
