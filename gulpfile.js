@@ -36,8 +36,8 @@ const startServer = async (env) => {
 };
 
 gulp.task("dev", () => {
-    return startServer({'NODE_ENV': 'development', 'IS_DEFAULT': "true"}).then(() => {
-        return stylusCompiler.watch(process.env.STATIC_DIR || "build");
+    return startServer({'NODE_ENV': 'development'}).then(() => {
+        return stylusCompiler.watch("build");
 
     }).then(() => {
         if (!/^win/.test(process.platform)) { // linux
@@ -46,7 +46,7 @@ gulp.task("dev", () => {
             return spawn('cmd', ['/s', "/c", "webpack", "--w"], {stdio: "inherit"});
         }
     }).then(() => {
-        return require("./scripts/copy-assets");
+        return spawn("node", ["./scripts/copy-assets", "dev"], {stdio: "inherit"})
 
     });
 
@@ -54,12 +54,14 @@ gulp.task("dev", () => {
 
 
 gulp.task("prod", () => {
-    return startServer().then(() => stylusCompiler.compile(process.env.STATIC_DIR).then(() => {
+    return startServer({'NODE_ENV': 'production'}).then(() => stylusCompiler.compile("dist").then(() => {
         if (!/^win/.test(process.platform)) { // linux
             return spawn("webpack", ["--config ./webpack.prod.config.js"], {stdio: "inherit"});
         } else {
             return spawn('cmd', ['/s', "/c", "webpack", "--config ./webpack.prod.config.js"], {stdio: "inherit"});
         }
-    })).then(() => require("./scripts/copy-assets"));
+    })).then(() => {
+        return spawn("node", ["./scripts/copy-assets", "prod"], {stdio: "inherit"})
+    });
 });
 
