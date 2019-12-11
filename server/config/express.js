@@ -35,10 +35,11 @@ module.exports = ({useCors = false}) => {
 
     app.use("/uploads", express.static(uploadDir));
     app.use("*", (req, res, next) => {
+        console.log("cc")
         if (/^\/api\//.test(req.originalUrl)) {
             next();
         } else {
-            console.log("cc")
+
             console.log(process.cwd() + "/" + process.env.HTML_DIR)
             res.sendFile(process.cwd() + "/" + process.env.HTML_DIR);
         }
