@@ -1,6 +1,6 @@
 console.log(process.env.NODE_ENV);
 require("dotenv").config({path: process.env.NODE_ENV === "production" ? "./env/prod.env" :  "./env/dev.env"});
-const https= require("https");
+const https= require("http");
 const fs = require("fs");
 const path = require("path");
 const createExpressServer = require("./config/express");
@@ -12,20 +12,7 @@ const createErrorHandlersMiddleware = require("./utils/error/error-handlers");
 initDatabase().then(db => {
     let environment = process.env.NODE_ENV;
     let server = https.createServer(
-        {
-            key: fs.readFileSync(
-                path.join(
-                    __dirname,
-                    `./ssl/${environment}/${process.env.SSL_KEY_PATH}`
-                )
-            ),
-            cert: fs.readFileSync(
-                path.join(
-                    __dirname,
-                    `./ssl/${environment}/${process.env.SSL_CRT_PATH}`
-                )
-            )
-        },
+
         app
     );
     app.use("/", createRoutes(db));

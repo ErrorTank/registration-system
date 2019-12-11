@@ -18,7 +18,6 @@ module.exports = ({useCors = false}) => {
     app.use(helmet());
     app.use(compression());
     app.use((req, res, next) => {
-        console.log("3")
         res.header("Access-Control-Allow-Origin", "*");
         res.header(
             "Access-Control-Allow-Headers",
