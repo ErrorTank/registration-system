@@ -9,8 +9,7 @@
     "prod": "gulp prod",
     "start": "node server/server.js --ext js --exec babel-node --ignore react",
     "copy-assets": "node ./scripts/copy-assets",
-    "heroku-prebuild": "npm i fs-extra --save-dev && node ./scripts/copy-assets prod",
-    "heroku-postbuild": "webpack --config ./webpack.prod.config.js"
+    "heroku-postbuild": "concurrently --kill-others \"node ./scripts/copy-assets prod\" \"webpack --config ./webpack.prod.config.js\""
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +25,7 @@
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "concurrently": "^5.0.1",
     "cross-env": "^6.0.3",
     "css-loader": "^0.28.11",
     "fs-extra": "^8.1.0",
