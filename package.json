@@ -9,7 +9,7 @@
     "prod": "gulp prod",
     "start": "node server/server.js --ext js --exec babel-node --ignore react",
     "copy-assets": "node ./scripts/copy-assets",
-    "heroku-postbuild": "concurrently --kill-others \"node ./scripts/copy-assets prod\" \"webpack --config ./webpack.prod.config.js\""
+    "heroku-postbuild": "concurrently  \"node ./scripts/copy-assets prod\" \"webpack --config ./webpack.prod.config.js\""
   },
   "author": "",
   "license": "ISC",
