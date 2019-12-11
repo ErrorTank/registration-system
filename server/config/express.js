@@ -30,17 +30,20 @@ module.exports = ({useCors = false}) => {
         next();
     });
     let uploadDir = process.cwd() + "/" + process.env.UPLOAD_DIR;
-    console.log(process.cwd() + "/" + process.env.STATIC_DIR)
-    app.use("/", express.static(process.cwd() + "/" + process.env.STATIC_DIR));
+
+    app.use("/", (req, res, next) => {
+        console.log(process.cwd() + "/" + process.env.STATIC_DIR)
+        console.log("cc")
+        return express.static(process.cwd() + "/" + process.env.STATIC_DIR)(req, res, next)
+    });
 
     app.use("/uploads", express.static(uploadDir));
     app.use("*", (req, res, next) => {
-        console.log("cc")
+
         if (/^\/api\//.test(req.originalUrl)) {
             next();
         } else {
 
-            console.log(process.cwd() + "/" + process.env.HTML_DIR)
             res.sendFile(process.cwd() + "/" + process.env.HTML_DIR);
         }
     });

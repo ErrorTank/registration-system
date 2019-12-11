@@ -17,7 +17,7 @@ export class MainRoute extends React.Component {
     render() {
         return (
             <div id="main-route">
-                <h1>Helllo</h1>
+                <h1>Hell2lo</h1>
                 <ModalsRegistry/>
                 <Router
                     history={customHistory}
