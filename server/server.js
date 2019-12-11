@@ -1,4 +1,5 @@
-require("dotenv").config({path: "./env/dev.env"});
+console.log(process.env.NODE_ENV);
+require("dotenv").config({path: process.env.NODE_ENV === "production" ? "./env/prod.env" :  "./env/dev.env"});
 const https= require("https");
 const fs = require("fs");
 const path = require("path");

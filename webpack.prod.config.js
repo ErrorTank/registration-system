@@ -24,7 +24,6 @@ module.exports = {
         chunkFilename: '[name].bundle.js',
         publicPath: "/",
         path: path.resolve(__dirname, 'dist'),
-
     },
     resolve: {
         extensions: [".js", ".jsx", ".styl"]
