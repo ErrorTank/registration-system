@@ -12,7 +12,7 @@ const CustomError = (name) => {
   }
 };
 
-export const errors = {
+module.exports = {
   AuthorizationError: CustomError("AuthorizationError"),
   ApplicationError: CustomError("ApplicationError"),
   OperatorError: CustomError("OperatorError"),

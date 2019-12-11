@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
-import {errors} from "../utils/error/error-types";
 
-const {JWTError, AuthorizationError} = errors;
+const {JWTError, AuthorizationError} = require("../utils/error/error-types");
 
 const decodeAuthRequest = (req, secret, config) => {
   return new Promise((resolve, reject) => {
@@ -68,7 +67,7 @@ const authorization = (secret, config) => {
   }
 };
 
-export const authServices = {
+module.exports = {
   authorization,
   decodeAuthRequest,
   verifyToken,

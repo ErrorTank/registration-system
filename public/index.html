@@ -4,66 +4,63 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width" initial-scale=1/>
-    <title>Loading...</title>
-    <link rel="icon" type="image/x-icon" href="/assets/img/favicon-32x32.png"/>
+    <title>Đang tải trang...</title>
+    <link rel="icon" type="image/x-icon" href="/assets/images/icons/favicon-32x32.png"/>
     <link rel="stylesheet" type="text/css" href="/main.css"/>
 
     <style type="text/css">
-        @keyframes lds-eclipse {
+
+        @keyframes ldio-q99wu626rti {
             0% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            50% {
-                -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
+                top: 99.82px;
+                left: 99.82px;
+                width: 0;
+                height: 0;
+                opacity: 1;
             }
             100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
+                top: 17.36px;
+                left: 17.36px;
+                width: 164.92px;
+                height: 164.92px;
+                opacity: 0;
             }
         }
 
-        @-webkit-keyframes lds-eclipse {
-            0% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            50% {
-                -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
-            }
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-
-        .lds-eclipse {
-            position: relative;
-            margin: auto;
-        }
-
-        .lds-eclipse div {
+        .ldio-q99wu626rti div {
             position: absolute;
-            -webkit-animation: lds-eclipse 0.8s linear infinite;
-            animation: lds-eclipse 0.8s linear infinite;
-            width: 160px;
-            height: 160px;
-            top: 20px;
-            left: 20px;
+            border-width: 8.68px;
+            border-style: solid;
+            opacity: 1;
             border-radius: 50%;
-            box-shadow: 0 6px 0 0 #60aaf5;
-            -webkit-transform-origin: 80px 83px;
-            transform-origin: 80px 83px;
+            animation: ldio-q99wu626rti 1.0416666666666665s cubic-bezier(0,0.2,0.8,1) infinite;
         }
 
-        .lds-eclipse {
-            width: 200px !important;
-            height: 200px !important;
-            -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
-            transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+        .ldio-q99wu626rti div:nth-child(1) {
+            border-color: #1d3f72
         }
+
+        .ldio-q99wu626rti div:nth-child(2) {
+            border-color: #5699d2;
+            animation-delay: -0.5208333333333333s;
+        }
+
+        .loadingio-spinner-ripple-cqafjyzu1eh {
+            width: 217px;
+            height: 217px;
+            display: inline-block;
+            overflow: hidden;
+        }
+        .ldio-q99wu626rti {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform: translateZ(0) scale(1);
+            backface-visibility: hidden;
+            transform-origin: 0 0;
+        }
+        .ldio-q99wu626rti div { box-sizing: content-box; }
+
     </style>
 
 </head>
@@ -71,13 +68,15 @@
 
 <section id="app" style="background-color: #f8f9fa!important; min-width: 100vw; min-height: 100vh; position: relative;">
     <div id="initial-loading">
+
+
         <div class="lds-css ng-scope">
             <div id="il-wrapper">
-                <div style="width:100%;height:100%" class="lds-eclipse">
-                    <div>
-                    </div>
+                <div class="loadingio-spinner-ripple-cqafjyzu1eh"><div class="ldio-q99wu626rti">
+                    <div></div><div></div>
                 </div>
-                <p id="il-text">Loading ...</p>
+                </div>
+                <p id="il-text">Đang tải trang...</p>
             </div>
 
         </div>

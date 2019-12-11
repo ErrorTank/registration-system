@@ -2,15 +2,14 @@ require("dotenv").config({path: "./env/dev.env"});
 const https= require("https");
 const fs = require("fs");
 const path = require("path");
-const app = configExpressServer({useCors: true});
-import {dbServices} from "./config/db";
-import {configExpressServer} from "./config/express";
-import {importMainRoutes} from "./config/routes";
-import {errorHandlersMiddleware} from "./utils/error/error-handlers";
-const {initDatabase} = dbServices;
+const createExpressServer = require("./config/express");
+const app = createExpressServer({useCors: true});
+const {initDatabase} = require("./config/db");
+const createRoutes = require("./config/routes");
+const createErrorHandlersMiddleware = require("./utils/error/error-handlers");
 
 initDatabase().then(db => {
-
+    let environment = process.env.NODE_ENV;
     let server = https.createServer(
         {
             key: fs.readFileSync(
@@ -28,8 +27,8 @@ initDatabase().then(db => {
         },
         app
     );
-    app.use("/", importMainRoutes(db));
-    app.use(errorHandlersMiddleware);
+    app.use("/", createRoutes(db));
+    app.use(createErrorHandlersMiddleware);
     const port = process.env.PORT || 2000;
     server.listen(port, () => {
 

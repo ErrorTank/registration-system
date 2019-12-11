@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-const ObjectId = mongoose.Types.ObjectId;
-
-const appDbUrl = process.env.LOCAL_HOST + "app";
+const appDbUrl = process.env.DB_HOST;
 let resolve1 = null;
 
 let promise1 = (() => new Promise((resolve) => {
@@ -18,7 +16,7 @@ let appDb = mongoose.createConnection(appDbUrl, {useNewUrlParser: true, useCreat
 });
 
 
-export const dbServices = {
+module.exports = {
     initDatabase: () => {
         return Promise.all([
             promise1

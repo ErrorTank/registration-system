@@ -6,7 +6,8 @@ const helmet = require("helmet");
 const cors = require("cors");
 const compression = require("compression");
 
-export const configExpressServer = ({useCors = false}) => {
+
+module.exports = ({useCors = false}) => {
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json({
         limit: '2mb'
@@ -50,6 +51,5 @@ export const configExpressServer = ({useCors = false}) => {
     }
     return app;
 };
-
 
 

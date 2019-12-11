@@ -25,7 +25,7 @@ const handlers = {
   })
 };
 
-export const errorHandlersMiddleware = (err, req, res, next) => {
+module.exports = (err, req, res, next) => {
   console.log(err);
   const errorHandler = handlers[err.name] || null;
   if (errorHandler) {
