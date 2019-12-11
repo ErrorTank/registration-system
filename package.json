@@ -7,7 +7,7 @@
     "dev": "gulp dev",
     "wp": "webpack --watch",
     "prod": "gulp prod",
-    "start": "nodemon -r esm server/server.js --ext js --exec babel-node --ignore react",
+    "start": "nodemon server/server.js --ext js --exec babel-node --ignore react",
     "copy-assets": "node ./scripts/copy-assets"
   },
   "author": "",
