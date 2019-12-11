@@ -38,6 +38,8 @@ module.exports = ({useCors = false}) => {
         if (/^\/api\//.test(req.originalUrl)) {
             next();
         } else {
+            console.log("cc")
+            console.log(process.cwd() + "/" + process.env.HTML_DIR)
             res.sendFile(process.cwd() + "/" + process.env.HTML_DIR);
         }
     });
