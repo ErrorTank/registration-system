@@ -8,7 +8,7 @@
     "wp": "webpack --watch",
     "prod": "gulp prod",
     "start": "node server/server.js --ext js --exec babel-node --ignore react",
-    "copy-assets": "npm i fs-extra && node ./scripts/copy-assets",
+    "copy-assets": "npm i fs-extra --save-dev && node ./scripts/copy-assets",
     "heroku-prebuild": "node ./scripts/copy-assets prod",
     "heroku-postbuild": "webpack --config ./webpack.prod.config.js"
   },
