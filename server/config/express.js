@@ -32,8 +32,7 @@ module.exports = ({useCors = false}) => {
     let uploadDir = process.cwd() + "/" + process.env.UPLOAD_DIR;
 
     app.use("/", (req, res, next) => {
-        console.log(process.cwd() + "/" + process.env.STATIC_DIR)
-        console.log("cc")
+
         return express.static(process.cwd() + "/" + process.env.STATIC_DIR)(req, res, next)
     });
 
