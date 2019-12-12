@@ -54,13 +54,13 @@ gulp.task("dev", () => {
 
 
 gulp.task("prod", () => {
-    return startServer({'NODE_ENV': 'production'}).then(() => stylusCompiler.compile("dist").then(() => {
+    return stylusCompiler.compile("dist").then(() => {
         if (!/^win/.test(process.platform)) { // linux
             return spawn("webpack", ["--config ./webpack.prod.config.js"], {stdio: "inherit"});
         } else {
             return spawn('cmd', ['/s', "/c", "webpack", "--config ./webpack.prod.config.js"], {stdio: "inherit"});
         }
-    })).then(() => {
+    }).then(() => {
         return spawn("node", ["./scripts/copy-assets", "prod"], {stdio: "inherit"})
     });
 });

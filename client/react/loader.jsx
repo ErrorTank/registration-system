@@ -6,5 +6,5 @@ import {authenLoader} from "../sercurity/authen-loader";
 
 authenLoader.init().then(() => {
 
-    ReactDOM.render(<MainRoute/>, document.getElementById("app"));
+    // ReactDOM.render(<MainRoute/>, document.getElementById("app"));
 });

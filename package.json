@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "gulp dev",
     "wp": "webpack --watch",
-    "prod": "gulp prod",
+    "prod": "gulp build-prod",
     "start": "node server/server.js --ext js --exec babel-node --ignore react",
     "copy-assets": "node ./scripts/copy-assets"
   },
