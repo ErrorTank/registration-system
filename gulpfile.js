@@ -40,14 +40,12 @@ gulp.task("dev", () => {
         return stylusCompiler.watch("build");
 
     }).then(() => {
+        spawn("node", ["./scripts/copy-assets", "dev"], {stdio: "inherit"})
         if (!/^win/.test(process.platform)) { // linux
             return spawn("webpack", ["--watch"], {stdio: "inherit"});
         } else {
             return spawn('cmd', ['/s', "/c", "webpack", "--w"], {stdio: "inherit"});
         }
-    }).then(() => {
-        return spawn("node", ["./scripts/copy-assets", "dev"], {stdio: "inherit"})
-
     });
 
 });
@@ -55,13 +53,12 @@ gulp.task("dev", () => {
 
 gulp.task("build-prod", () => {
     return stylusCompiler.compile("dist").then(() => {
+        spawn("node", ["./scripts/copy-assets", "prod"], {stdio: "inherit"})
         if (!/^win/.test(process.platform)) { // linux
             return spawn("webpack", ["--config ./webpack.prod.config.js"], {stdio: "inherit"});
         } else {
             return spawn('cmd', ['/s', "/c", "webpack", "--config ./webpack.prod.config.js"], {stdio: "inherit"});
         }
-    }).then(() => {
-        return spawn("node", ["./scripts/copy-assets", "prod"], {stdio: "inherit"})
-    });
+    })
 });
 
