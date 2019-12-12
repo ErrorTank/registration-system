@@ -13,11 +13,12 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 
 module.exports = {
     mode: "production",
-    entry: {
-        loader: ["@babel/polyfill", "./client/react/loader.jsx"]
-    },
+
     watchOptions: {
         ignored: ['node_modules', 'scripts', 'server']
+    },
+    entry: {
+        loader: ["@babel/polyfill", "./client/react/loader.jsx"]
     },
     output: {
         filename: 'bundle.js',

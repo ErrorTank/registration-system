@@ -55,9 +55,9 @@ gulp.task("build-prod", () => {
     return stylusCompiler.compile("dist").then(() => {
         spawn("node", ["./scripts/copy-assets", "prod"], {stdio: "inherit"})
         if (!/^win/.test(process.platform)) { // linux
-            return spawn("webpack", ["--config ./webpack.prod.config.js"], {stdio: "inherit"});
+            return spawn("webpack", ["--config", " ./webpack.prod.config.js"], {stdio: "inherit"});
         } else {
-            return spawn('cmd', ['/s', "/c", "webpack", "--config ./webpack.prod.config.js"], {stdio: "inherit"});
+            return spawn('cmd', ['/s', "/c", "webpack", "--config", "./webpack.prod.config.js"], {stdio: "inherit"});
         }
     })
 });
