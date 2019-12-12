@@ -9,6 +9,7 @@ const {initDatabase} = require("./config/db");
 const createRoutes = require("./config/routes");
 const createErrorHandlersMiddleware = require("./utils/error/error-handlers");
 
+
 initDatabase().then(db => {
     let environment = process.env.NODE_ENV;
     let server = http.createServer(
