@@ -16,7 +16,6 @@ initDatabase().then(db => {
     app.use(createErrorHandlersMiddleware);
     const port = process.env.PORT || 2000;
     server.listen(port, () => {
-
         console.log(`Server running on port: ${port}`)
     });
 }).catch(err => {
