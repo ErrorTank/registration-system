@@ -14,7 +14,8 @@ const dptInsInfoSchema = new Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
@@ -33,7 +34,8 @@ const dptInsInfoSchema = new Schema({
         required: true
     },
     identityID: {
-        type: String
+        type: String,
+        unique: true
     }
 });
 

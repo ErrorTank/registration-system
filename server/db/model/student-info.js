@@ -14,7 +14,8 @@ const studentInfoSchema = new Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
@@ -28,12 +29,13 @@ const studentInfoSchema = new Schema({
         required: true
     },
     englishLevel: {
-        type: ObjectId,
-        ref: "EnglishLevel",
-        required: true
+        type: String,
+        required: true,
+        enum: ["a1", "a2", "b1", "b2", "c1", "c2", "d1", "d2", "e1", "e2", "g1", "g2"]
     },
     identityID: {
-        type: String
+        type: String,
+        unique: true
     },
     schoolYear: {
         type: Number,

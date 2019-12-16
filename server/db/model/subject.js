@@ -19,7 +19,7 @@ const subjectSchema = new Schema({
     },
     capacity: {
         type: Number,
-        default: 0
+        default: 15
     },
     coefficient: {
         type: Number,
@@ -44,19 +44,6 @@ const subjectSchema = new Schema({
         enum: ["GDDC", "GDCN"],
         default: "GDDC"
     },
-    includedClasses: {
-        type: [
-            {
-                type: ObjectId,
-                ref: "Class",
-                required: true
-            }
-        ],
-        required: true,
-        validate: [function (val) {
-            return val.length > 0;
-        }, '{PATH} exceeds the limit of 10']
-    }
 });
 
 

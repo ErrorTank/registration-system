@@ -14,7 +14,8 @@ const commonUserInfoSchema = new Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
@@ -28,7 +29,8 @@ const commonUserInfoSchema = new Schema({
         required: true
     },
     identityID: {
-        type: String
+        type: String,
+        unique: true
     }
 });
 
