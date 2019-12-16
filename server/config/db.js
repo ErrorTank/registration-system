@@ -50,7 +50,7 @@ module.exports = {
                     email: "haha@gmail.com",
                     user: data.toObject()._id,
                     identityID: "A28998"
-                })
+                }).save()
             });
             new User({
                 username: "test2",
@@ -99,13 +99,38 @@ module.exports = {
 
                                         }).save().then(data4 => {
                                             new SchoolScheduleItems({
-                                                semester: "k1",
+                                                semester: "ki1",
                                                 class: data4.toObject()._id,
                                                 classRoom: data3.toObject()._id,
                                                 dayOfWeek: "t2",
                                                 instructor: he.toObject()._id,
                                                 from: data.toObject()._id,
                                                 to: data2.toObject()._id
+                                            }).save().then((a) => {
+                                                new User({
+                                                    username: "test5",
+                                                    password: "admin",
+                                                    role: "sv",
+
+                                                }).save().then(dta => {
+                                                    new StudentInfo({
+                                                        name: "dsa",
+                                                        dob: new Date().getTime(),
+                                                        phone: "31223",
+                                                        email: "haha2@gmail.com",
+                                                        user: dta.toObject()._id,
+                                                        identityID: "A282998",
+                                                        englishLevel: "a2",
+                                                        schoolYear: 29
+                                                    }).save().then(s => {
+                                                        new Schedule({
+                                                            items: [a.toObject()._id],
+                                                            owner: s.toObject()._id
+                                                        }).save()
+                                                    })
+
+                                                });
+
                                             })
                                         })
                                     })
@@ -186,6 +211,34 @@ module.exports = {
                             speciality: data1.toObject()._id
 
                         }).save()
+                        new User({
+                            username: "test6",
+                            password: "admin",
+                            role: "sv",
+
+                        }).save().then(dta => {
+                            new StudentInfo({
+                                name: "ds2a",
+                                dob: new Date().getTime(),
+                                phone: "3122223",
+                                email: "hah2a2@gmail.com",
+                                user: dta.toObject()._id,
+                                identityID: "A2282998",
+                                englishLevel: "a2",
+                                schoolYear: 29
+                            }).save().then((s) => {
+                                new Result({
+                                    owner: s.toObject()._id,
+                                    speciality: data1.toObject()._id,
+                                    results: [
+                                        {
+                                            subject: data2.toObject()._id,
+                                            grade: 10
+                                        }
+                                    ]
+                                }).save()
+                            })
+                        })
                     })
                 })
             });
