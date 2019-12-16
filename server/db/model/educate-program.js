@@ -14,7 +14,11 @@ const educateProgramSchema = new Schema({
         ],
         required: true
     },
-
+    speciality: {
+        type: ObjectId,
+        ref: "Speciality",
+        required: true
+    }
 });
 
 
