@@ -1,0 +1,71 @@
+.login-route{
+  width 100vw
+  height 100vh
+  background linear-gradient(to right bottom, rgba(white, 0.8), rgba(indigo, 0.8)), url(/assets/images/bg-01.jpg) no-repeat center center fixed
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  .login-form-wrapper{
+    display flex
+    height 100vh
+    justify-content center
+    align-items center
+    .login-form{
+      flex: 0 0 45rem;
+      background-color white
+      border-radius 4px
+      .wrapper{
+
+
+        border-bottom 1px solid common-border
+
+      }
+      .login-form__header  {
+        padding 20px
+        .main-title{
+          text-align center
+          font-size 2.4rem
+          font-weight 550
+          color indigo
+          padding 1.7rem 0
+        }
+        .header-logo{
+          display flex
+          justify-content center
+          align-items center
+
+          .header-logo__image{
+            width 100px
+            height 100px
+            position  relative
+            border-radius 50%
+            overflow hidden
+            img{
+              width 100%
+              absoluteMiddle();
+            }
+          }
+
+          .header-logo__title {
+            p{
+              font-size 2rem
+
+              text-align center
+              &:last-child{
+                font-size 2.1rem
+                font-weight 550
+              }
+            }
+
+          }
+        }
+
+
+
+      }
+    }
+  }
+
+
+}

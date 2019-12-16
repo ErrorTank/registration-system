@@ -8,7 +8,7 @@
     "wp": "webpack --watch",
     "prod": "gulp build-prod",
     "start": "node server/server.js --ext js --exec babel-node --ignore react",
-    "copy-assets": "node ./scripts/copy-assets"
+    "copy-assets-dev": "node ./scripts/copy-assets dev"
   },
   "author": "",
   "license": "ISC",
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
-    "antd": "^3.26.3",
+    "@material-ui/core": "^4.8.0",
     "classnames": "^2.2.6",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
