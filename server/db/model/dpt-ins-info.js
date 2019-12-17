@@ -4,25 +4,6 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 
 const dptInsInfoSchema = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    dob: {
-        type: Date,
-        required: true
-    },
-    phone: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: true,
-        index: true,
-        unique: true
-    },
     user: {
         type: ObjectId,
         ref: "User",
@@ -33,10 +14,7 @@ const dptInsInfoSchema = new Schema({
         ref: "Department",
         required: true
     },
-    identityID: {
-        type: String,
-        unique: true
-    }
+
 });
 
 

@@ -17,7 +17,30 @@ const userSchema = new Schema({
         type: String,
         enum: ["admin", "pdt", "bm", "gv", "sv"],
         default: "admin"
-    }
+    },
+    identityID: {
+        type: String,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    dob: {
+        type: Date,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
+        index: true,
+        unique: true
+    },
 });
 
 

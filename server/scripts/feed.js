@@ -19,22 +19,27 @@ module.exports = (appDb) => {
         username: "test",
         password: "admin",
         role: "admin",
-
+        name: "dsa",
+        dob: new Date().getTime(),
+        phone: "3123",
+        email: "haha@gmail.com",
+        identityID: "A28998"
     }).save().then(data => {
         new CommonUserInfo({
-            name: "dsa",
-            dob: new Date().getTime(),
-            phone: "3123",
-            email: "haha@gmail.com",
+
             user: data.toObject()._id,
-            identityID: "A28998"
+
         }).save()
     });
     new User({
         username: "test2",
         password: "admin",
         role: "bm",
-
+        name: "dsa",
+        dob: new Date().getTime(),
+        phone: "3123",
+        email: "haha@gmail.com",
+        identityID: "A28998",
     }).save().then(data => {
         new Department({
             name: "test",
@@ -42,12 +47,9 @@ module.exports = (appDb) => {
 
         }).save().then(data2 => {
             new DptInsInfo({
-                name: "dsa",
-                dob: new Date().getTime(),
-                phone: "3123",
-                email: "haha@gmail.com",
+
                 user: data.toObject()._id,
-                identityID: "A28998",
+
                 department:data2.toObject()._id
             }).save().then(he => {
                 new Shift({
@@ -89,15 +91,16 @@ module.exports = (appDb) => {
                                             username: "test5",
                                             password: "admin",
                                             role: "sv",
-
+                                            name: "dsa",
+                                            dob: new Date().getTime(),
+                                            phone: "31223",
+                                            email: "haha2@gmail.com",
+                                            identityID: "A282998",
                                         }).save().then(dta => {
                                             new StudentInfo({
-                                                name: "dsa",
-                                                dob: new Date().getTime(),
-                                                phone: "31223",
-                                                email: "haha2@gmail.com",
+
                                                 user: dta.toObject()._id,
-                                                identityID: "A282998",
+
                                                 englishLevel: "a2",
                                                 schoolYear: 29
                                             }).save().then(s => {
@@ -123,15 +126,15 @@ module.exports = (appDb) => {
         username: "test3",
         password: "admin",
         role: "sv",
+        name: "dsa",
+        dob: new Date().getTime(),
+        phone: "3123",
+        email: "haha@gmail.com",
 
+        identityID: "A28998",
     }).save().then(data => {
         new StudentInfo({
-            name: "dsa",
-            dob: new Date().getTime(),
-            phone: "3123",
-            email: "haha@gmail.com",
             user: data.toObject()._id,
-            identityID: "A28998",
             englishLevel: "a2",
             schoolYear: 29
         }).save()
@@ -193,15 +196,16 @@ module.exports = (appDb) => {
                     username: "test6",
                     password: "admin",
                     role: "sv",
-
+                    name: "ds2a",
+                    dob: new Date().getTime(),
+                    phone: "3122223",
+                    email: "hah2a2@gmail.com",
+                    identityID: "A2282998",
                 }).save().then(dta => {
                     new StudentInfo({
-                        name: "ds2a",
-                        dob: new Date().getTime(),
-                        phone: "3122223",
-                        email: "hah2a2@gmail.com",
+
                         user: dta.toObject()._id,
-                        identityID: "A2282998",
+
                         englishLevel: "a2",
                         schoolYear: 29
                     }).save().then((s) => {
