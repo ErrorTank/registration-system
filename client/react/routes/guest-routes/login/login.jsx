@@ -7,6 +7,10 @@ import {KComponent} from "../../../common/k-component";
 import {CommonInput} from "../../../common/common-input/common-input";
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import {customHistory} from "../../routes";
+import {userApi} from "../../../../api/common/user-api";
+import {userInfo} from "../../../../common/states/common";
+import {authenCache} from "../../../../common/cache/authen-cache";
+import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 
 
 class LoginForm extends KComponent {
@@ -34,12 +38,34 @@ class LoginForm extends KComponent {
         this.form.validateData();
     };
 
+    handleLogin = () => {
+        let {username, password} = this.form.getData();
+        this.setState({loading: true});
+        userApi.login({username, password}).then(data => {
+            let {user, token} = data;
+            authenCache.setAuthen(token, {expires: 1});
+            return userInfo.setState({...user}).then(() => customHistory.push("/"));
+        }).catch(err => this.setState({loading: false, error: err.message}));
+    };
+
+    renderServerError = () => {
+        let {error} = this.state;
+        let {username} = this.form.getData();
+        let errMatcher = {
+            "not_existed": `Tài khoản ${username} không tồn tại`,
+            "password_wrong": `Sai mật khẩu`,
+        };
+        return errMatcher.hasOwnProperty(error) ? errMatcher[error] : "Đã có lỗi xảy ra"
+    };
+
     render() {
+        const canLogin = !this.form.getInvalidPaths().length && !this.state.error && !this.state.loading;
+        console.log(this.state.error)
         return (
             <div className="login-form">
                 {this.state.error && (
                     <div className="server-error">
-                        error
+                        {this.renderServerError()}
                     </div>
                 )}
                 {this.form.enhanceComponent("username", ({error, onChange, onEnter, ...others}) => (
@@ -80,8 +106,16 @@ class LoginForm extends KComponent {
                     {this.props.renderNavigate()}
                 </div>
                 <div className="form-actions">
-                    <button className="btn btn-block btn-info">
+                    <button className="btn btn-block btn-info"
+                            disabled={!canLogin}
+                            onClick={this.handleLogin}
+                    >
                         Đăng nhập
+                        {this.state.loading && (
+                            <LoadingInline
+                                className={"login-loading"}
+                            />
+                        )}
                     </button>
                 </div>
             </div>
@@ -104,7 +138,7 @@ class ForgotPasswordForm extends KComponent {
                 recover: ""
             }
         });
-        this.onUnmount(this.form.on("enter", () => this.handleLogin()));
+        this.onUnmount(this.form.on("enter", () => this.sendConfirmationEmail()));
         this.onUnmount(this.form.on("change", () => {
             this.forceUpdate();
             this.state.error && this.setState({error: ""});
@@ -112,7 +146,12 @@ class ForgotPasswordForm extends KComponent {
         this.form.validateData();
     };
 
+    sendConfirmationEmail = () => {
+
+    };
+
     render() {
+        const canChange = !this.form.getInvalidPaths().length && !this.state.error && !this.state.loading;
         return (
             <div className="login-form">
                 {this.state.error && (
@@ -141,8 +180,10 @@ class ForgotPasswordForm extends KComponent {
                     {this.props.renderNavigate()}
                 </div>
                 <div className="form-actions">
-                    <button className="btn btn-block btn-info">
-                        Đổi mật khẩu
+                    <button className="btn btn-block btn-info"
+                            disabled={!canChange}
+                    >
+                        Xác thực
                     </button>
                 </div>
             </div>
@@ -178,7 +219,7 @@ export default class LoginRoute extends React.Component {
 
         },
         "forgotPassword": {
-            title: "Đổi mật khẩu",
+            title: "Quên mật khẩu",
             form: () => {
                 return (
                     <ForgotPasswordForm
@@ -198,9 +239,7 @@ export default class LoginRoute extends React.Component {
         }
     };
 
-    handleLogin = () => {
 
-    };
 
     render() {
 

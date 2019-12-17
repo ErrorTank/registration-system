@@ -5,7 +5,7 @@ export function LoadingInline({className}) {
   return (
     <div className="loading-inline">
       <div className="overlay row justify-content-center align-items-center">
-        <i className={classnames("fas fa-circle-notch spin-icon spin", className)}/>
+        <i className={classnames("far fa-spinner-third spin-icon spin", className)}/>
       </div>
 
     </div>

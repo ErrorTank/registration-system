@@ -40,7 +40,7 @@ const userSchema = new Schema({
         required: true,
         index: true,
         unique: true
-    },
+    }
 });
 
 
