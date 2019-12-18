@@ -21,7 +21,7 @@ module.exports = {
         return Promise.all([
             promise1
         ]).then(() => {
-            // require("../scripts/feed")(appDb);
+            require("../scripts/feed")(appDb);
         }).catch((err) => {
             console.log("Cannot connect to db");
             return Promise.reject(err);

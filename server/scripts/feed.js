@@ -50,7 +50,7 @@ module.exports = (appDb) => {
 
                 user: data.toObject()._id,
 
-                department:data2.toObject()._id
+                department: data2.toObject()._id
             }).save().then(he => {
                 new Shift({
                     name: 1,
@@ -72,6 +72,7 @@ module.exports = (appDb) => {
                                 credits: 3,
                                 capacity: 15,
                                 coefficient: 0.2,
+                                department: data2.toObject()._id
                             }).save().then(s => {
                                 new Class({
                                     name: "test2",
@@ -154,20 +155,27 @@ module.exports = (appDb) => {
     new Classroom({
         name: "cac"
     }).save();
-    new Subject({
-        subjectID: "test",
-        name: "dasd",
-        credits: 3,
-        capacity: 15,
-        coefficient: 0.2,
+    new Department({
+        name: "test",
+        pricePerCredit: 20000
 
-    }).save().then(data => {
-        new Class({
-            name: "test",
-            subject: data.toObject()._id
+    }).save().then((ok) => {
+        new Subject({
+            subjectID: "test",
+            name: "dasd",
+            credits: 3,
+            capacity: 15,
+            coefficient: 0.2,
+            department: ok.toObject()._id
+        }).save().then(data => {
+            new Class({
+                name: "test",
+                subject: data.toObject()._id
 
-        }).save();
-    });
+            }).save();
+        });
+    })
+
     new Department({
         name: "test",
         pricePerCredit: 20000
@@ -176,7 +184,6 @@ module.exports = (appDb) => {
         new Speciality({
             name: "test",
             shortName: "s",
-            department: data.toObject()._id
 
         }).save().then(data1 => {
             new Subject({
@@ -185,8 +192,8 @@ module.exports = (appDb) => {
                 credits: 3,
                 capacity: 15,
                 coefficient: 0.2,
-
-            }).save().then(data2=>{
+                department: data.toObject()._id
+            }).save().then(data2 => {
                 new EducateProgram({
                     subjects: [data2.toObject()._id],
                     speciality: data1.toObject()._id
