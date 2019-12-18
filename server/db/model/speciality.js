@@ -11,12 +11,7 @@ const specialitySchema = new Schema({
     shortName: {
         type: String,
         required: true
-    },
-    department: {
-        type: ObjectId,
-        ref: "Department",
-        required: true
-    },
+    }
 
 });
 
