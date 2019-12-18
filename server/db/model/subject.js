@@ -39,6 +39,11 @@ const subjectSchema = new Schema({
         type: Number,
         default: 0
     },
+    department: {
+        type: ObjectId,
+        ref: "Department",
+        required: true
+    },
     type: {
         type: String,
         enum: ["GDDC", "GDCN"],
