@@ -17,7 +17,13 @@ const studentInfoSchema = new Schema({
     schoolYear: {
         type: Number,
         required: true
+    },
+    speciality: {
+        ref: "Speciality",
+        type: ObjectId,
+        required: true
     }
+
 });
 
 
