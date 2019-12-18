@@ -11,8 +11,22 @@ const specialitySchema = new Schema({
     shortName: {
         type: String,
         required: true
-    }
+    },
+    pricePerCredit: {
+        type: [
+            {
+                schoolYear: {
+                    type: ObjectId,
+                    ref: "SchoolYear",
 
+                },
+                price: {
+                    type: Number,
+                    required: true
+                }
+            }
+        ]
+    }
 });
 
 

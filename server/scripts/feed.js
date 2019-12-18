@@ -1,5 +1,5 @@
 module.exports = (appDb) => {
-    const AppConfig = require("../db/model/app-config")(appDb);
+    const AppConfig = require("../db/model/school-year")(appDb);
     const Classroom = require("../db/model/class-room")(appDb);
     const Class = require("../db/model/class")(appDb);
     const CommonUserInfo = require("../db/model/common-user-info")(appDb);

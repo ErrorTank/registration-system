@@ -7,10 +7,6 @@ const departmentSchema = new Schema({
     name: {
         type: String,
         required: true
-    },
-    pricePerCredit: {
-        type: Number,
-        required: true
     }
 });
 

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
-
+//TODO department -> division
 
 const schoolScheduleItemsSchema = new Schema({
     year: {
@@ -11,6 +11,11 @@ const schoolScheduleItemsSchema = new Schema({
     semester: {
         type: String,
         enum: ["ki1", "ki2", "ki3"],
+        required: true
+    },
+    studentGroup: {
+        type: Number,
+        enum: [1, 2, 3],
         required: true
     },
     class: {
