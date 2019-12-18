@@ -9,4 +9,7 @@ export const userApi = {
         return offlineApi.post("/login", info);
 
     },
+    sendForgotPasswordEmail(identity){
+        return offlineApi.post("/forgot-password", identity)
+    }
 };

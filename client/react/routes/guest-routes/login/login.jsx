@@ -128,7 +128,8 @@ class ForgotPasswordForm extends KComponent {
         super(props);
         this.state = {
             loading: false,
-            error: null
+            error: null,
+            success: false
         };
         const loginSchema = yup.object().shape({
             recover: yup.string().required("Trường không được để trống"),
@@ -147,7 +148,10 @@ class ForgotPasswordForm extends KComponent {
     };
 
     sendConfirmationEmail = () => {
+        let {recover} = this.form.getData();
+        userApi.sendForgotPasswordEmail({recoveryID: recover}).then(() => {
 
+        })
     };
 
     render() {
