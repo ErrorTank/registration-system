@@ -9,9 +9,9 @@ const dptInsInfoSchema = new Schema({
         ref: "User",
         required: true
     },
-    department: {
+    division: {
         type: ObjectId,
-        ref: "Department",
+        ref: "Division",
         required: true
     },
 

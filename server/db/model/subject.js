@@ -36,9 +36,9 @@ const subjectSchema = new Schema({
         type: Number,
         default: 0
     },
-    department: {
+    division: {
         type: ObjectId,
-        ref: "Department",
+        ref: "Division",
         required: true
     },
     type: {

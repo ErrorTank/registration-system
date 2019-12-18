@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 
-const departmentSchema = new Schema({
+const divisionSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -11,4 +11,4 @@ const departmentSchema = new Schema({
 });
 
 
-module.exports = (db) => db.model("Department", departmentSchema);
+module.exports = (db) => db.model("Division", divisionSchema);

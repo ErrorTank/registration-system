@@ -16,8 +16,7 @@ const specialitySchema = new Schema({
         type: [
             {
                 schoolYear: {
-                    type: ObjectId,
-                    ref: "SchoolYear",
+                    type: Number
 
                 },
                 price: {
@@ -28,10 +27,5 @@ const specialitySchema = new Schema({
         ]
     }
 });
-
-
-
-
-
 
 module.exports = (db) => db.model("Speciality", specialitySchema) ;
