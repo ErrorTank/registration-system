@@ -12,7 +12,19 @@ const classSchema = new Schema({
         type: ObjectId,
         ref: "Subject",
         required: true
-    }
+    },
+    capacity: {
+        min: {
+            type: Number,
+            default: 15,
+            required: true
+        },
+        max: {
+            type: Number,
+            default: 30,
+            required: true
+        }
+    },
 });
 
 

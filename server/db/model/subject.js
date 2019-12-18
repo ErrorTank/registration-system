@@ -17,10 +17,7 @@ const subjectSchema = new Schema({
         type: Number,
         required: true
     },
-    capacity: {
-        type: Number,
-        default: 15
-    },
+
     coefficient: {
         type: Number,
         required: true
