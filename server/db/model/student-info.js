@@ -24,6 +24,7 @@ const studentInfoSchema = new Schema({
         required: true
     }
 
+
 });
 
 
