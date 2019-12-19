@@ -9,6 +9,7 @@ const authMiddleware = authorization(getPublicKey(), {expiresIn: "1 day", algori
 module.exports = () => {
     router.post("/login", (req, res, next) => {
         return regularLogin({...req.body}).then((data) => {
+            console.log(data)
             return res.status(200).json(data);
         }).catch(err => next(err));
 

@@ -1,8 +1,9 @@
-const {appDb} = require("../../config/db").getDb();
-const User = require("../model/user")(appDb);
-const CommonUserInfo = require("../model/common-user-info")(appDb);
-const DptInsInfo = require("../model/dpt-ins-info")(appDb);
-const StudentInfo = require("../model/student-info")(appDb);
+
+const User = require("../model/user")(require("../../config/db").appDb);
+
+const CommonUserInfo = require("../model/common-user-info")(require("../../config/db").appDb);
+const DptInsInfo = require("../model/dpt-ins-info")(require("../../config/db").appDb);
+const StudentInfo = require("../model/student-info")(require("../../config/db").appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
@@ -16,18 +17,11 @@ const getUserEntity = role => {
     })[role]
 };
 const regularLogin = ({username, password}) => {
-
-    return User.findOne({
-        $or: [
-            {username},
-            {identityID: username},
-            {phone: username},
-            {email: username}
-        ]
-    }).lean()
+    return User.findOne( {username}).lean()
         .then(data => {
+            console.log(data)
             if (!data) {
-                console.log(data)
+
                 return Promise.reject(new ApplicationError("not_existed"))
             }
             if (data.password !== password)
@@ -47,7 +41,6 @@ const regularLogin = ({username, password}) => {
                 .catch(err => Promise.reject(err))
         )
         .catch(err => {
-
             return Promise.reject(err)
         })
 };

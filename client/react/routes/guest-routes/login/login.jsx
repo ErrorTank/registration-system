@@ -91,7 +91,7 @@ class LoginForm extends KComponent {
                         error={error}
                         id={"password"}
                         onKeyDown={onEnter}
-                        type={"text"}
+                        type={"password"}
                         label={"Mật khẩu"}
                         placeholder={"Nhập mật khẩu"}
                         onChange={e => {
