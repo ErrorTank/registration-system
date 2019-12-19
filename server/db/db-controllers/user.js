@@ -1,9 +1,9 @@
+const appDb = require("../../config/db").getDbs().appDb;
+const User = require("../model/user")(appDb);
 
-const User = require("../model/user")(require("../../config/db").appDb);
-
-const CommonUserInfo = require("../model/common-user-info")(require("../../config/db").appDb);
-const DptInsInfo = require("../model/dpt-ins-info")(require("../../config/db").appDb);
-const StudentInfo = require("../model/student-info")(require("../../config/db").appDb);
+const CommonUserInfo = require("../model/common-user-info")(appDb);
+const DptInsInfo = require("../model/dpt-ins-info")(appDb);
+const StudentInfo = require("../model/student-info")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
@@ -19,7 +19,7 @@ const getUserEntity = role => {
 const regularLogin = ({username, password}) => {
     return User.findOne( {username}).lean()
         .then(data => {
-            console.log(data)
+
             if (!data) {
 
                 return Promise.reject(new ApplicationError("not_existed"))
