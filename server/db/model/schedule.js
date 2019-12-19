@@ -18,22 +18,7 @@ const scheduleSchema = new Schema({
         type: ObjectId,
         ref: "StudentInfo",
         required: true
-    },
-    year: {
-        from: {
-            type: Number,
-            required: true,
-        },
-        to: {
-            type: Number,
-            required: true
-        },
-    },
-    semester: {
-        type: Number,
-        enum: [0, 1, 2],
-        required: true
-    },
+    }
 });
 
 

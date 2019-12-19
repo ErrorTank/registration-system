@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const appConfigSchema = new Schema({
-    latestSchoolYear: {
+    currentSchoolYear: {
         type: Number,
         required: true
-    },
+    }
 
 });
 
