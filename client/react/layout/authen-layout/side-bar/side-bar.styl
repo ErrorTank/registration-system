@@ -1,0 +1,33 @@
+.side-bar{
+  width 24rem
+  height 100vh
+  z-index 5
+  position fixed
+  background-color purple2
+  color navTextColor
+  padding 30px 0
+  overflow-y auto
+  margin-top 56px
+  .side-bar-item{
+    padding 12px 15px
+    border-left 3px solid transparent
+    display flex
+    align-items center
+    font-size 2rem
+    cursor pointer
+    transition all 0.1s ease
+    &:hover{
+      color white
+
+    }
+    &.active{
+      border-color orangeBorder
+    }
+
+    span{
+      margin-left 1.2rem
+      font-size 1.5rem
+      letter-spacing 1px
+    }
+  }
+}

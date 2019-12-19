@@ -6,23 +6,17 @@ import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import {customHistory} from "../../../../routes/routes";
 import classnames from "classnames"
+import {authenCache} from "../../../../../common/cache/authen-cache";
 
 export class UserSection extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            isDropdown: true
+            isDropdown: false
         };
     };
 
-    styles = {
 
-        largeIcon: {
-            width: 60,
-            height: 60,
-        },
-
-    };
 
     items = [
         {
@@ -36,6 +30,7 @@ export class UserSection extends React.Component{
             icon: <ExitToAppIcon fontSize={"inherit"}/>,
             onClick: () => {
                 userInfo.setState(null);
+                authenCache.clearAuthen();
                 customHistory.push("/login");
             }
         },
@@ -43,11 +38,12 @@ export class UserSection extends React.Component{
 
     render(){
         let {isDropdown} = this.state;
+        let {location} = customHistory;
         let info = userInfo.getState();
         return(
             <div className="user-section"
-                 // onMouseEnter={() => this.setState({isDropdown: true})}
-                 // onMouseLeave={() => this.setState({isDropdown: false})}
+                onMouseEnter={() => this.setState({isDropdown: true})}
+                onMouseLeave={() => this.setState({isDropdown: false})}
             >
                 <Avatar
                     round={true}
@@ -58,22 +54,29 @@ export class UserSection extends React.Component{
                     {info.name}
                 </span>
                 <KeyboardArrowDownIcon/>
+
                 {isDropdown && (
                     <div className="user-dropdown">
-                        {this.items.map((item) => (
-                            <div className={classnames("dropdown-item")}
-                                 onClick={() => {
-                                     if(item.url){
-                                         customHistory.push(url);
-                                     }else{
-                                         item.onClick();
-                                     }
-                                 }}
-                            >
-                                {item.icon}
-                                <span>{item.label}</span>
-                            </div>
-                        ))}
+                        <div className="dropdown-content">
+
+                            <span className="decorate">
+                </span>
+                            {this.items.map((item) => (
+                                <div className={classnames("dropdown-item", {active: item.url ? location.pathname.indexOf(item.url) > -1 : false})}
+                                     key={item.label}
+                                     onClick={() => {
+                                         if(item.url){
+                                             customHistory.push(url);
+                                         }else{
+                                             item.onClick();
+                                         }
+                                     }}
+                                >
+                                    {item.icon}
+                                    <span>{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )
 
