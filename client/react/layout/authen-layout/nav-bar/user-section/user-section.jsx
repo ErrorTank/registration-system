@@ -62,7 +62,7 @@ export class UserSection extends React.Component{
                             <span className="decorate">
                 </span>
                             {this.items.map((item) => (
-                                <div className={classnames("dropdown-item", {active: item.url ? location.pathname.indexOf(item.url) > -1 : false})}
+                                <div className={classnames("dropdown-item", {active: item.url ? location.pathname === item.url : false})}
                                      key={item.label}
                                      onClick={() => {
                                          if(item.url){

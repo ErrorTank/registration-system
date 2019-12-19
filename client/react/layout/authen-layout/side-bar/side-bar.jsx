@@ -15,7 +15,7 @@ export class Sidebar extends React.Component {
         return (
             <div className="side-bar">
                 {navItems.map(item => (
-                    <div className={classnames("side-bar-item", {active: item.url ? location.pathname.indexOf(item.url) > -1 : false})}
+                    <div className={classnames("side-bar-item", {active: item.url ? location.pathname === item.url : false})}
                          key={item.url}
                          onClick={() => customHistory.push(item.url)}
                     >

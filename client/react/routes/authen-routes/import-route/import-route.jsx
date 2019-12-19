@@ -2,7 +2,7 @@ import React from "react";
 import {PageTitle} from "../../../common/page-title/page-title";
 import {AuthenLayout} from "../../../layout/authen-layout/authen-layout";
 
-export default class Dashboard extends React.Component {
+export default class ImportRoute extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -11,12 +11,12 @@ export default class Dashboard extends React.Component {
     render() {
         return (
             <PageTitle
-                title={"Trang chủ"}
+                title={"Import"}
             >
                 <AuthenLayout
-                    title={"Trang chủ"}
+                    title={"Import dữ liệu"}
                 >
-                    <div className="dashboard-route">
+                    <div className="import-route">
 
                     </div>
 
