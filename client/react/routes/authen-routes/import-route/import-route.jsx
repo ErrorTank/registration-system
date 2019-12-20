@@ -11,7 +11,10 @@ export default class ImportRoute extends React.Component {
         super(props);
         this.initData = {
             dataType: 0,
-            currentStep: 0
+            currentStep: 0,
+            scheduleItems: [],
+            educateProgram: [],
+            results: []
         };
         this.state = {
             ...this.initData
@@ -24,6 +27,19 @@ export default class ImportRoute extends React.Component {
 
     steps = [
         {
+            title: "Chọn loại dữ liệu tải lên",
+            subtitle: "Chọn loại dữ liệu",
+            render: () => (
+                <DataTypePicker
+                    onChange={dataType => this.setState({dataType, currentStep: 1})}
+                />
+            ),
+            onNext: () => this.setState({currentStep: 1}),
+            onClickNav: () => this.setState({...this.initData}),
+            hideCancel: () => true,
+            hideNext: () => true,
+        },
+        {
             title: "Tải lên tệp dữ liệu",
             subtitle: "Tải dữ liệu lên",
             render: () => (
@@ -32,9 +48,12 @@ export default class ImportRoute extends React.Component {
                 />
             ),
             canNext: () => true,
-            onNext: () => this.setState({currentStep: 1}),
-            onClickNav: () => this.setState({...this.initData}),
-            hideCancel: () => true
+            onNext: () => this.setState({currentStep: 2}),
+            onClickNav: () => this.setState({currentStep: 1}),
+            hideCancel: () => true,
+            onPrevious: () => {
+                this.setState({...this.initData});
+            },
         },{
             title: "Xác nhận thông tin dữ liệu tải lên",
             subtitle: "Xác nhận dữ liệu",
@@ -44,9 +63,8 @@ export default class ImportRoute extends React.Component {
             canNext: () => false,
             onNext: this.handleImportData,
             onPrevious: () => {
-                this.setState({...this.initData});
+                this.setState({currentStep: 1});
             },
-            hideCancel: () => true
         },
     ];
 

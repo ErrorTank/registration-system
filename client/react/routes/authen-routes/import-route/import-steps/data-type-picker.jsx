@@ -10,15 +10,23 @@ export class DataTypePicker extends React.Component{
 
 
     render(){
+        let {onChange} = this.props;
         return(
             <div className="data-type-picker">
-                <div className="option">
-
+                <div className="option"
+                     onClick={() => onChange(0)}
+                >
+                    Chương trình học & TKB toàn trường
                 </div>
                 <div className="separate">
+                    <span></span>
+                    <span>hoặc</span>
+                    <span></span>
                 </div>
-                <div className="option">
-
+                <div className="option"
+                     onClick={() => onChange(1)}
+                >
+                    Bảng điểm cá nhân
                 </div>
             </div>
         );

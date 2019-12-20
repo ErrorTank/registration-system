@@ -22,7 +22,14 @@ export class MultipleSteps extends React.Component{
                             >
                                 <div className="wrapper">
                                     <div className="step-index">
-                                        <span>{i + 1}</span>
+                                        {curStepIndex > i ? (
+                                            <span>&#10003;</span>
+                                        ) : (
+                                            <span>{i + 1}</span>
+                                        )
+
+                                        }
+
                                     </div>
                                     <div className="step-subtitle">
                                         {each.subtitle}
