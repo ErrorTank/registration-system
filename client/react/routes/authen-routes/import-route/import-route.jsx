@@ -12,7 +12,12 @@ export default class ImportRoute extends React.Component {
         this.initData = {
             dataType: 0,
             currentStep: 0,
-            scheduleItems: [],
+            scheduleItems: {
+                value: [],
+                year: new Date().getFullYear(),
+                semester: null,
+                studentGroup: null
+            },
             educateProgram: [],
             results: []
         };
@@ -44,7 +49,7 @@ export default class ImportRoute extends React.Component {
             subtitle: "Tải dữ liệu lên",
             render: () => (
                 <UploadExcel
-
+                    type={this.state.dataType}
                 />
             ),
             canNext: () => true,
