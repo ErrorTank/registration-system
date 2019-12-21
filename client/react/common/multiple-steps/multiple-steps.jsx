@@ -1,5 +1,6 @@
 import React from "react";
 import classnames from "classnames";
+import {LoadingInline} from "../loading-inline/loading-inline";
 
 export class MultipleSteps extends React.Component{
     constructor(props){
@@ -10,7 +11,7 @@ export class MultipleSteps extends React.Component{
     render(){
         let {btnConfig, curStepIndex, steps, onCancel} = this.props;
         let {nextText, cancelText, finishText, previousText} = btnConfig;
-        let {onNext, canNext = () => false, onPrevious = () => null, render, title, hideNext = () => false, hideCancel = () => false} = steps[curStepIndex];
+        let {onNext, canNext = () => false, onPrevious = () => null, render, title, hideNext = () => false, hideCancel = () => false, nextLoading = () => false} = steps[curStepIndex];
         return(
             <div className="multiple-steps">
                 <div className="steps-nav">
@@ -60,9 +61,14 @@ export class MultipleSteps extends React.Component{
                         {!hideNext() && (
                             <button className={classnames("btn btn-next", {disabled: !canNext()})}
                                     onClick={onNext}
-                                    disabled={!canNext()}
+                                    disabled={!canNext() || nextLoading()}
                             >
                                 {curStepIndex === steps.length -1 ?  finishText : nextText}
+                                {nextLoading() && (
+                                    <LoadingInline
+                                        className={"login-loading"}
+                                    />
+                                )}
                             </button>
                         )
 

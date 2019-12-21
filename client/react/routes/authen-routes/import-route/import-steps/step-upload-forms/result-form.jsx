@@ -1,27 +1,25 @@
 import React from "react";
-import * as yup from "yup";
-import {createSimpleForm} from "../../../../../common/form-validator/form-validator";
 import {
     uploadCommonFile
 } from "../../../../../../common/utils/excel";
 import {InputFileExcel} from "../../../../../common/input-file-excel/input-file-excel";
 import {Select} from "../../../../../common/select/select";
-import {years} from "../../../../../../const/years";
-import {semester} from "../../../../../../const/semester";
-import {studentGroups} from "../../../../../../const/student-group";
+
 import {KComponent} from "../../../../../common/k-component";
 import {specialitesCache} from "../../../../../../common/cache/api-cache/common-cache";
 import classnames from "classnames";
 import {LoadingInline} from "../../../../../common/loading-inline/loading-inline";
 import {wait1} from "../../../../../../common/utils/common";
+import {CommonInput} from "../../../../../common/common-input/common-input";
 
-export class EduProgramForm extends KComponent{
+export class ResultForm extends KComponent{
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
             specialities: []
         };
+
         this.props.form.validateData();
 
         specialitesCache.get().then(specialities => this.setState({specialities}))
@@ -43,12 +41,10 @@ export class EduProgramForm extends KComponent{
 
         return (
             <div className={classnames("schedule-form u-form", {valid: this.props.form.isValid()})}>
-
                 <div className="upload-form-row">
                     <p className="upload-label">Chọn file</p>
                     <InputFileExcel
                         onUploaded={this.handleUpload}
-
                         render={({onClick}) => (
                             <button className="btn btn-upload"
                                     onClick={(file) => onClick(file)}
@@ -84,7 +80,44 @@ export class EduProgramForm extends KComponent{
 
                             ), true)}
                         </div>
+                        <div className="upload-form-row">
+                            <p className="upload-label">Mã sinh viên</p>
+                            {this.props.form.enhanceComponent("msv", ({error, onChange, onEnter, ...others}) => (
+                                <CommonInput
+                                    className="pt-0"
+                                    error={error}
+                                    id={"msv"}
+                                    onKeyDown={onEnter}
+                                    type={"text"}
+                                    placeholder={"Nhập mã sinh viên"}
+                                    onChange={e => {
 
+                                        this.setState({error: ""});
+                                        onChange(e);
+                                    }}
+                                    {...others}
+                                />
+                            ), true)}
+                        </div>
+                        <div className="upload-form-row">
+                            <p className="upload-label">Họ và tên</p>
+                            {this.props.form.enhanceComponent("name", ({error, onChange, onEnter, ...others}) => (
+                                <CommonInput
+                                    className="pt-0"
+                                    error={error}
+                                    id={"name"}
+                                    onKeyDown={onEnter}
+                                    type={"text"}
+                                    placeholder={"Nhập họ tên"}
+                                    onChange={e => {
+
+                                        this.setState({error: ""});
+                                        onChange(e);
+                                    }}
+                                    {...others}
+                                />
+                            ), true)}
+                        </div>
                     </>
                 )
 

@@ -11,6 +11,7 @@ import {userApi} from "../../../../api/common/user-api";
 import {userInfo} from "../../../../common/states/common";
 import {authenCache} from "../../../../common/cache/authen-cache";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
+import {specialitesCache} from "../../../../common/cache/api-cache/common-cache";
 
 
 class LoginForm extends KComponent {
@@ -44,7 +45,7 @@ class LoginForm extends KComponent {
         userApi.login({username, password}).then(data => {
             let {user, token} = data;
             authenCache.setAuthen(token, {expires: 1});
-            return userInfo.setState({...user}).then(() => customHistory.push("/"));
+            return Promise.all[userInfo.setState({...user}), specialitesCache.get()].then(() => customHistory.push("/"));
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 

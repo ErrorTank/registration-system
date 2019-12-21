@@ -31,6 +31,7 @@ export class InputFileExcel extends React.Component {
           onChange={this.handleSubmit}
           style={{display: "none"}}
           ref={elem => this.inputElem = elem}
+          accept={".xlsx"}
         />
       </Fragment>
     )

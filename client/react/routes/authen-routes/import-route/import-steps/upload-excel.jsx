@@ -2,7 +2,7 @@ import React from "react";
 import {InputFileExcel} from "../../../../common/input-file-excel/input-file-excel";
 import {ScheduleForm} from "./step-upload-forms/schedule-form";
 import {EduProgramForm} from "./step-upload-forms/edu-program-from";
-
+import {ResultForm} from "./step-upload-forms/result-form";
 export class UploadExcel extends React.Component{
     constructor(props){
         super(props);
@@ -33,7 +33,19 @@ export class UploadExcel extends React.Component{
                     }
                 }
             ],
-            requiredField: 2,
+        }, {
+            fields: [
+                {
+                    label: "Bảng điểm cá nhân",
+                    render: () => {
+                        return (
+                            <ResultForm
+                                form={this.props.resultForm}
+                            />
+                        )
+                    }
+                }
+            ],
         }
     ];
 
@@ -46,6 +58,7 @@ export class UploadExcel extends React.Component{
                     <div className="upload-panel"
                          key={i}
                     >
+                        <p className="form-title">{f.label}</p>
                         {f.render()}
                     </div>
                 ))}

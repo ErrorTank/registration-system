@@ -12,9 +12,9 @@ export class Breadcrumbs extends React.Component {
 
     render() {
         let {location} = customHistory;
-        console.log(location)
+
         let arr = buildBreadcrumbsArray(location.pathname);
-        console.log(arr)
+
         return (
             <div className="breadcrumbs-container">
                 {arr.length > 1 && (

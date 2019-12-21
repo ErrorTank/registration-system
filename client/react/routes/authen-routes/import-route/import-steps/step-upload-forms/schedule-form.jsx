@@ -21,16 +21,11 @@ export class ScheduleForm extends KComponent {
             loading: false
 
         };
-
+        this.props.form.validateData();
 
     };
 
-    componentDidMount(){
-        this.onUnmount(this.props.form.on("change", () => {
-            this.forceUpdate();
-        }));
-        this.props.form.validateData();
-    }
+
 
     handleUpload = async (file) => {
         this.setState({loading: true});
@@ -49,7 +44,6 @@ export class ScheduleForm extends KComponent {
 
         return (
             <div className={classnames("schedule-form u-form", {valid: this.props.form.isValid()})}>
-                <p className="form-title">Thời khóa biểu toàn trường</p>
                 <div className="upload-form-row">
                     <p className="upload-label">Chọn file</p>
                     <InputFileExcel
@@ -57,6 +51,7 @@ export class ScheduleForm extends KComponent {
                         render={({onClick}) => (
                             <button className="btn btn-upload"
                                     onClick={(file) => onClick(file)}
+                                    disabled={this.state.loading}
                             >
                                 Tải lên
                                 {this.state.loading && (

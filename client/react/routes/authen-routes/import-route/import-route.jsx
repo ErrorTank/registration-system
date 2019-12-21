@@ -11,8 +11,11 @@ import {semester} from "../../../../const/semester";
 import {studentGroups} from "../../../../const/student-group";
 import {specialitesCache} from "../../../../common/cache/api-cache/common-cache";
 import {createSimpleForm} from "../../../common/form-validator/form-validator";
+import {KComponent} from "../../../common/k-component";
+import {schoolScheduleApi} from "../../../../api/common/school-schedule-api";
+import {resultApi} from "../../../../api/common/result-api";
 
-export default class ImportRoute extends React.Component {
+export default class ImportRoute extends KComponent {
     constructor(props) {
         super(props);
         this.scheduleItems = {
@@ -27,11 +30,18 @@ export default class ImportRoute extends React.Component {
             list: [],
             speciality: specialitesCache.syncGet()[0],
         };
+        this.results = {
+            fileName: "",
+            list: [],
+            msv: "",
+            speciality: specialitesCache.syncGet()[0],
+            name: ""
+        };
         this.initData = {
             dataType: 0,
             currentStep: 0,
-            results: [],
-
+            step2Loading: false,
+            overview: null
         };
         this.state = {
             ...this.initData
@@ -40,6 +50,18 @@ export default class ImportRoute extends React.Component {
             fileName: yup.string(),
             list: yup.array().min(1, "Chương trình học không được để trống"),
             speciality: yup.object(),
+        });
+        const resultForm = yup.object().shape({
+            fileName: yup.string(),
+            list: yup.array().min(1, "Kết quả không được để trống"),
+            speciality: yup.object(),
+            msv: yup.string().required("Mã sinh viên không được để trống"),
+            name: yup.string().required("Tên sinh viên không được để trống"),
+        });
+        this.resultForm = createSimpleForm(resultForm, {
+            initData: {
+                ...this.results
+            }
         });
         this.eduProgramForm = createSimpleForm(eduProgramForm, {
             initData: {
@@ -58,10 +80,58 @@ export default class ImportRoute extends React.Component {
                 ...this.scheduleItems
             }
         });
+        this.onUnmount(this.resultForm.on("change", () => {
+
+            this.forceUpdate();
+        }));
+        this.onUnmount(this.eduProgramForm.on("change", () => {
+
+            this.forceUpdate();
+        }));
+        this.onUnmount(this.scheduleForm.on("change", () => {
+
+            this.forceUpdate();
+        }));
+
+
 
     };
 
     handleImportData = () => {
+
+    };
+
+    uploadEduProgramAndSchedule = () => {
+        return schoolScheduleApi.uploadScheduleAndEduProgram({
+            schedule: this.scheduleForm.getData(),
+            eduProgram: this.eduProgramForm.getData()
+        })
+    };
+
+    uploadResult = () => {
+        return resultApi.uploadResult({result: this.resultForm.getData()})
+    };
+
+    step2Actions = [
+        this.uploadEduProgramAndSchedule,
+        this.uploadResult
+    ];
+
+    handleNextStep2 = () => {
+        console.log(this.scheduleForm.getData())
+        console.log(this.eduProgramForm.getData())
+        console.log(this.resultForm.getData())
+        this.setState({step2Loading: true});
+        let action = this.step2Actions[this.state.dataType];
+        action().then(overview => {
+            if(!this.state.dataType){
+                this.scheduleForm.resetData();
+                this.eduProgramForm.resetData();
+            }else{
+                this.resultForm.resetData();
+            }
+            this.setState({currentStep: 2, overview, step2Loading: false})
+        });
 
     };
 
@@ -78,6 +148,7 @@ export default class ImportRoute extends React.Component {
             onClickNav: () => {
                 this.scheduleForm.resetData();
                 this.eduProgramForm.resetData();
+                this.resultForm.resetData();
                 this.setState({...this.initData})
             },
             hideCancel: () => true,
@@ -91,14 +162,19 @@ export default class ImportRoute extends React.Component {
                     type={this.state.dataType}
                     scheduleForm={this.scheduleForm}
                     eduProgramForm={this.eduProgramForm}
+                    resultForm={this.resultForm}
                 />
             ),
-            canNext: () => this.scheduleForm.isValid() && this.eduProgramForm.isValid(),
-            onNext: () => this.setState({currentStep: 2}),
+            canNext: () => this.state.dataType === 0 ? this.scheduleForm.isValid() && this.eduProgramForm.isValid() : this.resultForm.isValid(),
+            onNext: this.handleNextStep2,
+            nextLoading: () => {
+              return this.state.step2Loading;
+            },
             onClickNav: () => this.setState({currentStep: 1}),
             hideCancel: () => true,
             onPrevious: () => {
                 this.scheduleForm.resetData();
+                this.resultForm.resetData();
                 this.eduProgramForm.resetData();
                 this.setState({...this.initData});
             },
