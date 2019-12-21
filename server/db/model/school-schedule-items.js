@@ -5,12 +5,18 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const schoolScheduleItemsSchema = new Schema({
     year: {
-        type: Number,
-        default: new Date().getFullYear()
+        from: {
+            type: Number,
+            required: true,
+        },
+        to: {
+            type: Number,
+            required: true
+        },
     },
     semester: {
-        type: String,
-        enum: ["ki1", "ki2", "ki3"],
+        type: Number,
+        enum: [0, 1, 2],
         required: true
     },
     studentGroup: {
@@ -29,8 +35,8 @@ const schoolScheduleItemsSchema = new Schema({
         required: true
     },
     dayOfWeek: {
-        type: String,
-        enum: ["t2", "t3", "t4", "t5", "t6", "t7", "cn"],
+        type: Number,
+        enum: [0, 1, 2, 3, 4, 5, 6],
         required: true
     },
     instructor: {
