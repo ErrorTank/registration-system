@@ -10,35 +10,55 @@ import {years} from "../../../../const/years";
 import {semester} from "../../../../const/semester";
 import {studentGroups} from "../../../../const/student-group";
 import {specialitesCache} from "../../../../common/cache/api-cache/common-cache";
+import {createSimpleForm} from "../../../common/form-validator/form-validator";
 
 export default class ImportRoute extends React.Component {
     constructor(props) {
         super(props);
+        this.scheduleItems = {
+            fileName: "",
+            list: [],
+            year: years[0],
+            semester: semester[0],
+            studentGroup: studentGroups[0],
+        };
+        this.educateProgram = {
+            fileName: "",
+            list: [],
+            speciality: specialitesCache.syncGet()[0],
+        };
         this.initData = {
-            loadSpec: true,
             dataType: 0,
             currentStep: 0,
-            scheduleItems: {
-                fileName: "",
-                list: [],
-                year: years[0],
-                semester: semester[0],
-                studentGroup: studentGroups[0]
-            },
-            educateProgram: {
-                fileName: "",
-                list: [],
-                speciality: null
-            },
-            results: []
+            results: [],
+
         };
         this.state = {
             ...this.initData
         };
-        specialitesCache.get().then(specialities => {
+        const eduProgramForm = yup.object().shape({
+            fileName: yup.string(),
+            list: yup.array().min(1, "Chương trình học không được để trống"),
+            speciality: yup.object(),
+        });
+        this.eduProgramForm = createSimpleForm(eduProgramForm, {
+            initData: {
+                ...this.educateProgram
+            }
+        });
+        const scheduleForm = yup.object().shape({
+            fileName: yup.string(),
+            list: yup.array().min(1, "Thời khóa biểu không được để trống"),
+            studentGroup: yup.object(),
+            semester: yup.object(),
+            year: yup.object()
+        });
+        this.scheduleForm = createSimpleForm(scheduleForm, {
+            initData: {
+                ...this.scheduleItems
+            }
+        });
 
-            this.setState({educateProgram: {...this.state.educateProgram, speciality: specialities[0]}, loadSpec: false})
-        })
     };
 
     handleImportData = () => {
@@ -55,7 +75,11 @@ export default class ImportRoute extends React.Component {
                 />
             ),
             onNext: () => this.setState({currentStep: 1}),
-            onClickNav: () => this.setState({...this.initData}),
+            onClickNav: () => {
+                this.scheduleForm.resetData();
+                this.eduProgramForm.resetData();
+                this.setState({...this.initData})
+            },
             hideCancel: () => true,
             hideNext: () => true,
         },
@@ -65,15 +89,17 @@ export default class ImportRoute extends React.Component {
             render: () => (
                 <UploadExcel
                     type={this.state.dataType}
-                    scheduleItems={this.state.scheduleItems}
-                    educateProgram={this.state.educateProgram}
+                    scheduleForm={this.scheduleForm}
+                    eduProgramForm={this.eduProgramForm}
                 />
             ),
-            canNext: () => true,
+            canNext: () => this.scheduleForm.isValid() && this.eduProgramForm.isValid(),
             onNext: () => this.setState({currentStep: 2}),
             onClickNav: () => this.setState({currentStep: 1}),
             hideCancel: () => true,
             onPrevious: () => {
+                this.scheduleForm.resetData();
+                this.eduProgramForm.resetData();
                 this.setState({...this.initData});
             },
         },{
@@ -101,23 +127,19 @@ export default class ImportRoute extends React.Component {
                 >
                     <div className="import-route">
                         <div className="multiple-steps-wrapper">
-                            {!loadSpec && (
-                                <MultipleSteps
-                                    btnConfig={{
-                                        nextText: "Tiếp theo",
-                                        cancelText: "Hủy bỏ",
-                                        finishText: "Import dữ liệu",
-                                        previousText: "Trở về"
-                                    }}
-                                    curStepIndex={currentStep}
-                                    steps={this.steps}
-                                    onCancel={() => {
-                                        this.setState({...this.initData})
-                                    }}
-                                />
-                            )
-
-                            }
+                            <MultipleSteps
+                                btnConfig={{
+                                    nextText: "Tiếp theo",
+                                    cancelText: "Hủy bỏ",
+                                    finishText: "Import dữ liệu",
+                                    previousText: "Trở về"
+                                }}
+                                curStepIndex={currentStep}
+                                steps={this.steps}
+                                onCancel={() => {
+                                    this.setState({...this.initData})
+                                }}
+                            />
 
                         </div>
 

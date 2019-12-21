@@ -11,6 +11,9 @@ import {semester} from "../../../../../../const/semester";
 import {studentGroups} from "../../../../../../const/student-group";
 import {KComponent} from "../../../../../common/k-component";
 import {specialitesCache} from "../../../../../../common/cache/api-cache/common-cache";
+import classnames from "classnames";
+import {LoadingInline} from "../../../../../common/loading-inline/loading-inline";
+import {wait1} from "../../../../../../common/utils/common";
 
 export class EduProgramForm extends KComponent{
     constructor(props) {
@@ -19,35 +22,33 @@ export class EduProgramForm extends KComponent{
             loading: false,
             specialities: []
         };
-        const loginSchema = yup.object().shape({
-            fileName: yup.string(),
-            list: yup.array().min(1, "Chương trình học không được để trống"),
-            speciality: yup.object(),
-        });
-        this.form = createSimpleForm(loginSchema, {
-            initData: {
-                ...props.form
-            }
-        });
-        this.onUnmount(this.form.on("change", () => {
-            this.forceUpdate();
-        }));
-        this.form.validateData();
+
+
         specialitesCache.get().then(specialities => this.setState({specialities}))
     };
 
+    componentDidMount(){
+        this.onUnmount(this.props.form.on("change", () => {
+            this.forceUpdate();
+        }));
+        console.log("me")
+        this.props.form.validateData();
+    }
+
     handleUpload = async (file) => {
         this.setState({loading: true});
-        let result = await uploadCommonFile(file);
-        this.setState({loading: false});
-        this.form.updateData(result);
+        await wait1(async () => {
+            let result = await uploadCommonFile(file);
+            this.setState({loading: false});
+            this.props.form.updateData(result);
+        });
     };
 
     render() {
-        let data = this.form.getData();
-        console.log(data)
+        let data = this.props.form.getData();
+        console.log(this.props.form.getInvalidPaths())
         return (
-            <div className="schedule-form">
+            <div className={classnames("schedule-form u-form", {valid: this.props.form.isValid()})}>
                 <p className="form-title">Chương trình học</p>
                 <div className="upload-form-row">
                     <p className="upload-label">Chọn file</p>
@@ -58,16 +59,21 @@ export class EduProgramForm extends KComponent{
                                     onClick={(file) => onClick(file)}
                             >
                                 Tải lên
+                                {this.state.loading && (
+                                    <LoadingInline
+                                        className={"login-loading"}
+                                    />
+                                )}
                             </button>
                         )}
                     />
-                    <span className="file-name">{name}</span>
+                    <span className="file-name">{data.fileName}</span>
                 </div>
                 {!!data.list.length && (
                     <>
                         <div className="upload-form-row">
-                            <p className="upload-label">Năm học</p>
-                            {this.form.enhanceComponent("speciality", ({error, onChange, onEnter, ...others}) => (
+                            <p className="upload-label">Chuyên ngành</p>
+                            {this.props.form.enhanceComponent("speciality", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
                                     options={this.state.specialities}
@@ -75,6 +81,7 @@ export class EduProgramForm extends KComponent{
                                     displayAs={(each) => each.name}
                                     getValue={each => each._id}
                                     onChange={e => {
+
                                         onChange(this.state.specialities.find(sp => sp._id === e.target.value))
                                     }}
                                 />

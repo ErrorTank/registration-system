@@ -9,7 +9,9 @@ import {Select} from "../../../../../common/select/select";
 import {years} from "../../../../../../const/years";
 import {semester} from "../../../../../../const/semester";
 import {studentGroups} from "../../../../../../const/student-group";
-
+import classnames from "classnames"
+import {LoadingInline} from "../../../../../common/loading-inline/loading-inline";
+import {wait1, wait2} from "../../../../../../common/utils/common";
 
 
 export class ScheduleForm extends KComponent {
@@ -19,36 +21,34 @@ export class ScheduleForm extends KComponent {
             loading: false
 
         };
-        const loginSchema = yup.object().shape({
-            fileName: yup.string(),
-            list: yup.array().min(1, "Thời khóa biểu không được để trống"),
-            studentGroup: yup.object(),
-            semester: yup.object(),
-            year: yup.object()
-        });
-        this.form = createSimpleForm(loginSchema, {
-            initData: {
-                ...props.form
-            }
-        });
-        this.onUnmount(this.form.on("change", () => {
+
+
+    };
+
+    componentDidMount(){
+        this.onUnmount(this.props.form.on("change", () => {
             this.forceUpdate();
         }));
-        this.form.validateData();
-    };
+        this.props.form.validateData();
+    }
 
     handleUpload = async (file) => {
         this.setState({loading: true});
-        let result = await uploadCommonFile(file);
-        this.setState({loading: false});
-        this.form.updateData(result);
+
+        await wait1(async () => {
+            let result = await uploadCommonFile(file);
+            this.setState({loading: false});
+            this.props.form.updateData(result);
+        });
+
+
     };
 
     render() {
-        let data = this.form.getData();
-        console.log(data)
+        let data = this.props.form.getData();
+
         return (
-            <div className="schedule-form">
+            <div className={classnames("schedule-form u-form", {valid: this.props.form.isValid()})}>
                 <p className="form-title">Thời khóa biểu toàn trường</p>
                 <div className="upload-form-row">
                     <p className="upload-label">Chọn file</p>
@@ -59,16 +59,21 @@ export class ScheduleForm extends KComponent {
                                     onClick={(file) => onClick(file)}
                             >
                                 Tải lên
+                                {this.state.loading && (
+                                    <LoadingInline
+                                        className={"login-loading"}
+                                    />
+                                )}
                             </button>
                         )}
                     />
-                    <span className="file-name">{name}</span>
+                    <span className="file-name">{data.fileName}</span>
                 </div>
                 {!!data.list.length && (
                     <>
                         <div className="upload-form-row">
                             <p className="upload-label">Năm học</p>
-                            {this.form.enhanceComponent("year", ({error, onChange, onEnter, ...others}) => (
+                            {this.props.form.enhanceComponent("year", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
                                     options={years}
@@ -76,7 +81,7 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(e.target.value)
+                                        onChange(years.find(sp => sp.value === e.target.value))
                                     }}
                                 />
 
@@ -84,7 +89,7 @@ export class ScheduleForm extends KComponent {
                         </div>
                         <div className="upload-form-row">
                             <p className="upload-label">Học kì</p>
-                            {this.form.enhanceComponent("semester", ({error, onChange, onEnter, ...others}) => (
+                            {this.props.form.enhanceComponent("semester", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
                                     options={semester}
@@ -92,7 +97,7 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(e.target.value)
+                                        onChange(semester.find(sp => sp.value === e.target.value))
                                     }}
                                 />
 
@@ -100,7 +105,7 @@ export class ScheduleForm extends KComponent {
                         </div>
                         <div className="upload-form-row">
                             <p className="upload-label">Nhóm</p>
-                            {this.form.enhanceComponent("studentGroup", ({error, onChange, onEnter, ...others}) => (
+                            {this.props.form.enhanceComponent("studentGroup", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
                                     options={studentGroups}
@@ -108,7 +113,7 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(e.target.value)
+                                        onChange(studentGroups.find(sp => sp.value === e.target.value))
                                     }}
                                 />
 

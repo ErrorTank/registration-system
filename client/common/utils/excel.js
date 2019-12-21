@@ -1,5 +1,6 @@
 import XLSX from "xlsx";
 import omit from "lodash/omit";
+import {wait2} from "./common";
 
 let readAsBinaryString = (fileObject) => {
     return new Promise((resolve, reject) => {
@@ -37,9 +38,12 @@ let uploadCommonFile = async (file) => {
         defval: "",
     };
     let fileObj = await readAsBinaryString(file);
+
     let list = removeEmptyHeaderCols(getExcelDataAsJson(fileObj.result, options));
+
+
     return ({
-        list:list.map(each => {
+        list: list.map(each => {
             let keys = Object.keys(each);
             return keys.reduce((obj, cur) => {
                 let newKey = `${cur}`;

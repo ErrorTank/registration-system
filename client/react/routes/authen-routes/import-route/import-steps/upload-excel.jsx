@@ -18,7 +18,7 @@ export class UploadExcel extends React.Component{
                     render: () => {
                         return (
                             <ScheduleForm
-                                form={{...this.props.scheduleItems}}
+                                form={this.props.scheduleForm}
                             />
                         )
                     }
@@ -27,7 +27,7 @@ export class UploadExcel extends React.Component{
                     render: () => {
                         return (
                             <EduProgramForm
-                                form={{...this.props.educateProgram}}
+                                form={this.props.eduProgramForm}
                             />
                         )
                     }
