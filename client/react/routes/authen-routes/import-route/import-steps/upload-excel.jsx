@@ -1,5 +1,7 @@
 import React from "react";
 import {InputFileExcel} from "../../../../common/input-file-excel/input-file-excel";
+import {ScheduleForm} from "./step-upload-forms/schedule-form";
+import {EduProgramForm} from "./step-upload-forms/edu-program-from";
 
 export class UploadExcel extends React.Component{
     constructor(props){
@@ -15,32 +17,18 @@ export class UploadExcel extends React.Component{
                     label: "Thời khóa biểu toàn trường",
                     render: () => {
                         return (
-                            <div className="upload-panel">
-                                <div className="form-row">
-                                    <InputFileExcel
-                                        onUploaded={this.handleUpload}
-                                        render={({onClick}) => (
-                                            <button className="btn btn-info"
-                                                    onClick={(file) => onClick(file)}
-                                            >
-                                                Tải lên
-                                            </button>
-                                        )}
-                                    />
-                                    <span className="file-name">
-                                        {name}
-                                    </span>
-                                </div>
-                            </div>
+                            <ScheduleForm
+                                form={{...this.props.scheduleItems}}
+                            />
                         )
                     }
                 }, {
                     label: "Chương trình học",
                     render: () => {
                         return (
-                            <div className="upload-panel">
-
-                            </div>
+                            <EduProgramForm
+                                form={{...this.props.educateProgram}}
+                            />
                         )
                     }
                 }
@@ -51,9 +39,16 @@ export class UploadExcel extends React.Component{
 
     render(){
         let {type} = this.props;
+        let field = this.comps[type];
         return(
             <div className="upload-excel">
-
+                {field.fields.map((f, i) => (
+                    <div className="upload-panel"
+                         key={i}
+                    >
+                        {f.render()}
+                    </div>
+                ))}
             </div>
         );
     }

@@ -3,6 +3,8 @@ import {Cache} from "./cache"
 import Cookies from "js-cookie";
 import {userInfo} from "../states/common";
 import {userApi} from "../../api/common/user-api";
+import {specialityApi} from "../../api/common/speciality-api";
+import {specialitesCache} from "./api-cache/common-cache";
 
 const cookiesEngine = {
   getItem: Cookies.get,
@@ -32,7 +34,7 @@ export const authenCache = (() => {
             }
 
             else {
-              return resolve(Promise.all([userInfo.setState(user)]));
+              return resolve(Promise.all([userInfo.setState(user), specialitesCache.get()]));
 
             }
 

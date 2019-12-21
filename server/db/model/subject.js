@@ -20,7 +20,8 @@ const subjectSchema = new Schema({
 
     coefficient: {
         type: Number,
-        required: true
+        required: true,
+        default: 1
     },
     subjectsRequired: {
         type: [
@@ -39,13 +40,8 @@ const subjectSchema = new Schema({
     division: {
         type: ObjectId,
         ref: "Division",
-        required: true
     },
-    type: {
-        type: String,
-        enum: ["GDDC", "GDCN"],
-        default: "GDDC"
-    },
+
 });
 
 

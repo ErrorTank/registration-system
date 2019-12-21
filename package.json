@@ -83,6 +83,7 @@
     "url-loader": "^2.1.0",
     "validator": "^11.1.0",
     "webpack-async-chunk-names-plugin": "^0.1.1",
+    "xlsx": "^0.15.3",
     "yup": "^0.26.10"
   }
 }
