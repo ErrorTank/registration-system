@@ -13,7 +13,7 @@ const transformResults = ({result}) => {
                     subject: {
                         subjectID:  sub.subjectID
                     },
-                    grade: Number(sub.grade)
+                    grade: Number(sub.grade.toString().replace(",", "."))
                 }))
             }
         });

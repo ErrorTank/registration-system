@@ -48,20 +48,36 @@ export class UploadExcel extends React.Component{
             ],
         }
     ];
+    renderServerError = () => {
+        let {error, resultForm} = this.props;
+        let {speciality, name, msv} = resultForm.getData();
+        let errMatcher = {
+            "result_existed": `Bảng điểm cho chuyên ngành ${speciality.name} của sinh viên ${name}(${msv}) đã tồn tại`,
+        };
+        return errMatcher.hasOwnProperty(error) ? errMatcher[error] : "Đã có lỗi xảy ra"
+    };
 
     render(){
-        let {type} = this.props;
+        let {type, error} = this.props;
         let field = this.comps[type];
         return(
             <div className="upload-excel">
-                {field.fields.map((f, i) => (
-                    <div className="upload-panel"
-                         key={i}
-                    >
-                        <p className="form-title">{f.label}</p>
-                        {f.render()}
+                {error && (
+                    <div className="server-error">
+                        {this.renderServerError()}
                     </div>
-                ))}
+                )}
+                <div className="panel-wrapper">
+                    {field.fields.map((f, i) => (
+                        <div className="upload-panel"
+                             key={i}
+                        >
+                            <p className="form-title">{f.label}</p>
+                            {f.render()}
+                        </div>
+                    ))}
+                </div>
+
             </div>
         );
     }

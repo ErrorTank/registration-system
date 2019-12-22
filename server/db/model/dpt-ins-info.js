@@ -12,7 +12,7 @@ const dptInsInfoSchema = new Schema({
     division: {
         type: ObjectId,
         ref: "Division",
-        required: true
+        // required: true
     },
 
 });

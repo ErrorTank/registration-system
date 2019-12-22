@@ -36,7 +36,7 @@ const schoolScheduleItemsSchema = new Schema({
     },
     dayOfWeek: {
         type: Number,
-        enum: [0, 1, 2, 3, 4, 5, 6],
+        enum: [1,2,3,4,5,6,7],
         required: true
     },
     instructor: {

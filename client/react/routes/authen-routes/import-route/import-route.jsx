@@ -42,7 +42,8 @@ export default class ImportRoute extends KComponent {
             currentStep: 0,
             step2Loading: false,
             overview: null,
-            step3Loading: false
+            step3Loading: false,
+            error: null
         };
         this.state = {
             ...this.initData
@@ -82,15 +83,16 @@ export default class ImportRoute extends KComponent {
             }
         });
         this.onUnmount(this.resultForm.on("change", () => {
-
+            console.log("cac")
+            this.state.error && this.setState({error: ""});
             this.forceUpdate();
         }));
         this.onUnmount(this.eduProgramForm.on("change", () => {
-
+            this.state.error && this.setState({error: ""});
             this.forceUpdate();
         }));
         this.onUnmount(this.scheduleForm.on("change", () => {
-
+            this.state.error && this.setState({error: ""});
             this.forceUpdate();
         }));
 
@@ -108,7 +110,9 @@ export default class ImportRoute extends KComponent {
             }else{
                 this.resultForm.resetData();
             }
-            this.setState({currentStep: 2, overview, step3Loading: false})
+            this.setState({...this.initData})
+        }).catch(err => {
+            this.setState({currentStep: 1, overview: null, step3Loading: false, error: err.message})
         });
     };
 
@@ -145,15 +149,9 @@ export default class ImportRoute extends KComponent {
         console.log(this.scheduleForm.getData())
         console.log(this.eduProgramForm.getData())
         console.log(this.resultForm.getData())
-        this.setState({step2Loading: true});
+        this.setState({step2Loading: true, error: null});
         let action = this.step2Actions[this.state.dataType];
         action().then(overview => {
-            if(!this.state.dataType){
-                this.scheduleForm.resetData();
-                this.eduProgramForm.resetData();
-            }else{
-                this.resultForm.resetData();
-            }
             this.setState({currentStep: 2, overview, step2Loading: false})
         });
 
@@ -183,13 +181,14 @@ export default class ImportRoute extends KComponent {
             subtitle: "Tải dữ liệu lên",
             render: () => (
                 <UploadExcel
+                    error={this.state.error}
                     type={this.state.dataType}
                     scheduleForm={this.scheduleForm}
                     eduProgramForm={this.eduProgramForm}
                     resultForm={this.resultForm}
                 />
             ),
-            canNext: () => this.state.dataType === 0 ? this.scheduleForm.isValid() && this.eduProgramForm.isValid() : this.resultForm.isValid(),
+            canNext: () => (this.state.dataType === 0 ? this.scheduleForm.isValid() && this.eduProgramForm.isValid() : this.resultForm.isValid()) && !this.state.error,
             onNext: this.handleNextStep2,
             nextLoading: () => {
               return this.state.step2Loading;
@@ -221,6 +220,7 @@ export default class ImportRoute extends KComponent {
             },
         },
     ];
+
 
     render() {
         let {currentStep, loadSpec} = this.state;

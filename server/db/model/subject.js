@@ -26,8 +26,7 @@ const subjectSchema = new Schema({
     subjectsRequired: {
         type: [
             {
-                type: ObjectId,
-                ref: "Subject",
+                type: String,
                 required: true
             }
         ],

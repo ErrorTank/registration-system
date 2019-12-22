@@ -15,8 +15,29 @@ module.exports =  (appDb) => {
     const StudentInfo = require("../db/model/student-info")(appDb);
     const Subject = require("../db/model/subject")(appDb);
     const User = require("../db/model/user")(appDb);
-
+    // Class.deleteMany({}).then(() => console.log("cac"));
+    // Classroom.deleteMany({}).then(() => console.log("cac"));
+    // Division.deleteMany({}).then(() => console.log("cac"));
+    // DptInsInfo.deleteMany({}).then(() => console.log("cac"));
+    // EducateProgram.deleteMany({}).then(() => console.log("cac"));
+    // RegistrationEvent.deleteMany({}).then(() => console.log("cac"));
+    // Result.deleteMany({}).then(() => console.log("cac"));
+    // Schedule.deleteMany({}).then(() => console.log("cac"));
+    // SchoolScheduleItems.deleteMany({}).then(() => console.log("cac"));
+    // StudentInfo.deleteMany({}).then(() => console.log("cac"));
+    // Subject.deleteMany({}).then(() => console.log("cac"));
+    // User.deleteMany({role: {$ne: "admin"}}).then(() => console.log("cac"));
+    // Shift.deleteMany({}).then(() => console.log("cac"));
     // const shifts = [
+    //     {
+    //         name: 1,
+    //         from: "7h05",
+    //         to: "8h00"
+    //     }, {
+    //         name: 2,
+    //         from: "8h05",
+    //         to: "9h00"
+    //     },
     //     {
     //         name: 3,
     //         from: "9h15",
@@ -49,6 +70,26 @@ module.exports =  (appDb) => {
     //         name: 10,
     //         from: "17h10",
     //         to: "18h05"
+    //     },{
+    //         name: 11,
+    //         from: "17h10",
+    //         to: "18h05"
+    //     },{
+    //         name: 12,
+    //         from: "18h15",
+    //         to: "19h10"
+    //     },{
+    //         name: 13,
+    //         from: "19h15",
+    //         to: "20h10"
+    //     },{
+    //         name: 14,
+    //         from: "20h15",
+    //         to: "21h10"
+    //     },{
+    //         name: 15,
+    //         from: "21h15",
+    //         to: "22h05"
     //     },
     // ];
     //
@@ -63,14 +104,14 @@ module.exports =  (appDb) => {
     // });
     //
     // new User({
-    //     username: "test",
-    //     password: "admin",
+    //     username: "a28998",
+    //     password: "123123qwe",
     //     role: "admin",
-    //     name: "dsa",
+    //     name: "Kappa",
     //     dob: new Date().getTime(),
     //     phone: "3123",
     //     email: "haha@gmail.com",
-    //     identityID: "A28998"
+    //     identityID: "dasdsa"
     // }).save().then(data => {
     //     new CommonUserInfo({
     //
