@@ -7,7 +7,6 @@ export const userApi = {
     },
     login(info){
         return offlineApi.post("/login", info);
-
     },
     sendForgotPasswordEmail(identity){
         return offlineApi.post("/forgot-password", identity)

@@ -1,7 +1,43 @@
 .upload-excel{
-  margin-top 20px
+  margin-top 5rem
   display flex
   justify-content center
+}
+.review-data{
+  margin-top 5rem
+  .s-title{
+    color inverse
+    font-size 1.8rem
+    font-weight 500
+    margin-bottom 3rem
+  }
+  .step-content{
+    display flex
+    flex-wrap wrap
+    .overview-info{
+      margin-bottom 20px
+      flex 0 0 50%
+      .overview-info__child{
+        margin-left 15px
+      }
+      .label{
+        color inverse
+        font-size 1.5rem
+        font-weight 450
+        &:not(.inverse){
+          margin-left 10px
+        }
+      }
+      .value{
+        font-size 1.5rem
+        font-weight 450
+        color info
+        &.inverse{
+          margin-left 10px
+        }
+      }
+    }
+  }
 }
 .data-type-picker{
   margin-top 5rem

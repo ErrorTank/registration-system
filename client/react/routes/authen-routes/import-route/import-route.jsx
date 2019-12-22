@@ -41,7 +41,8 @@ export default class ImportRoute extends KComponent {
             dataType: 0,
             currentStep: 0,
             step2Loading: false,
-            overview: null
+            overview: null,
+            step3Loading: false
         };
         this.state = {
             ...this.initData
@@ -98,7 +99,17 @@ export default class ImportRoute extends KComponent {
     };
 
     handleImportData = () => {
-
+        this.setState({step3Loading: true});
+        let action = this.step3Actions[this.state.dataType];
+        action().then(overview => {
+            if(!this.state.dataType){
+                this.scheduleForm.resetData();
+                this.eduProgramForm.resetData();
+            }else{
+                this.resultForm.resetData();
+            }
+            this.setState({currentStep: 2, overview, step3Loading: false})
+        });
     };
 
     uploadEduProgramAndSchedule = () => {
@@ -111,6 +122,19 @@ export default class ImportRoute extends KComponent {
     uploadResult = () => {
         return resultApi.uploadResult({result: this.resultForm.getData()})
     };
+
+    importEduProgramAndSchedule = () => {
+        return schoolScheduleApi.importScheduleAndEduProgram(this.state.overview)
+    };
+
+    importResult = () => {
+        return resultApi.importResult(this.state.overview)
+    };
+
+    step3Actions = [
+        this.importEduProgramAndSchedule,
+        this.importResult
+    ];
 
     step2Actions = [
         this.uploadEduProgramAndSchedule,
@@ -181,10 +205,16 @@ export default class ImportRoute extends KComponent {
         },{
             title: "Xác nhận thông tin dữ liệu tải lên",
             subtitle: "Xác nhận dữ liệu",
+            nextLoading: () => {
+                return this.state.step3Loading;
+            },
             render: () => (
-                <ReviewData/>
+                <ReviewData
+                    type={this.state.dataType}
+                    overview={this.state.overview}
+                />
             ),
-            canNext: () => false,
+            canNext: () => true,
             onNext: this.handleImportData,
             onPrevious: () => {
                 this.setState({currentStep: 1});

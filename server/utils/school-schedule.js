@@ -35,8 +35,7 @@ const transformSchoolScheduleItem = item => {
     };
     i.from = Number(sFrom);
     i.to = Number(sTo);
-    console.log(i.class)
-    console.log(i.insInfo)
+
     i.instructor = {
         name: i.insInfo.replace(/\(\w+\)/gi, ""),
         identityID: /\((\w+)\)/gi.exec(i.insInfo)[1]

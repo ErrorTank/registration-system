@@ -16,6 +16,46 @@ module.exports =  (appDb) => {
     const Subject = require("../db/model/subject")(appDb);
     const User = require("../db/model/user")(appDb);
 
+    // const shifts = [
+    //     {
+    //         name: 3,
+    //         from: "9h15",
+    //         to: "10h10"
+    //     }, {
+    //         name: 4,
+    //         from: "10h15",
+    //         to: "11h10"
+    //     },{
+    //         name: 5,
+    //         from: "11h15",
+    //         to: "12h10"
+    //     },{
+    //         name: 6,
+    //         from: "13h00",
+    //         to: "13h55"
+    //     },{
+    //         name: 7,
+    //         from: "14h00",
+    //         to: "14h55"
+    //     },{
+    //         name: 8,
+    //         from: "15h10",
+    //         to: "16h05"
+    //     },{
+    //         name: 9,
+    //         from: "16h10",
+    //         to: "17h05"
+    //     },{
+    //         name: 10,
+    //         from: "17h10",
+    //         to: "18h05"
+    //     },
+    // ];
+    //
+    // for(let i of shifts){
+    //     new Shift(i).save()
+    // }
+
     // new AppConfig({
     //     latestSchoolYear: 32
     // }).save().then((s) => {
