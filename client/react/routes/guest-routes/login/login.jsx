@@ -45,7 +45,10 @@ class LoginForm extends KComponent {
         userApi.login({username, password}).then(data => {
             let {user, token} = data;
             authenCache.setAuthen(token, {expires: 1});
-            return Promise.all[userInfo.setState({...user}), specialitesCache.get()].then(() => customHistory.push("/"));
+            return Promise.all([
+                specialitesCache.get(),
+                userInfo.setState({...user})
+            ]).then(() => customHistory.push("/"));
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 
@@ -205,7 +208,6 @@ export default class LoginRoute extends React.Component {
     };
 
 
-
     forms = {
         "login": {
             title: "Đăng nhập",
@@ -243,7 +245,6 @@ export default class LoginRoute extends React.Component {
 
         }
     };
-
 
 
     render() {
