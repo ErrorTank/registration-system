@@ -118,10 +118,10 @@ export class CommonDataTable extends React.Component {
     render() {
         let {columns, className, rowTrackBy = (row, i) => i, onClickRow, rowLinkTo, rowClassName, emptyNotify = "Empty table.", totalText} = this.props;
         let {list, page, total, loading} = this.state;
-
+        console.log(list)
         return (
             <div className="common-data-table">
-                {list && (
+                {list && totalText && (
                     <div className="summary">
                         {totalText(total)}
                     </div>
@@ -160,21 +160,25 @@ export class CommonDataTable extends React.Component {
                 {loading && (
                     <LoadingInline className={"table-loading"}/>
                 )}
+                {this.props.maxItem && (
+                    <div className="table-footer">
+                        {(list && list.length) && (
+                            <Pagination
+                                value={page + 1}
+                                totalPage={Math.ceil(total / this.pageSize())}
+                                onChange={(newPage) => {
+                                    this.loadData({page: newPage - 1})
+                                }}
+                            />
+                        )
 
-                <div className="table-footer">
-                    {(list && list.length) && (
-                        <Pagination
-                            value={page + 1}
-                            totalPage={Math.ceil(total / this.pageSize())}
-                            onChange={(newPage) => {
-                                this.loadData({page: newPage - 1})
-                            }}
-                        />
-                    )
+                        }
 
-                    }
+                    </div>
+                )
 
-                </div>
+                }
+
 
             </div>
         );

@@ -17,6 +17,10 @@
     align-items center
     font-size 1.8rem
     cursor pointer
+    &.disabled{
+      pointer-events none !important
+      cursor none !important
+    }
     transition all 0.1s ease
     &:hover{
       color white

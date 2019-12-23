@@ -31,13 +31,15 @@ export const navItems = [
         icon: <FormatListNumberedRtlIcon
             fontSize={"inherit"}
         />,
-        roles: ["bm", "sv", "gv"]
+        roles: ["bm", "sv", "gv"],
+        disabled: true
     }, {
         label: "Chương trình học",
         url: "/chuong-trinh-hoc",
         icon: <DeveloperBoardIcon
             fontSize={"inherit"}
         />,
-        roles: ["sv"]
+        roles: ["sv"],
+        disabled: true
     }
 ];

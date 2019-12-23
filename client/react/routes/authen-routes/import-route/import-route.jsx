@@ -8,7 +8,7 @@ import * as yup from "yup";
 import {years} from "../../../../const/years";
 import {semester} from "../../../../const/semester";
 import {studentGroups} from "../../../../const/student-group";
-import {specialitesCache} from "../../../../common/cache/api-cache/common-cache";
+import {specialitiesCache} from "../../../../common/cache/api-cache/common-cache";
 import {createSimpleForm} from "../../../common/form-validator/form-validator";
 import {KComponent} from "../../../common/k-component";
 import {schoolScheduleApi} from "../../../../api/common/school-schedule-api";
@@ -30,13 +30,13 @@ export default class ImportRoute extends KComponent {
         this.educateProgram = {
             fileName: "",
             list: [],
-            speciality: specialitesCache.syncGet()[0],
+            speciality: specialitiesCache.syncGet()[0],
         };
         this.results = {
             fileName: "",
             list: [],
             msv: "",
-            speciality: specialitesCache.syncGet()[0],
+            speciality: specialitiesCache.syncGet()[0],
             name: ""
         };
         this.initData = {

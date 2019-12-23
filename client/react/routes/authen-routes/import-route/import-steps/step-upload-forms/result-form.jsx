@@ -6,7 +6,7 @@ import {InputFileExcel} from "../../../../../common/input-file-excel/input-file-
 import {Select} from "../../../../../common/select/select";
 
 import {KComponent} from "../../../../../common/k-component";
-import {specialitesCache} from "../../../../../../common/cache/api-cache/common-cache";
+import {specialitiesCache} from "../../../../../../common/cache/api-cache/common-cache";
 import classnames from "classnames";
 import {LoadingInline} from "../../../../../common/loading-inline/loading-inline";
 import {wait1} from "../../../../../../common/utils/common";
@@ -22,7 +22,7 @@ export class ResultForm extends KComponent{
 
         this.props.form.validateData();
 
-        specialitesCache.get().then(specialities => this.setState({specialities}))
+        specialitiesCache.get().then(specialities => this.setState({specialities}))
     };
 
 

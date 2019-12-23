@@ -3,6 +3,7 @@ const Result = require("../model/result")(appDb);
 const User = require("../model/user")(appDb);
 const Subject = require("../model/subject")(appDb);
 const StudentInfo = require("../model/student-info")(appDb);
+const Speciality = require("../model/speciality")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
@@ -61,8 +62,22 @@ const importData = ({result}) => {
 
 };
 
+const getAvaiableSpecs = (studentID) => {
+    return Result.find({owner: ObjectId(studentID)}).populate("speciality").then(data => {
+        return data.map(each => each.speciality);
+    })
+};
+
+const getResultByStudentId = (studentID, {speciality}) => {
+    return Result.findOne({
+        owner: ObjectId(studentID),
+        speciality: ObjectId(speciality)
+    }).populate("results.subject")
+};
 
 module.exports = {
-    importData
+    importData,
+    getResultByStudentId,
+    getAvaiableSpecs
 
 }

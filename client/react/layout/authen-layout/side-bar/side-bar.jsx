@@ -17,7 +17,7 @@ export class Sidebar extends React.Component {
             <div className="side-bar">
                 {navItems.map(item => item.roles.includes(userInfo.getState().role) ? (
                     <div
-                        className={classnames("side-bar-item", {active: item.url ? location.pathname === item.url : false})}
+                        className={classnames("side-bar-item", {active: item.url ? location.pathname === item.url : false, disabled: item.disabled})}
                         key={item.url}
                         onClick={() => customHistory.push(item.url)}
                     >

@@ -1,6 +1,14 @@
 .common-data-table{
   min-height 400px
   position relative
+  .result-table{
+    .grade-display{
+      color success
+      &.tach{
+        color danger
+      }
+    }
+  }
   .summary{
     color #6c757e
     font-size 16px
@@ -23,7 +31,7 @@
   }
   table{
     width 100%
-    color #1e2022
+    color commonText
     border-collapse collapse
 
     tr{
@@ -34,11 +42,12 @@
       }
     }
     thead{
-      font-size 16px
-      color #6c757e
-      background-color #f8fafd
+      font-size 1.5rem
+      color inherit
+      background-color white
       border-bottom 1px solid #e7eaf3
       border-top 1px solid #e7eaf3
+      font-weight 500
     }
     tbody{
       .no-data{
@@ -47,13 +56,23 @@
         padding 12px
         font-size 15px
       }
-      font-size 16px
+      font-size 1.5rem
       tr{
         border-top 1px solid #e7eaf3
         cursor pointer
-        &:hover{
-          background-color darken(white, 5%)
+        &:nth-of-type(odd){
+          background-color white
+          &:hover{
+            background-color darken(white, 3%)
+          }
         }
+        &:nth-of-type(even){
+          background-color darken(white, 5%)
+          &:hover{
+            background-color darken(white, 8%)
+          }
+        }
+
       }
     }
   }
