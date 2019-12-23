@@ -13,6 +13,7 @@ import {createSimpleForm} from "../../../common/form-validator/form-validator";
 import {KComponent} from "../../../common/k-component";
 import {schoolScheduleApi} from "../../../../api/common/school-schedule-api";
 import {resultApi} from "../../../../api/common/result-api";
+import isEqual from "lodash/isEqual"
 
 export default class ImportRoute extends KComponent {
     constructor(props) {
@@ -82,17 +83,19 @@ export default class ImportRoute extends KComponent {
                 ...this.scheduleItems
             }
         });
-        this.onUnmount(this.resultForm.on("change", () => {
-            console.log("cac")
-            this.state.error && this.setState({error: ""});
+        this.onUnmount(this.resultForm.on("change", (data, info) => {
+            if(!info || !info.validate)
+                this.state.error && this.setState({error: ""});
             this.forceUpdate();
         }));
-        this.onUnmount(this.eduProgramForm.on("change", () => {
-            this.state.error && this.setState({error: ""});
+        this.onUnmount(this.eduProgramForm.on("change", (data, info) => {
+            if(!info || !info.validate)
+                this.state.error && this.setState({error: ""});
             this.forceUpdate();
         }));
-        this.onUnmount(this.scheduleForm.on("change", () => {
-            this.state.error && this.setState({error: ""});
+        this.onUnmount(this.scheduleForm.on("change", (data,info) => {
+            if(!info || !info.validate)
+                this.state.error && this.setState({error: ""});
             this.forceUpdate();
         }));
 
