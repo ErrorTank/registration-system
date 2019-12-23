@@ -3,7 +3,7 @@ import {userInfo} from "../../../common/states/common";
 import {Route, Redirect} from "react-router-dom"
 import {TrackLocation} from "../../common/location-tracker";
 import {authenCache} from "../../../common/cache/authen-cache";
-import {AuthenCheck} from "./authen-check";
+import {AuthenLayout} from "../../layout/authen-layout/authen-layout";
 
 export const AuthenRoute = ({component: Component, excludeRoles = null, ...rest}) => {
     let getComp = (props) => {
@@ -26,21 +26,27 @@ export const AuthenRoute = ({component: Component, excludeRoles = null, ...rest}
             }
         }
 
+
         // return (
         //   <AuthenLayout location={props.location} match={props.match}>
         //     <Component {...props}/>
         //   </AuthenLayout>
         // )
         return (
-            <AuthenCheck {...props}>
-                <Component {...props}/>
-            </AuthenCheck>
+
+                <AuthenLayout>
+                    {({setTitle}) => (
+                            <Component {...props} setTitle={setTitle}/>
+                    )}
+                </AuthenLayout>
+
         )
     };
     return (
         <Route
             {...rest}
             render={props => {
+                console.log(props)
                 return (
                     <TrackLocation
                         location={props.match.url}

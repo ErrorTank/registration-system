@@ -7,8 +7,13 @@ import {Breadcrumbs} from "../../common/breadcrumbs/breadcrumbs";
 export class AuthenLayout extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            title: ""
+        };
     };
+
+    setTitle = title => this.setState({title});
+
 
     render() {
         return (
@@ -19,10 +24,10 @@ export class AuthenLayout extends React.Component {
 
                     <Breadcrumbs>
                         <div className="main-content__header">
-                            <p className="authen-route-title">{this.props.title}</p>
+                            <p className="authen-route-title">{this.state.title}</p>
                         </div>
                         <div className="main-content__body">
-                            {this.props.children}
+                            {this.props.children({setTitle: this.setTitle})}
                         </div>
 
                     </Breadcrumbs>

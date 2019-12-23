@@ -7,6 +7,7 @@ export const PropsTracker = ({getProp, initial = null}) => {
       constructor(props) {
         super(props);
         prevProp = getProp(prevProp, props);
+        console.log(prevProp)
       };
 
       static setProps(initProps){
@@ -23,8 +24,6 @@ export const PropsTracker = ({getProp, initial = null}) => {
         return this.props.render(prevProp)
       }
     },
-    Getter: ({render}) => (
-      render(prevProp)
-    )
+    Getter:() => prevProp
   }
 };

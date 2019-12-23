@@ -1,6 +1,5 @@
 import React from "react";
 import {PageTitle} from "../../../common/page-title/page-title";
-import {AuthenLayout} from "../../../layout/authen-layout/authen-layout";
 import {DataTypePicker} from "./import-steps/data-type-picker";
 import {UploadExcel} from "./import-steps/upload-excel";
 import {ReviewData} from "./import-steps/review-data";
@@ -18,6 +17,7 @@ import {resultApi} from "../../../../api/common/result-api";
 export default class ImportRoute extends KComponent {
     constructor(props) {
         super(props);
+        props.setTitle("Import dữ liệu");
         this.scheduleItems = {
             fileName: "",
             list: [],
@@ -228,30 +228,25 @@ export default class ImportRoute extends KComponent {
             <PageTitle
                 title={"Import"}
             >
-                <AuthenLayout
-                    title={"Import dữ liệu"}
-                >
-                    <div className="import-route">
-                        <div className="multiple-steps-wrapper">
-                            <MultipleSteps
-                                btnConfig={{
-                                    nextText: "Tiếp theo",
-                                    cancelText: "Hủy bỏ",
-                                    finishText: "Import dữ liệu",
-                                    previousText: "Trở về"
-                                }}
-                                curStepIndex={currentStep}
-                                steps={this.steps}
-                                onCancel={() => {
-                                    this.setState({...this.initData})
-                                }}
-                            />
-
-                        </div>
+                <div className="import-route">
+                    <div className="multiple-steps-wrapper">
+                        <MultipleSteps
+                            btnConfig={{
+                                nextText: "Tiếp theo",
+                                cancelText: "Hủy bỏ",
+                                finishText: "Import dữ liệu",
+                                previousText: "Trở về"
+                            }}
+                            curStepIndex={currentStep}
+                            steps={this.steps}
+                            onCancel={() => {
+                                this.setState({...this.initData})
+                            }}
+                        />
 
                     </div>
 
-                </AuthenLayout>
+                </div>
             </PageTitle>
         );
     }
