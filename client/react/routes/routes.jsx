@@ -30,7 +30,7 @@ export class MainRoute extends React.Component {
                         <Switch>
 
                             <AuthenRoute exact path="/" component={props => <Dashboard {...props}/>}/>
-                            <AuthenRoute exact path="/import" component={props => <ImportRoute {...props}/>}/>
+                            <AuthenRoute exact path="/import" component={props => <ImportRoute {...props} />} excludeRoles={["sv", "bm", "gv"]}/>
                             <GuestRoute exact path="/login" render={props => <LoginRoute {...props}/>}/>
                         </Switch>
                     </Suspense>

@@ -17,7 +17,7 @@ const getUserEntity = role => {
     })[role]
 };
 const regularLogin = ({username, password}) => {
-    return User.findOne( {username}).lean()
+    return User.findOne( {username: { $regex: new RegExp("^" + username.toLowerCase(), "i") }}).lean()
         .then(data => {
 
             if (!data) {

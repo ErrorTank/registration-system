@@ -14,6 +14,7 @@ import {KComponent} from "../../../common/k-component";
 import {schoolScheduleApi} from "../../../../api/common/school-schedule-api";
 import {resultApi} from "../../../../api/common/result-api";
 import isEqual from "lodash/isEqual"
+import {commonPopup} from "../../../common/common-popup/common-popup";
 
 export default class ImportRoute extends KComponent {
     constructor(props) {
@@ -107,13 +108,23 @@ export default class ImportRoute extends KComponent {
         this.setState({step3Loading: true});
         let action = this.step3Actions[this.state.dataType];
         action().then(overview => {
-            if(!this.state.dataType){
+            let {dataType} = this.state;
+            if(!dataType){
+
                 this.scheduleForm.resetData();
                 this.eduProgramForm.resetData();
             }else{
                 this.resultForm.resetData();
             }
-            this.setState({...this.initData})
+            this.setState({...this.initData});
+            commonPopup.publish({
+                "common-popup": (
+                    <div className="common-success-notify">
+                        {dataType ? "Import TKB & chương trình học thành công!" : "Import bảng điểm thành công!"}
+                    </div>
+
+                )
+            });
         }).catch(err => {
             this.setState({currentStep: 1, overview: null, step3Loading: false, error: err.message})
         });

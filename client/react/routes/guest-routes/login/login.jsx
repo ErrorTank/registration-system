@@ -24,7 +24,7 @@ class LoginForm extends KComponent {
         };
         const loginSchema = yup.object().shape({
             username: yup.string().required("Tên đăng nhập không được để trống"),
-            password: yup.string().min(6, "Mật khẩu phải nhiều hơn 6 kí tự").noSpecialChar("Mật khẩu không được chứa kí tự đặc biệt")
+            password: yup.string().min(4, "Mật khẩu phải nhiều hơn 3 kí tự").noSpecialChar("Mật khẩu không được chứa kí tự đặc biệt")
         });
         this.form = createSimpleForm(loginSchema, {
             initData: {
@@ -32,7 +32,10 @@ class LoginForm extends KComponent {
                 password: ""
             }
         });
-        this.onUnmount(this.form.on("enter", () => this.handleLogin()));
+        this.onUnmount(this.form.on("enter", () => {
+            if(this.form.isValid())
+                this.handleLogin()
+        }));
         this.onUnmount(this.form.on("change", () => {
             this.forceUpdate();
             this.state.error && this.setState({error: ""});

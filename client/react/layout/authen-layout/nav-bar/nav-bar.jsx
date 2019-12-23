@@ -1,5 +1,6 @@
 import React from "react";
 import {UserSection} from "./user-section/user-section";
+import {commonPopup, CommonPopupRegistry} from "../../../common/common-popup/common-popup";
 
 export class Navbar extends React.Component{
     constructor(props){
@@ -10,6 +11,7 @@ export class Navbar extends React.Component{
     render(){
         return(
             <div className="nav-bar">
+
                 <div className="nav-bar__logo">
                     <a href={"/"}>
                         <div className="img-wrapper">
