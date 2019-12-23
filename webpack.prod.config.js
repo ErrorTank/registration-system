@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const webpack = require("webpack");
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const env = dotenv.config({path: "./env/prod.env"}).parsed;
 
 const envKeys = Object.keys(env).reduce((prev, next) => {
@@ -30,16 +30,15 @@ module.exports = {
         extensions: [".js", ".jsx", ".styl"]
     },
     optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                parallel: 4,
-                uglifyOptions: {
-                    compress: {
-                        inline: false
-                    }
+        minimize: true,
+        minimizer: [new TerserPlugin({
+            parallel: 4,
+            terserOptions: {
+                compress: {
+                    inline: true
                 }
-            })
-        ],
+            }
+        })],
         splitChunks: {
             cacheGroups: {
                 default: false,
