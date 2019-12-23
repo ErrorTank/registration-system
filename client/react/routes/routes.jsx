@@ -13,6 +13,7 @@ import {delayLoad} from "../../common/utils/common";
 const LoginRoute = lazy(delayLoad(() => import("./guest-routes/login/login")));
 const Dashboard = lazy(delayLoad(() => import("./authen-routes/dashboard/dashboard")));
 const ImportRoute = lazy(delayLoad(() => import("./authen-routes/import-route/import-route")));
+const ResultRoute = lazy(delayLoad(() => import("./authen-routes/result-route/result-route")));
 
 export class MainRoute extends React.Component {
     constructor(props) {
@@ -31,6 +32,7 @@ export class MainRoute extends React.Component {
 
                             <AuthenRoute exact path="/" component={props => <Dashboard {...props}/>}/>
                             <AuthenRoute exact path="/import" component={props => <ImportRoute {...props} />} excludeRoles={["sv", "bm", "gv"]}/>
+                            <AuthenRoute exact path="/bang-diem" component={props => <ResultRoute {...props} />} excludeRoles={["admin", "bm", "gv", "pdt"]}/>
                             <GuestRoute exact path="/login" render={props => <LoginRoute {...props}/>}/>
                         </Switch>
                     </Suspense>

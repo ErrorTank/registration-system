@@ -17,6 +17,9 @@ const structures = {
         {
             url: "/import",
             label: <span className="label">Import</span>
+        },{
+            url: "/bang-diem",
+            label: <span className="label">Bảng điểm</span>
         }
     ]
 };
@@ -27,13 +30,17 @@ const buildingRecursive = (structure ,pathname, result) => {
         result.push(omit(structure, ["childrens"]));
         return result;
     }
-    for(let str of structure.childrens){
-        result = buildingRecursive(str, pathname, result);
-        if(result.length){
-            result.push(omit(structure, ["childrens"]));
-            return result;
+    if(structure.childrens){
+        for(const str of structure.childrens){
+            console.log(str)
+            result = buildingRecursive(str, pathname, result);
+            if(result.length){
+                result.push(omit(structure, ["childrens"]));
+                return result;
+            }
         }
     }
+    return result;
 
 
 };

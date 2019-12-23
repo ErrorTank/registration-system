@@ -13,11 +13,21 @@ const {createAuthToken} = require("../../authorization/auth");
 const {getPrivateKey, getPublicKey} = require("../../authorization/keys/keys");
 const getUserEntity = role => {
     return ({
-        "admin": CommonUserInfo, "pdt": CommonUserInfo, "bm": DptInsInfo, "gv": DptInsInfo, "sv": StudentInfo
+        "admin": {
+            findOne: filter => CommonUserInfo.findOne(filter)
+        }, "pdt": {
+            findOne: filter => CommonUserInfo.findOne(filter)
+        }, "bm": {
+            findOne: filter => DptInsInfo.findOne(filter)
+        }, "gv": {
+            findOne: filter => DptInsInfo.findOne(filter)
+        }, "sv": {
+            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName pricePerCredit")
+        }
     })[role]
 };
 const regularLogin = ({username, password}) => {
-    return User.findOne( {username: { $regex: new RegExp("^" + username.toLowerCase(), "i") }}).lean()
+    return User.findOne({username: {$regex: new RegExp("^" + username.toLowerCase(), "i")}}).lean()
         .then(data => {
 
             if (!data) {
