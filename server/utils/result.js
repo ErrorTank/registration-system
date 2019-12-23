@@ -13,8 +13,8 @@ const transformResults = ({result}) => {
                     subject: {
                         subjectID:  sub.subjectID
                     },
-                    grade: Number(sub.grade.toString().replace(",", "."))
-                }))
+                    grade: sub.grade === "?" ? "?" : Number(sub.grade.toString().replace(",", "."))
+                })).filter(sub => sub.grade !== "?")
             }
         });
     })

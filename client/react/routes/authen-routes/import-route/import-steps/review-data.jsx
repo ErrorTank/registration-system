@@ -46,7 +46,7 @@ export class ReviewData extends React.Component {
                 displayValue: i => i.name
             },
             results: {
-                mean: "Số môn trong bảng điểm",
+                mean: "Môn trong bảng điểm",
                 displayValue: i => i.length
             }
         }
