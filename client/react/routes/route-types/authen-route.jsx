@@ -49,7 +49,7 @@ export const AuthenRoute = ({component: Component, excludeRoles = null, ...rest}
                 console.log(props)
                 return (
                     <TrackLocation
-                        location={props.match.url}
+                        location={window.location.href.replace(document.location.origin, "")}
                         render={() => getComp(props)}
                     />
 
