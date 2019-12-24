@@ -3,13 +3,15 @@ import {urlUtils} from "../../common/utils/url-utils";
 import {userInfo} from "../../common/states/common";
 
 export const eduProgramApi = {
-
+    getAll(){
+        return authenApi.get(`/edu-programs`)
+    },
     getEduProgram(config) {
         let {filter} = config;
-        let {speciality} = filter || {};
+        let {eduProgram} = filter || {};
         const params = {
 
-            speciality: speciality ? speciality._id : null
+            speciality: eduProgram ? eduProgram.speciality._id : null
         };
         return authenApi.get(`/edu-program${urlUtils.buildParams(params)}`)
     }

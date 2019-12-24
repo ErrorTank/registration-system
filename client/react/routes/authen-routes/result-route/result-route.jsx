@@ -10,14 +10,13 @@ import {specialitiesCache} from "../../../../common/cache/api-cache/common-cache
 import {resultApi} from "../../../../api/common/result-api";
 import {specialityApi} from "../../../../api/common/speciality-api";
 
-export default class ImportRoute extends KComponent {
+export default class ResultRoute extends KComponent {
     constructor(props) {
         super(props);
         props.setTitle("Bảng điểm cá nhân");
         this.state = {
             loading: true,
             speciality: null,
-            list: [],
             specialities: []
         };
         specialityApi.getStudentSpecs().then(specialities => this.setState({specialities, loading: false, speciality: specialities[0]}))
@@ -56,7 +55,7 @@ export default class ImportRoute extends KComponent {
             };
         });
         let {loading, speciality, specialities} = this.state;
-        console.log(specialities)
+
         return (
 
             <PageTitle
@@ -83,7 +82,7 @@ export default class ImportRoute extends KComponent {
                                                     displayAs={(each) => each.name}
                                                     getValue={each => each._id}
                                                     onChange={e => {
-                                                        this.setState({speciality: specialities.find(sp => sp.value === e.target.value)})
+                                                        this.setState({speciality: specialities.find(sp => sp._id === e.target.value)})
                                                     }}
                                                 />
                                             )}

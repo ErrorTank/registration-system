@@ -8,16 +8,17 @@ const omit = require("lodash/omit");
 const pick = require("lodash/pick");
 
 
-const getAll = () => {
-    return Speciality.find().lean().then((data) => {
-        return data;
-    })
+const getEducateProgram = ({speciality}) => {
+    return EducateProgram.findOne({
+        speciality: ObjectId(speciality)
+    }).populate("subjects");
 };
 
-
-
+const getAll = () => {
+    return EducateProgram.find({}).populate("speciality")
+};
 
 module.exports = {
-    getAll,
-
+    getEducateProgram,
+    getAll
 }
