@@ -13,12 +13,87 @@ const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
 const omit = require("lodash/omit");
 const pick = require("lodash/pick");
+const isNil = require("lodash/isNil");
 
-
-const getAll = () => {
-    return Speciality.find().lean().then((data) => {
-        return data;
-    })
+const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
+    let pipeline = [];
+    if(year){
+        let [from, to] = year.split("-");
+        pipeline.push({
+            $and : [
+                {"year.from": Number(from)},
+                {"year.to": Number(to)}
+            ]
+        });
+    }
+    // if(studentGroup){
+    //     pipeline.push({
+    //         studentGroup: Number(studentGroup)
+    //     });
+    // }
+    // if(!isNil(semester)){
+    //     pipeline.push({
+    //         semester: Number(semester)
+    //     });
+    // }
+    // pipeline = pipeline.concat([
+    //     {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
+    //     {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
+    //     {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+    //     {$lookup: {from: 'classrooms', localField: 'classRoom', foreignField: '_id', as: "classRoom"}},
+    //     {
+    //         $addFields: {
+    //             'from': {
+    //                 $arrayElemAt: ["$from", 0]
+    //             },
+    //             'to': {
+    //                 $arrayElemAt: ["$to", 0]
+    //             },
+    //             'class': {
+    //                 $arrayElemAt: ["$class", 0]
+    //             },
+    //             'classRoom': {
+    //                 $arrayElemAt: ["$classRoom", 0]
+    //             }
+    //         }
+    //     },
+    //     {$lookup: {from: 'subjects', localField: 'subject', foreignField: '_id', as: "subject"}},
+    //     {
+    //         $addFields: {
+    //             'class.subject': {
+    //                 $arrayElemAt: ["$class.subject", 0]
+    //             }
+    //         }
+    //     },
+    //
+    //     {$lookup: {from: 'DptInsInfo', localField: 'instructor', foreignField: '_id', as: "instructor"}},
+    //     {
+    //         $addFields: {
+    //             'instructor': {
+    //                 $arrayElemAt: ["$instructor", 0]
+    //             }
+    //         }
+    //     },
+    //     {$lookup: {from: 'User', localField: 'instructor.user', foreignField: '_id', as: "instructor.user"}},
+    //     {
+    //         $addFields: {
+    //             'instructor.user': {
+    //                 $arrayElemAt: ["$instructor.user", 0]
+    //             }
+    //         }
+    //     },
+    // ]);
+    //
+    // if(keyword){
+    //     pipeline.push({
+    //         $or : [
+    //             {"class.subject.name": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
+    //             {"class.subject.subjectID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
+    //         ]
+    //     });
+    // }
+    // console.log(pipeline)
+    return SchoolScheduleItems.aggregate(pipeline).then(data => console.log(data));
 };
 
 const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRooms, instructors}) => {
@@ -78,7 +153,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
 
 
 module.exports = {
-    getAll,
+    getSchoolScheduleItems,
     importData
 
 }

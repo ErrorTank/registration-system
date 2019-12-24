@@ -24,32 +24,43 @@ export default class EduProgramRoute extends KComponent {
     columns = [
         {
             label: "STT",
-            cellDisplay: (r, i) => i + 1,
+            cellDisplay: (s, i) => i + 1,
 
         }, {
-            label: "Mã đào tạo phần",
-            cellDisplay: (r) => r.subject.subjectID,
+            label: "Mã môn",
+            cellDisplay: (s) => s.subjectID,
 
         }, {
-            label: "Tên đào tạo phần",
-            cellDisplay: (r) => r.subject.name,
+            label: "Tên môn",
+            cellDisplay: (s) => s.name,
 
         }, {
-            label: "Sô tín chỉ",
-            cellDisplay: (r) => r.subject.credits,
+            label: "Học phần tiên quyết",
+            cellDisplay: (s) => (
+                <div className="display-required-subs">
+                    {!s.subjectsRequired.length ? (
+                        ""
+                    ) : (s.subjectsRequired.reduce((r, c) => r + `, ${c} (${this.state.list.findIndex(each => each.subjectID === c) + 1})` ,"")).substring(2)}
+                </div>
+            ),
 
         }, {
-            label: "Điểm",
-            cellDisplay: (r) => <p className={classnames("grade-display", {tach: r.grade < 5})}>{r.grade}</p>,
+            label: "TC tiên quyết",
+            cellDisplay: (s) => s.creditsRequired || "",
+
+        }, {
+            label: "TC",
+            cellDisplay: (s) => s.credits,
 
         },
     ];
 
     render() {
         const api = (config) => eduProgramApi.getEduProgram(config).then((data) => {
+            this.setState({list: data});
             return {
-                list: data.results,
-                total: null
+                list: data,
+                total: null,
             };
         });
         let {loading, eduProgram, eduPrograms} = this.state;
@@ -60,7 +71,7 @@ export default class EduProgramRoute extends KComponent {
             >
                 <div className="educate-program-route">
                     <div className="common-route-wrapper">
-                        <div className="student-result">
+                        <div className="edu-programs">
                             {!loading && (
                                 <>
                                     <div className="table-actions">

@@ -72,7 +72,7 @@ export default class ResultRoute extends KComponent {
                                 <>
                                     <div className="table-actions">
                                         <div className="spec-select">
-                                            <span className="label">Chương trình học</span>
+                                            <span className="label">Ngành học</span>
                                             {specialities.length === 1 ? (
                                                 <span className="value">{speciality.name}</span>
                                             ) : (

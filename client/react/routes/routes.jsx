@@ -14,6 +14,8 @@ const LoginRoute = lazy(delayLoad(() => import("./guest-routes/login/login")));
 const Dashboard = lazy(delayLoad(() => import("./authen-routes/dashboard/dashboard")));
 const ImportRoute = lazy(delayLoad(() => import("./authen-routes/import-route/import-route")));
 const ResultRoute = lazy(delayLoad(() => import("./authen-routes/result-route/result-route")));
+const EduProgramRoute = lazy(delayLoad(() => import("./authen-routes/edu-program-route/edu-program-route")));
+const SchoolScheduleRoute = lazy(delayLoad(() => import("./authen-routes/school-schedule-route/school-schedule-route")));
 
 export class MainRoute extends React.Component {
     constructor(props) {
@@ -32,7 +34,8 @@ export class MainRoute extends React.Component {
 
                             <AuthenRoute exact path="/" component={props => <Dashboard {...props}/>}/>
                             <AuthenRoute exact path="/import" component={props => <ImportRoute {...props} />} excludeRoles={["sv", "bm", "gv"]}/>
-                            {/*<AuthenRoute exact path="/import" component={props => <ImportRoute {...props} />} excludeRoles={["sv", "bm", "gv"]}/>*/}
+                            <AuthenRoute exact path="/chuong-trinh-dao-tao" component={props => <EduProgramRoute {...props} />} excludeRoles={["admin", "bm", "gv", "pdt"]}/>
+                            <AuthenRoute exact path="/tkb-toan-truong" component={props => <SchoolScheduleRoute {...props} />} excludeRoles={["admin", "pdt"]}/>
                             <AuthenRoute exact path="/bang-diem" component={props => <ResultRoute {...props} />} excludeRoles={["admin", "bm", "gv", "pdt"]}/>
                             <GuestRoute exact path="/login" render={props => <LoginRoute {...props}/>}/>
                         </Switch>

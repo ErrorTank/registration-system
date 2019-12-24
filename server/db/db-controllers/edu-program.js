@@ -11,7 +11,7 @@ const pick = require("lodash/pick");
 const getEducateProgram = ({speciality}) => {
     return EducateProgram.findOne({
         speciality: ObjectId(speciality)
-    }).populate("subjects");
+    }).populate("subjects").then(data => data.subjects);
 };
 
 const getAll = () => {

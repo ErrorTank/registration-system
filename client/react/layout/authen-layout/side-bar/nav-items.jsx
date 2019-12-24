@@ -32,10 +32,10 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["bm", "sv", "gv"],
-        disabled: true
+        // disabled: true
     }, {
-        label: "Chương trình học",
-        url: "/chuong-trinh-hoc",
+        label: "Chương trình đào tạo",
+        url: "/chuong-trinh-dao-tao",
         icon: <DeveloperBoardIcon
             fontSize={"inherit"}
         />,
