@@ -14,7 +14,7 @@ export const schoolScheduleApi = {
         let {keyword, year, studentGroup, semester} = filter || {};
         const params = {
             keyword: keyword || null,
-            year: year || null,
+            year: isNil(year) ? null : year.value,
             studentGroup: isNil(studentGroup) ? null : studentGroup.value,
             semester: isNil(semester) ? null : semester.value,
         };

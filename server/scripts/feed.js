@@ -104,7 +104,7 @@ module.exports =  (appDb) => {
     // });
     //
     // new User({
-    //     username: "a28998",
+    //     username: "admin",
     //     password: "123123qwe",
     //     role: "admin",
     //     name: "Kappa",

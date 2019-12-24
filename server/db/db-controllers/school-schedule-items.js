@@ -20,80 +20,91 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
     if(year){
         let [from, to] = year.split("-");
         pipeline.push({
-            $and : [
-                {"year.from": Number(from)},
-                {"year.to": Number(to)}
-            ]
+           $match: {
+               "year.from": Number(from),
+               "year.to": Number(to)
+           }
         });
     }
-    // if(studentGroup){
-    //     pipeline.push({
-    //         studentGroup: Number(studentGroup)
-    //     });
-    // }
-    // if(!isNil(semester)){
-    //     pipeline.push({
-    //         semester: Number(semester)
-    //     });
-    // }
-    // pipeline = pipeline.concat([
-    //     {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
-    //     {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
-    //     {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
-    //     {$lookup: {from: 'classrooms', localField: 'classRoom', foreignField: '_id', as: "classRoom"}},
-    //     {
-    //         $addFields: {
-    //             'from': {
-    //                 $arrayElemAt: ["$from", 0]
-    //             },
-    //             'to': {
-    //                 $arrayElemAt: ["$to", 0]
-    //             },
-    //             'class': {
-    //                 $arrayElemAt: ["$class", 0]
-    //             },
-    //             'classRoom': {
-    //                 $arrayElemAt: ["$classRoom", 0]
-    //             }
-    //         }
-    //     },
-    //     {$lookup: {from: 'subjects', localField: 'subject', foreignField: '_id', as: "subject"}},
-    //     {
-    //         $addFields: {
-    //             'class.subject': {
-    //                 $arrayElemAt: ["$class.subject", 0]
-    //             }
-    //         }
-    //     },
-    //
-    //     {$lookup: {from: 'DptInsInfo', localField: 'instructor', foreignField: '_id', as: "instructor"}},
-    //     {
-    //         $addFields: {
-    //             'instructor': {
-    //                 $arrayElemAt: ["$instructor", 0]
-    //             }
-    //         }
-    //     },
-    //     {$lookup: {from: 'User', localField: 'instructor.user', foreignField: '_id', as: "instructor.user"}},
-    //     {
-    //         $addFields: {
-    //             'instructor.user': {
-    //                 $arrayElemAt: ["$instructor.user", 0]
-    //             }
-    //         }
-    //     },
-    // ]);
-    //
-    // if(keyword){
-    //     pipeline.push({
-    //         $or : [
-    //             {"class.subject.name": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
-    //             {"class.subject.subjectID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
-    //         ]
-    //     });
-    // }
-    // console.log(pipeline)
-    return SchoolScheduleItems.aggregate(pipeline).then(data => console.log(data));
+    if(studentGroup){
+        pipeline.push({
+            $match: {
+                studentGroup: Number(studentGroup)
+            }
+
+        });
+    }
+    if(!isNil(semester)){
+        pipeline.push({
+            $match: {
+                semester: Number(semester)
+            }
+
+        });
+    }
+    pipeline = pipeline.concat([
+
+        {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
+        {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
+        {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+        {$lookup: {from: 'classrooms', localField: 'classRoom', foreignField: '_id', as: "classRoom"}},
+        {
+            $addFields: {
+                'from': {
+                    $arrayElemAt: ["$from", 0]
+                },
+                'to': {
+                    $arrayElemAt: ["$to", 0]
+                },
+                'class': {
+                    $arrayElemAt: ["$class", 0]
+                },
+                'classRoom': {
+                    $arrayElemAt: ["$classRoom", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'subjects', localField: 'class.subject', foreignField: '_id', as: "class.subject"}},
+        {
+            $addFields: {
+                'class.subject': {
+                    $arrayElemAt: ["$class.subject", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'dptinsinfos', localField: 'instructor', foreignField: '_id', as: "instructor"}},
+
+        {
+            $addFields: {
+                'instructor': {
+                    $arrayElemAt: ["$instructor", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'users', localField: 'instructor.user', foreignField: '_id', as: "instructor.user"}},
+        {
+            $addFields: {
+                'instructor.user': {
+                    $arrayElemAt: ["$instructor.user", 0]
+                }
+            }
+        },
+    ]);
+
+    if(keyword){
+        pipeline.push({
+            $match: {
+                $or : [
+                    {"class.subject.name": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
+                    {"class.subject.subjectID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
+                ]
+            }
+
+        });
+    }
+    return SchoolScheduleItems.aggregate(pipeline).then(data => {
+        return data;
+    });
 };
 
 const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRooms, instructors}) => {
@@ -133,6 +144,10 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     result[current.name] = ObjectId(current._id);
                     return result;
                 }, {});
+                const userMapping = users.reduce((result, current) => {
+                    result[current.identityID] = dptInfo.find(e => e.user === current._id)._id;
+                    return result;
+                }, {});
                 // console.log(classMapping)
                 return SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
                     // console.log(classMapping[each.class.name])
@@ -143,7 +158,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                             return e.name === each.from
                         })._id,
                         to:  shifts.find(e => e.name === each.to)._id,
-                        instructor: users.find(e => e.identityID === each.instructor.identityID)._id
+                        instructor: userMapping[each.instructor.identityID]
                     }, ["subjectID", "shift"])
                 }));
 

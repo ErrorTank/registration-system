@@ -75,7 +75,6 @@ export default class SchoolScheduleRoute extends React.Component{
             semester,
             studentGroup,
             year} = this.state;
-        console.log(years)
         return (
 
             <PageTitle
@@ -116,7 +115,8 @@ export default class SchoolScheduleRoute extends React.Component{
                                                 displayAs={(each) => each.label}
                                                 getValue={each => each.value}
                                                 onChange={e => {
-                                                    this.setState({semester: semesters.find(sp => sp.value === e.target.value)})
+
+                                                    this.setState({semester: semesters.find(sp => sp.value === Number(e.target.value))})
                                                 }}
                                             />
 
@@ -129,7 +129,7 @@ export default class SchoolScheduleRoute extends React.Component{
                                                 displayAs={(each) => each.label}
                                                 getValue={each => each.value}
                                                 onChange={e => {
-                                                    this.setState({studentGroup: studentGroups.find(sp => sp.value === e.target.value)})
+                                                    this.setState({studentGroup: studentGroups.find(sp => sp.value === Number(e.target.value))})
                                                 }}
                                             />
 
