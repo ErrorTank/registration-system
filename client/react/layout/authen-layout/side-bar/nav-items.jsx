@@ -40,6 +40,6 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["sv"],
-        disabled: true
+        // disabled: true
     }
 ];
