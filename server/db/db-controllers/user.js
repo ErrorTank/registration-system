@@ -29,9 +29,7 @@ const getUserEntity = role => {
 const regularLogin = ({username, password}) => {
     return User.findOne({username: {$regex: new RegExp("^" + username.toLowerCase(), "i")}}).lean()
         .then(data => {
-
             if (!data) {
-
                 return Promise.reject(new ApplicationError("not_existed"))
             }
             if (data.password !== password)

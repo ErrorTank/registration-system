@@ -18,6 +18,7 @@ const getAll = () => {
     return EducateProgram.find({}).populate("speciality")
 };
 
+
 module.exports = {
     getEducateProgram,
     getAll

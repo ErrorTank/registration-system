@@ -4,7 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 
 const scheduleSchema = new Schema({
-    results: {
+    list: {
         type: [
             {
                 type: ObjectId,

@@ -13,6 +13,10 @@ const registrationEventSchema = new Schema({
         type: Date,
         required: true
     },
+    delay: {
+        type: String,
+        default: 0
+    },
     to: {
         type: Date,
         required: true

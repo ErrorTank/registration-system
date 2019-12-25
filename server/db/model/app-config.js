@@ -6,6 +6,11 @@ const appConfigSchema = new Schema({
     latestSchoolYear: {
         type: Number,
         required: true
+    },
+    currentSemester: {
+        type: Number,
+        enum: [0, 1, 2],
+        required: true
     }
 
 });
