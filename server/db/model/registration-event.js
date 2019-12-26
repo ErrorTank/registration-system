@@ -9,13 +9,17 @@ const registrationEventSchema = new Schema({
         enum: [1, 2, 3],
         required: true
     },
+    active: {
+        type: Boolean,
+        default: true
+    },
     from: {
         type: Date,
         required: true
     },
     delay: {
         type: String,
-        default: 0
+        default: "60000",
     },
     to: {
         type: Date,

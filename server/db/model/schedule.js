@@ -19,6 +19,10 @@ const scheduleSchema = new Schema({
         ref: "StudentInfo",
         required: true
     },
+    active: {
+        type: Boolean,
+        default: false
+    },
     year: {
         from: {
             type: Number,
