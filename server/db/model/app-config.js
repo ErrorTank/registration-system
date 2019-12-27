@@ -11,6 +11,20 @@ const appConfigSchema = new Schema({
         type: Number,
         enum: [0, 1, 2],
         required: true
+    },
+    pricePerCredit: {
+        type: [
+            {
+                schoolYear: {
+                    type: Number
+
+                },
+                price: {
+                    type: Number,
+                    required: true
+                }
+            }
+        ]
     }
 
 });

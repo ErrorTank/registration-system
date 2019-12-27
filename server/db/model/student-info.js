@@ -22,6 +22,11 @@ const studentInfoSchema = new Schema({
         ref: "Speciality",
         type: ObjectId,
         required: true
+    },
+    credits: {
+        type: Number,
+        required: true,
+        default: 0
     }
 
 

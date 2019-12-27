@@ -12,20 +12,7 @@ const specialitySchema = new Schema({
         type: String,
         required: true
     },
-    pricePerCredit: {
-        type: [
-            {
-                schoolYear: {
-                    type: Number
 
-                },
-                price: {
-                    type: Number,
-                    required: true
-                }
-            }
-        ]
-    }
 });
 
 module.exports = (db) => db.model("Speciality", specialitySchema) ;
