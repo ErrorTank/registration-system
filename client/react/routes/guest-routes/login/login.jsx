@@ -13,6 +13,7 @@ import {authenCache} from "../../../../common/cache/authen-cache";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 import {specialitiesCache} from "../../../../common/cache/api-cache/common-cache";
 import {GetLocation} from "../../../common/location-tracker";
+import {mapRoleToDefaultPath} from "../../route-types/role-filter-route";
 
 
 class LoginForm extends KComponent {
@@ -53,7 +54,7 @@ class LoginForm extends KComponent {
             return Promise.all([
                 specialitiesCache.get(),
                 userInfo.setState({...user})
-            ]).then(() => customHistory.push(prevLocation ? prevLocation : ["admin", "pdt"].includes(userInfo.getState().role) ? "/manage" : "/"));
+            ]).then(() => customHistory.push(prevLocation ? prevLocation : mapRoleToDefaultPath[userInfo.getState().role]));
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 
@@ -69,7 +70,6 @@ class LoginForm extends KComponent {
 
     render() {
         const canLogin = !this.form.getInvalidPaths().length && !this.state.error && !this.state.loading;
-        console.log(this.state.error)
         return (
             <div className="login-form">
                 {this.state.error && (

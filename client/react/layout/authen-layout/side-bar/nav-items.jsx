@@ -16,7 +16,9 @@ export const navItems = [
     }, {
         label: "Trang chủ quản lý",
         url: "/manage",
-        icon: <PublishIcon fontSize={"inherit"}/>,
+        icon: <HomeIcon
+            fontSize={"inherit"}
+        />,
         roles: ["admin", "pdt"]
     },{
         label: "Import dữ liệu",

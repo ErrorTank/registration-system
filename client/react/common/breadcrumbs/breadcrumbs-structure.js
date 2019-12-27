@@ -4,24 +4,47 @@ import omit from "lodash/omit"
 import reverse from "lodash/reverse"
 
 const structures = {
-    url: "/",
-    label: (
-        <span>
+    "/": {
+        url: "/",
+        label: (
+            <span>
             <HomeIcon
                 fontSize={"inherit"}
             />
             <span className="label">Trang chủ</span>
         </span>
-    ),
-    childrens: [
-        {
-            url: "/import",
-            label: <span className="label">Import</span>
-        },{
-            url: "/bang-diem",
-            label: <span className="label">Bảng điểm</span>
-        }
-    ]
+        ),
+        childrens: [
+           {
+                url: "/bang-diem",
+                label: <span className="label">Bảng điểm</span>
+           },{
+                url: "/chuong-trinh-dao-tao",
+                label: <span className="label">CT đào tạo</span>
+            },{
+                url: "/tkb-toan-truong",
+                label: <span className="label">TKB toàn trường</span>
+            },
+        ]
+    },
+    "/manage": {
+        url: "/manage",
+        label: (
+            <span>
+            <HomeIcon
+                fontSize={"inherit"}
+            />
+            <span className="label">Trang chủ</span>
+        </span>
+        ),
+        childrens: [
+            {
+                url: "/manage/import",
+                label: <span className="label">Import</span>
+            },
+
+        ]
+    }
 };
 
 const buildingRecursive = (structure ,pathname, result) => {
@@ -32,7 +55,7 @@ const buildingRecursive = (structure ,pathname, result) => {
     }
     if(structure.childrens){
         for(const str of structure.childrens){
-            console.log(str)
+
             result = buildingRecursive(str, pathname, result);
             if(result.length){
                 result.push(omit(structure, ["childrens"]));
@@ -50,4 +73,4 @@ const createBreadcrumbBuilder = (initStructure) => (pathname, result = []) => {
     return reverse(final);
 };
 
-export const buildBreadcrumbsArray = createBreadcrumbBuilder(structures);
+export const initBreadcrumb = i => createBreadcrumbBuilder(structures[i]);

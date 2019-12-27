@@ -3,6 +3,8 @@ import {Sidebar} from "./side-bar/side-bar";
 import {Navbar} from "./nav-bar/nav-bar";
 import {Breadcrumbs} from "../../common/breadcrumbs/breadcrumbs";
 import {commonPopup, CommonPopupRegistry} from "../../common/common-popup/common-popup";
+import {userInfo} from "../../../common/states/common";
+import {mapRoleToDefaultPath} from "../../routes/route-types/role-filter-route";
 
 
 export class AuthenLayout extends React.Component {
@@ -24,7 +26,9 @@ export class AuthenLayout extends React.Component {
                 <Sidebar/>
                 <div className="main-content">
 
-                    <Breadcrumbs>
+                    <Breadcrumbs
+                        type={mapRoleToDefaultPath[userInfo.getState().role]}
+                    >
                         {this.props.children()}
 
 

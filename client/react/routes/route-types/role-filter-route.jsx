@@ -1,14 +1,15 @@
 import React from "react";
 import {userInfo} from "../../../common/states/common";
 import {Route, Redirect} from "react-router-dom"
-import {TrackLocation} from "../../common/location-tracker";
-import {authenCache} from "../../../common/cache/authen-cache";
-import {AuthenLayout} from "../../layout/authen-layout/authen-layout";
 
-const routesMap = {
-    "user": "/manage",
-    "manage": "/"
-}
+
+export const mapRoleToDefaultPath = {
+    "sv": "/",
+    "gv": "/giao-vien",
+    "bm": "/bo-mon",
+    "pdt": "/manage",
+    "admin": "/manage"
+};
 
 export const RoleFilterRoute = ({component: Component, roles = null, type, ...rest}) => {
     let getComp = (props) => {
@@ -21,7 +22,7 @@ export const RoleFilterRoute = ({component: Component, roles = null, type, ...re
                 return (
                     <Redirect
                         to={{
-                            pathname: routesMap[type]
+                            pathname: mapRoleToDefaultPath[info.role]
                         }}
                     />
                 )

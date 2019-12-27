@@ -1,6 +1,6 @@
 import React from "react";
 import {customHistory} from "../../routes/routes";
-import {buildBreadcrumbsArray} from "./breadcrumbs-structure";
+import {initBreadcrumb} from "./breadcrumbs-structure";
 
 
 
@@ -12,9 +12,9 @@ export class Breadcrumbs extends React.Component {
 
     render() {
         let {location} = customHistory;
-
+        const buildBreadcrumbsArray = initBreadcrumb(this.props.type);
         let arr = buildBreadcrumbsArray(location.pathname);
-
+        console.log(arr)
         return (
             <div className="breadcrumbs-container">
                 {arr.length > 1 && (
