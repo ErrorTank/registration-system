@@ -2,7 +2,7 @@ import React from "react";
 import {PageTitle} from "../../../common/page-title/page-title";
 import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
 
-export default class Dashboard extends React.Component {
+export default class AdminDashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -10,15 +10,14 @@ export default class Dashboard extends React.Component {
     };
 
     render() {
-
         return (
             <PageTitle
-                title={"Trang chủ"}
+                title={"Trang chủ quản lý"}
             >
                 <AuthenLayoutTitle
-                    title={"Trang chủ"}
+                    title={"Trang chủ quản lý"}
                 >
-                    <div className="dashboard-route">
+                    <div className="admin-dashboard-route">
 
                     </div>
                 </AuthenLayoutTitle>

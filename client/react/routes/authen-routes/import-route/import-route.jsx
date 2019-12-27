@@ -15,11 +15,12 @@ import {schoolScheduleApi} from "../../../../api/common/school-schedule-api";
 import {resultApi} from "../../../../api/common/result-api";
 import isEqual from "lodash/isEqual"
 import {commonPopup} from "../../../common/common-popup/common-popup";
+import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
 
 export default class ImportRoute extends KComponent {
     constructor(props) {
         super(props);
-        props.setTitle("Import dữ liệu");
+
         this.scheduleItems = {
             fileName: "",
             list: [],
@@ -242,25 +243,30 @@ export default class ImportRoute extends KComponent {
             <PageTitle
                 title={"Import"}
             >
-                <div className="import-route">
-                    <div className="multiple-steps-wrapper">
-                        <MultipleSteps
-                            btnConfig={{
-                                nextText: "Tiếp theo",
-                                cancelText: "Hủy bỏ",
-                                finishText: "Import dữ liệu",
-                                previousText: "Trở về"
-                            }}
-                            curStepIndex={currentStep}
-                            steps={this.steps}
-                            onCancel={() => {
-                                this.setState({...this.initData})
-                            }}
-                        />
+                <AuthenLayoutTitle
+                    title={"Import dữ liệu"}
+                >
+                    <div className="import-route">
+                        <div className="multiple-steps-wrapper">
+                            <MultipleSteps
+                                btnConfig={{
+                                    nextText: "Tiếp theo",
+                                    cancelText: "Hủy bỏ",
+                                    finishText: "Import dữ liệu",
+                                    previousText: "Trở về"
+                                }}
+                                curStepIndex={currentStep}
+                                steps={this.steps}
+                                onCancel={() => {
+                                    this.setState({...this.initData})
+                                }}
+                            />
+
+                        </div>
 
                     </div>
+                </AuthenLayoutTitle>
 
-                </div>
             </PageTitle>
         );
     }

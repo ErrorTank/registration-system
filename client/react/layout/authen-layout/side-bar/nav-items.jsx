@@ -7,15 +7,20 @@ import FormatListNumberedRtlIcon from '@material-ui/icons/FormatListNumberedRtl'
 
 export const navItems = [
     {
-        label: "Dashboard",
+        label: "Trang chủ",
         url: "/",
         icon: <HomeIcon
             fontSize={"inherit"}
         />,
-        roles: ["admin", "bm", "sv", "gv", "pdt"]
+        roles: ["bm", "sv", "gv"]
     }, {
+        label: "Trang chủ quản lý",
+        url: "/manage",
+        icon: <PublishIcon fontSize={"inherit"}/>,
+        roles: ["admin", "pdt"]
+    },{
         label: "Import dữ liệu",
-        url: "/import",
+        url: "/manage/import",
         icon: <PublishIcon fontSize={"inherit"}/>,
         roles: ["admin", "pdt"]
     }, {
@@ -39,7 +44,7 @@ export const navItems = [
         icon: <DeveloperBoardIcon
             fontSize={"inherit"}
         />,
-        roles: ["sv"],
+        roles: ["sv", "gv"],
         // disabled: true
     }
 ];

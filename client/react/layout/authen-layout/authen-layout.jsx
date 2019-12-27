@@ -8,12 +8,9 @@ import {commonPopup, CommonPopupRegistry} from "../../common/common-popup/common
 export class AuthenLayout extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            title: ""
-        };
+
     };
 
-    setTitle = title => this.setState({title});
 
 
     render() {
@@ -28,12 +25,8 @@ export class AuthenLayout extends React.Component {
                 <div className="main-content">
 
                     <Breadcrumbs>
-                        <div className="main-content__header">
-                            <p className="authen-route-title">{this.state.title}</p>
-                        </div>
-                        <div className="main-content__body">
-                            {this.props.children({setTitle: this.setTitle})}
-                        </div>
+                        {this.props.children()}
+
 
                     </Breadcrumbs>
                 </div>

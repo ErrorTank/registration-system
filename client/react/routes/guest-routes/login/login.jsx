@@ -53,7 +53,7 @@ class LoginForm extends KComponent {
             return Promise.all([
                 specialitiesCache.get(),
                 userInfo.setState({...user})
-            ]).then(() => customHistory.push(prevLocation ? prevLocation : "/"));
+            ]).then(() => customHistory.push(prevLocation ? prevLocation : ["admin", "pdt"].includes(userInfo.getState().role) ? "/manage" : "/"));
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 

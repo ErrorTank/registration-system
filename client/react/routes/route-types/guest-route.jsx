@@ -2,6 +2,7 @@ import React from "react";
 import {Route, Redirect} from "react-router-dom"
 import {authenCache} from "../../../common/cache/authen-cache";
 import {KComponent} from "../../common/k-component";
+import {userInfo} from "../../../common/states/common";
 
 
 export class GuestRoute extends KComponent {
@@ -15,7 +16,7 @@ export class GuestRoute extends KComponent {
 
     render() {
         let {render, component: Component, ...rest} = this.props;
-
+        console.log("dadas")
         return (
             <Route
                 {...rest}
@@ -24,7 +25,7 @@ export class GuestRoute extends KComponent {
                 ) : (
                     <Redirect
                         to={{
-                            pathname: "/",
+                            pathname: ["admin", "pdt"].includes(userInfo.getState().role) ? "/manage" : "/",
                         }}
                     />
                 )}

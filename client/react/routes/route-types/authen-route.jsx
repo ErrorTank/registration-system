@@ -13,22 +13,6 @@ export const AuthenRoute = ({component: Component, excludeRoles = null, ...rest}
                 <Redirect to={{pathname: "/login"}}/>
             )
         }
-        console.log(excludeRoles)
-        if (info && excludeRoles && excludeRoles.length) {
-
-            if (excludeRoles.includes(info.role)) {
-
-                return (
-                    <Redirect
-                        to={{
-                            pathname: "/",
-                        }}
-                    />
-                )
-            }
-        }
-
-
         // return (
         //   <AuthenLayout location={props.location} match={props.match}>
         //     <Component {...props}/>
@@ -37,8 +21,8 @@ export const AuthenRoute = ({component: Component, excludeRoles = null, ...rest}
         return (
 
                 <AuthenLayout>
-                    {({setTitle}) => (
-                            <Component {...props} setTitle={setTitle}/>
+                    {() => (
+                        <Component {...props}/>
                     )}
                 </AuthenLayout>
 
@@ -48,6 +32,7 @@ export const AuthenRoute = ({component: Component, excludeRoles = null, ...rest}
         <Route
             {...rest}
             render={props => {
+                console.log("1")
                 console.log(props)
                 return (
                     <TrackLocation

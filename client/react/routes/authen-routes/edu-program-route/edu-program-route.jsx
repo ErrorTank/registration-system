@@ -7,11 +7,11 @@ import classnames from "classnames"
 import {CommonDataTable} from "../../../common/common-data-table/common-data-table";
 import {Select} from "../../../common/select/select";
 import {eduProgramApi} from "../../../../api/common/edu-program-api";
+import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
 
 export default class EduProgramRoute extends KComponent {
     constructor(props) {
         super(props);
-        props.setTitle("Chương trình đào tạo");
         this.state = {
             loading: true,
             eduProgram: null,
@@ -69,43 +69,48 @@ export default class EduProgramRoute extends KComponent {
             <PageTitle
                 title={"Chương trình đào tạo"}
             >
-                <div className="educate-program-route">
-                    <div className="common-route-wrapper">
-                        <div className="edu-programs">
-                            {!loading && (
-                                <>
-                                    <div className="table-actions">
-                                        <div className="spec-select">
-                                            <span className="label">Chương trình đào tạo ngành</span>
-                                            <Select
-                                                options={eduPrograms}
-                                                value={eduProgram}
-                                                displayAs={(each) => each.speciality.name}
-                                                getValue={each => each._id}
-                                                onChange={e => {
-                                                    this.setState({eduProgram: eduPrograms.find(sp => sp._id === e.target.value)})
-                                                }}
-                                            />
+                <AuthenLayoutTitle
+                    title={"Chương trình đào tạo"}
+                >
+                    <div className="educate-program-route">
+                        <div className="common-route-wrapper">
+                            <div className="edu-programs">
+                                {!loading && (
+                                    <>
+                                        <div className="table-actions">
+                                            <div className="spec-select">
+                                                <span className="label">Chương trình đào tạo ngành</span>
+                                                <Select
+                                                    options={eduPrograms}
+                                                    value={eduProgram}
+                                                    displayAs={(each) => each.speciality.name}
+                                                    getValue={each => each._id}
+                                                    onChange={e => {
+                                                        this.setState({eduProgram: eduPrograms.find(sp => sp._id === e.target.value)})
+                                                    }}
+                                                />
 
+                                            </div>
                                         </div>
-                                    </div>
-                                    <CommonDataTable
-                                        className={"result-table"}
-                                        api={api}
-                                        filter={{
-                                            eduProgram
-                                        }}
-                                        columns={this.columns}
-                                        rowTrackBy={(row, i) => row._id}
-                                        emptyNotify={"Không có môn học nào"}
-                                    />
-                                </>
-                            )}
+                                        <CommonDataTable
+                                            className={"result-table"}
+                                            api={api}
+                                            filter={{
+                                                eduProgram
+                                            }}
+                                            columns={this.columns}
+                                            rowTrackBy={(row, i) => row._id}
+                                            emptyNotify={"Không có môn học nào"}
+                                        />
+                                    </>
+                                )}
 
 
+                            </div>
                         </div>
                     </div>
-                </div>
+                </AuthenLayoutTitle>
+
             </PageTitle>
         );
     }
