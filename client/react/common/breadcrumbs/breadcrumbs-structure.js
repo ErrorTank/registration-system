@@ -52,7 +52,7 @@ const structures = {
                     },{
                         regex: /\/manage\/registration-event\/(\w+)\/edit/gi,
                         label: <span className="label">Cập nhật</span>,
-                    },
+                    }
 
                 ]
             },

@@ -1,18 +1,20 @@
 import {authenApi, offlineApi} from "../api";
 import {urlUtils} from "../../common/utils/url-utils";
 import {userInfo} from "../../common/states/common";
+import isNil from "lodash/isNil";
 
 export const registrationEventApi = {
     create(data){
         return authenApi.post("/registration-event/create", data)
     },
-    getStudentResult(config) {
+    getAll(config) {
         let {filter} = config;
-        let {speciality} = filter || {};
+        let {year, studentGroup, semester} = filter || {};
         const params = {
-
-            speciality: speciality ? speciality._id : null
+            year: isNil(year) ? null : year.value,
+            studentGroup: isNil(studentGroup) ? null : studentGroup.value,
+            semester: isNil(semester) ? null : semester.value,
         };
-        return authenApi.get(`/result/student/${userInfo.getState()._id}${urlUtils.buildParams(params)}`)
+        return authenApi.get(`/registration-event/all${urlUtils.buildParams(params)}`)
     }
 };

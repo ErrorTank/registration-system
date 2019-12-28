@@ -20,12 +20,13 @@ const ResultRoute = lazy(delayLoad(() => import("./authen-routes/result-route/re
 const EduProgramRoute = lazy(delayLoad(() => import("./authen-routes/edu-program-route/edu-program-route")));
 const SchoolScheduleRoute = lazy(delayLoad(() => import("./authen-routes/school-schedule-route/school-schedule-route")));
 const NewRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/new/new")));
-
+const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
 
 class App extends React.Component {
     constructor(props) {
         super(props);
     };
+
     render() {
         const {location} = this.props;
         const isError = !!(
@@ -35,7 +36,7 @@ class App extends React.Component {
 
         return (
             <Suspense fallback={<OverlayLoading/>}>
-                {isError ? <Redirect to={{pathname : "/"}}/> : (
+                {isError ? <Redirect to={{pathname: "/"}}/> : (
                     <CustomSwitch>
                         <GuestRoute exact path="/login" render={props => <LoginRoute {...props}/>}/>
                         <AuthenRoute
@@ -57,7 +58,16 @@ class App extends React.Component {
                                                     {...props}
                                                     exact
                                                     path={props.match.path + "/registration-event/new"}
-                                                    component={props => <NewRegistrationEventRoute {...props} {...authenProps}/>}
+                                                    component={props =>
+                                                        <NewRegistrationEventRoute {...props} {...authenProps}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/registration-events"}
+                                                    component={props =>
+                                                        <RegistrationEventsRoute {...props} {...authenProps}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
@@ -88,21 +98,22 @@ class App extends React.Component {
                                                     {...props}
                                                     exact
                                                     path={"/chuong-trinh-dao-tao"}
-                                                    component={props => <EduProgramRoute {...props}  {...authenProps}/>}
+                                                    component={props => <EduProgramRoute {...props} {...authenProps}/>}
                                                     roles={["sv", "gv"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
                                                     path={"/tkb-toan-truong"}
-                                                    component={props => <SchoolScheduleRoute {...props}  {...authenProps}/>}
+                                                    component={props =>
+                                                        <SchoolScheduleRoute {...props} {...authenProps}/>}
                                                     roles={["sv", "gv", "bm"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
                                                     path={"/bang-diem"}
-                                                    component={props => <ResultRoute {...props}  {...authenProps}/>}
+                                                    component={props => <ResultRoute {...props} {...authenProps}/>}
                                                     roles={["sv"]}
                                                 />
 
@@ -135,7 +146,6 @@ export class MainRoute extends React.Component {
     constructor(props) {
         super(props);
     };
-
 
 
     render() {

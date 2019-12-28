@@ -23,7 +23,7 @@ module.exports = () => {
         }).catch(err => next(err));
 
     });
-    router.get("/school-schedule/items", authMiddleware ,(req, res, next) => {
+    router.get("/school-schedule/all", authMiddleware ,(req, res, next) => {
 
         return getSchoolScheduleItems({...req.query}).then((data) => {
             return res.status(200).json(data);

@@ -5,7 +5,8 @@ const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
 const omit = require("lodash/omit");
 const pick = require("lodash/pick");
-
+const isNil = require("lodash/isNil");
+const {isActive} = require("../../utils/registration-event");
 
 const createRegistrationEvent = (data) => {
     return RegistrationEvent.findOne({
@@ -23,9 +24,41 @@ const createRegistrationEvent = (data) => {
     });
 };
 
-const getAll = () => {
-    return RegistrationEvent.find({}).populate("speciality")
+const getAll = ({year, studentGroup, semester}) => {
+    let pipeline = [];
+    if(year){
+        let [from, to] = year.split("-");
+        pipeline.push({
+            $match: {
+                "year.from": Number(from),
+                "year.to": Number(to)
+            }
+        });
+    }
+    if(studentGroup){
+        pipeline.push({
+            $match: {
+                studentGroup: Number(studentGroup)
+            }
+
+        });
+    }
+    if(!isNil(semester)){
+        pipeline.push({
+            $match: {
+                semester: Number(semester)
+            }
+
+        });
+    }
+
+
+    return RegistrationEvent.aggregate(pipeline).then(data => {
+        console.log(data.map(each => ({...each, isActive: isActive(each)})))
+        return data.map(each => ({...each, isActive: isActive(each)}));
+    });
 };
+
 
 
 module.exports = {
