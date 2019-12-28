@@ -7,6 +7,8 @@ import {studentGroups} from "../../../../../const/student-group";
 import {years} from "../../../../../const/years";
 import {AuthenLayoutTitle} from "../../../../layout/authen-layout/authen-layout-title";
 import {registrationEventApi} from "../../../../../api/common/registration-event";
+import {Badge} from "../../../../common/badge/badge";
+import {customHistory} from "../../../routes";
 
 export default class RegisterEventsRoute extends React.Component{
     constructor(props){
@@ -41,7 +43,10 @@ export default class RegisterEventsRoute extends React.Component{
         },{
             label: "Trạng thái",
             cellDisplay: (s) => {
-                return "";
+                return <Badge
+                    content={s.isActive ? "Diễn ra" : "Kết thúc"}
+                    style={s.isActive ?  "success" : "danger"}
+                />;
             }
 
         }
@@ -67,8 +72,18 @@ export default class RegisterEventsRoute extends React.Component{
                 <AuthenLayoutTitle
                     title={"Danh sách đợt đăng ký"}
                 >
-                    <div className="school-schedule-route">
+                    <div className="registration-events manage-list-route">
                         <div className="common-route-wrapper">
+                            <div className="route-actions">
+                                <button className="btn btn-next icon-btn"
+                                        onClick={() => customHistory.push("/manage/registration-event/new")}
+                                >
+                                    <i class="fal fa-plus"></i>
+
+
+                                    Tạo đợt đăng ký
+                                </button>
+                            </div>
                             <div className="schedule-items">
                                 {!loading && (
                                     <>
