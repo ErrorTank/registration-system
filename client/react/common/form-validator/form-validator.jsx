@@ -72,6 +72,7 @@ export const createSimpleForm = (schema, _options) => {
         touched[path] = true;
       }
       if(relativeFields && relativeFields.length){
+        console.log(relativeFields)
         for(let p of relativeFields)
           await validatePath(p)
       }

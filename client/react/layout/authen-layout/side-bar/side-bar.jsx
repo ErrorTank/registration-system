@@ -16,11 +16,12 @@ export class Sidebar extends React.Component {
         return (
             <div className="side-bar">
                 {navItems.map(item => {
+
                     return item.roles.includes(userInfo.getState().role) ? (
                         <div
                             className={classnames("side-bar-item", {active: item.url ? !Array.isArray(item.url) ? location.pathname === item.url : !!item.url.find(each => typeof each === "string" ? location.pathname === each : each.test(location.pathname)) : false, disabled: item.disabled})}
                             key={item.url}
-                            onClick={() => customHistory.push(item.url)}
+                            onClick={() => customHistory.push(typeof item.url === "string" ? item.url : item.defaultUrl)}
                         >
                             {item.icon}
                             <span>{item.label}</span>

@@ -51,10 +51,11 @@ export const navItems = [
         // disabled: true
     },{
         label: "Quản lý đợt đăng ký",
-        url: ["/registration-events", "/registration-event/new", /\/manage\/registration-event\/(\w+)\/edit/gi],
+        url: ["/manage/registration-events", "/manage/registration-event/new", /\/manage\/registration-event\/(\w+)\/edit/gi],
         icon: <CreateIcon
             fontSize={"inherit"}
         />,
-        roles: ["admin", "pdt"]
+        roles: ["admin", "pdt"],
+        defaultUrl: "/manage/registration-events"
     }
 ];
