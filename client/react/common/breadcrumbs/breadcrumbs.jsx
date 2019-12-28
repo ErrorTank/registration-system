@@ -2,8 +2,6 @@ import React from "react";
 import {customHistory} from "../../routes/routes";
 import {initBreadcrumb} from "./breadcrumbs-structure";
 
-
-
 export class Breadcrumbs extends React.Component {
     constructor(props) {
         super(props);
@@ -14,7 +12,7 @@ export class Breadcrumbs extends React.Component {
         let {location} = customHistory;
         const buildBreadcrumbsArray = initBreadcrumb(this.props.type);
         let arr = buildBreadcrumbsArray(location.pathname);
-        console.log(arr)
+
         return (
             <div className="breadcrumbs-container">
                 {arr.length > 1 && (
@@ -22,7 +20,7 @@ export class Breadcrumbs extends React.Component {
                         {arr.map((each) => (
                             <div className={"breadcrumbs__item"}
                                  key={each.url}
-                                 onClick={() => customHistory.push(each.url)}
+                                 onClick={() => customHistory.push(each.url || window.location.href.replace(document.location.origin, ""))}
                             >
                                 {each.label}
                             </div>

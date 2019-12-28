@@ -114,7 +114,11 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
     //         console.log("loz")
     // });
     return Promise.all([
-        Subject.insertMany(subjects),
+        Subject.insertMany(subjects.map(each => {
+            if(!each.division)
+                return omit(each, "division");
+            return {...each, division: ObjectId(each.division)}
+        })),
         ClassRoom.insertMany(classRooms),
         User.insertMany(instructors.map((each, i) => ({...each, email: `gv${i}@gmail.com`, phone: i, role: "gv",dob: new Date().getTime(), password: "test", username: each.identityID}))),
         Shift.find({}).lean()

@@ -19,7 +19,7 @@ const ImportRoute = lazy(delayLoad(() => import("./authen-routes/import-route/im
 const ResultRoute = lazy(delayLoad(() => import("./authen-routes/result-route/result-route")));
 const EduProgramRoute = lazy(delayLoad(() => import("./authen-routes/edu-program-route/edu-program-route")));
 const SchoolScheduleRoute = lazy(delayLoad(() => import("./authen-routes/school-schedule-route/school-schedule-route")));
-
+const NewRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/new/new")));
 
 
 class App extends React.Component {
@@ -51,6 +51,13 @@ class App extends React.Component {
                                                     exact
                                                     path={props.match.path}
                                                     component={props => <AdminDashboard {...props} {...authenProps}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/registration-event/new"}
+                                                    component={props => <NewRegistrationEventRoute {...props} {...authenProps}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute

@@ -4,6 +4,7 @@ import PublishIcon from '@material-ui/icons/Publish';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 import FormatListNumberedRtlIcon from '@material-ui/icons/FormatListNumberedRtl';
+import CreateIcon from '@material-ui/icons/Create';
 
 export const navItems = [
     {
@@ -48,5 +49,12 @@ export const navItems = [
         />,
         roles: ["sv", "gv"],
         // disabled: true
+    },{
+        label: "Quản lý đợt đăng ký",
+        url: ["/registration-events", "/registration-event/new", /\/manage\/registration-event\/(\w+)\/edit/gi],
+        icon: <CreateIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["admin", "pdt"]
     }
 ];

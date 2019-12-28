@@ -17,7 +17,6 @@ module.exports =  (appDb) => {
     const User = require("../db/model/user")(appDb);
     // Class.deleteMany({}).then(() => console.log("cac"));
     // Classroom.deleteMany({}).then(() => console.log("cac"));
-    // Division.deleteMany({}).then(() => console.log("cac"));
     // DptInsInfo.deleteMany({}).then(() => console.log("cac"));
     // EducateProgram.deleteMany({}).then(() => console.log("cac"));
     // RegistrationEvent.deleteMany({}).then(() => console.log("cac"));
@@ -28,6 +27,7 @@ module.exports =  (appDb) => {
     // Subject.deleteMany({}).then(() => console.log("cac"));
     // User.deleteMany({role: {$ne: "admin"}}).then(() => console.log("cac"));
     // Shift.deleteMany({}).then(() => console.log("cac"));
+    // Division.deleteMany({}).then(() => console.log("cac"));
     // const shifts = [
     //     {
     //         name: 1,

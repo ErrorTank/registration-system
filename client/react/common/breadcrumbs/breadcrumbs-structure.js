@@ -42,14 +42,31 @@ const structures = {
                 url: "/manage/import",
                 label: <span className="label">Import</span>
             },
+            {
+                url: "/manage/registration-events",
+                label: <span className="label">Đợt đăng ký học</span>,
+                childrens: [
+                    {
+                        url: "/manage/registration-event/new",
+                        label: <span className="label">Tạo mới</span>,
+                    },{
+                        regex: /\/manage\/registration-event\/(\w+)\/edit/gi,
+                        label: <span className="label">Cập nhật</span>,
+                    },
 
+                ]
+            },
         ]
     }
 };
 
 const buildingRecursive = (structure ,pathname, result) => {
 
-    if(pathname === structure.url){
+    if(structure.regex && structure.regex.test(pathname)){
+        result.push(omit(structure, ["childrens"]));
+        return result;
+    }
+    else if(pathname === structure.url){
         result.push(omit(structure, ["childrens"]));
         return result;
     }
