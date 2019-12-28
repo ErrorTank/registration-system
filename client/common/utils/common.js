@@ -11,6 +11,13 @@ const getBase64=(file)=>new Promise((resolve)=>{
         resolve({file, src:reader.result, fileID: file.lastModified});
     };
 });
+const parseYear = yearStr => {
+  let [from, to] = yearStr.split("-");
+  return {
+      from,
+      to
+  }
+};
 const wait2 = delay => new Promise((resolve) => {
     setTimeout(() =>  resolve() ,delay)
 }) ;
@@ -79,5 +86,6 @@ export {
     pronounce,
     formatMoney,
     getMoneyValueAsText,
+    parseYear,
     convertTextMoneyToNumber
 }

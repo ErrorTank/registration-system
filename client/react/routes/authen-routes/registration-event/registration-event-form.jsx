@@ -86,7 +86,7 @@ class RegistrationEventForm extends Component {
                                 displayAs={(each) => each.label}
                                 getValue={each => each.value}
                                 onChange={e => {
-                                    onChange(semester.find(sp => sp.value === e.target.value))
+                                    onChange(semester.find(sp => sp.value === Number(e.target.value)))
                                 }}
                             />
 
@@ -103,7 +103,7 @@ class RegistrationEventForm extends Component {
                                 displayAs={(each) => each.label}
                                 getValue={each => each.value}
                                 onChange={e => {
-                                    onChange(studentGroups.find(sp => sp.value === e.target.value))
+                                    onChange(studentGroups.find(sp => sp.value === Number(e.target.value)))
                                 }}
                             />
 
@@ -118,7 +118,7 @@ class RegistrationEventForm extends Component {
                                 id={"delay"}
                                 type={"text"}
                                 error={error}
-                                label={"Thời gian delay"}
+                                label={"Thời gian delay (Mili giây)"}
 
                                 placeholder={"Nhập thời gian delay"}
                                 onChange={e => {

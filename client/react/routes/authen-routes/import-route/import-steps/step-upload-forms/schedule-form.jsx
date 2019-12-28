@@ -92,7 +92,7 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(semester.find(sp => sp.value === e.target.value))
+                                        onChange(semester.find(sp => sp.value === Number(e.target.value)))
                                     }}
                                 />
 
@@ -108,7 +108,7 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(studentGroups.find(sp => sp.value === e.target.value))
+                                        onChange(studentGroups.find(sp => sp.value === Number(e.target.value)))
                                     }}
                                 />
 

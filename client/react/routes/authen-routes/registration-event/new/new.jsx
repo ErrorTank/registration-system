@@ -11,12 +11,15 @@ import RegistrationEventForm from "../registration-event-form";
 import {customHistory} from "../../../routes";
 import omit from "lodash/omit"
 import {registrationEventApi} from "../../../../../api/common/registration-event";
+import {parseYear} from "../../../../../common/utils/common";
+import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
 
 class RegistrationEventNewRoute extends KComponent {
     constructor(props) {
         super(props);
         this.state = {
-            loading: false
+            loading: false,
+            error: null
         };
 
         const registrationEventSchema = yup.object().shape({
@@ -55,6 +58,15 @@ class RegistrationEventNewRoute extends KComponent {
         this.form.validateData();
     };
 
+    renderServerError = () => {
+        let {error} = this.state;
+        let {year, semester, studentGroup} = this.form.getData();
+        let errMatcher = {
+            "existed": `Đợt đăng ký học ${semester.label} ${studentGroup.label} năm học ${year.label} đã tồn tại`,
+        };
+        return errMatcher.hasOwnProperty(error) ? errMatcher[error] : "Đã có lỗi xảy ra"
+    };
+
     handleCreateRegistrationEvent = () => {
         this.setState({loading: true});
         let data = this.form.getData();
@@ -63,11 +75,13 @@ class RegistrationEventNewRoute extends KComponent {
         }else{
             data.delay = data.delay.toString();
         }
-        registrationEventApi.create({...data}).then(newRegistrationEvent => {
+        registrationEventApi.create({...data,
+            year: parseYear(data.year.value),
+            semester: data.semester.value,
+            studentGroup: data.studentGroup.value,
+        }).then(newRegistrationEvent => {
            customHistory.push("/manage/registration-events");
-        }).catch(err => {
-
-        });
+        }).catch(err => this.setState({loading: false, error: err.message}));
     };
 
     render() {
@@ -81,22 +95,34 @@ class RegistrationEventNewRoute extends KComponent {
                 >
                     <div className="registration-event-new-route">
                         <div className="common-route-wrapper">
+
                             <div className="route-body">
+                                <div style={{padding: "20px 20px 0 20px"}}>
+                                    {this.state.error && (
+                                        <div className="server-error">
+                                            {this.renderServerError()}
+                                        </div>
+                                    )}
+                                </div>
                                 <RegistrationEventForm
                                     form={this.form}
                                 />
                             </div>
                             <div className="route-actions">
                                 <button className="btn btn-cancel"
-                                        onClick={this.handleCreateRegistrationEvent}
+                                        onClick={() => customHistory.push("/manage/registration-events")}
+
                                 >
                                     Trở về
                                 </button>
                                 <button className="btn btn-next"
-                                        onClick={() => customHistory.push("/manage/registration-events")}
+                                        onClick={this.handleCreateRegistrationEvent}
                                         disabled={!canCreate}
                                 >
                                     Tạo mới
+                                    {this.state.loading && (
+                                        <LoadingInline/>
+                                    )}
                                 </button>
                             </div>
                         </div>
