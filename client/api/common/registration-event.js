@@ -15,5 +15,14 @@ export const registrationEventApi = {
             semester: semester.value === "" ? null : semester.value,
         };
         return authenApi.get(`/registration-event/all${urlUtils.buildParams(params)}`)
+    },
+    getRegistrationEventById(rID){
+        return authenApi.get(`/registration-event/${rID}`)
+    },
+    deleteRegistrationEvent(rID){
+        return authenApi.delete(`/registration-event/${rID}`)
+    },
+    updateRegistrationEvent(rID, data){
+        return authenApi.put(`/registration-event/${rID}`, data)
     }
 };
