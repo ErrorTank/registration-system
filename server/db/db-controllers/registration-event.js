@@ -59,9 +59,20 @@ const getAll = ({year, studentGroup, semester}) => {
     });
 };
 
-
+const getRegisterEventById = (rID) => {
+    return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean()
+};
+const updateRegisterEvent = (rID, data) => {
+    return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean();
+};
+const deleteRegisterEvent = (rID) => {
+    return RegistrationEvent.findOneAndDelete({_id: ObjectId(rID)})
+};
 
 module.exports = {
     createRegistrationEvent,
-    getAll
-}
+    getAll,
+    getRegisterEventById,
+    updateRegisterEvent,
+    deleteRegisterEvent
+};
