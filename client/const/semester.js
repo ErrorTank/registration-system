@@ -1,5 +1,9 @@
 export const semester = [
     {
+        label: "Tất cả",
+        value: null
+    },
+    {
         label: "Học kì 1",
         value: 0
     },{

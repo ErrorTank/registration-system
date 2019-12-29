@@ -11,9 +11,9 @@ export const registrationEventApi = {
         let {filter} = config;
         let {year, studentGroup, semester} = filter || {};
         const params = {
-            year: isNil(year) ? null : year.value,
-            studentGroup: isNil(studentGroup) ? null : studentGroup.value,
-            semester: isNil(semester) ? null : semester.value,
+            year: isNil(year.value) ? null : year.value,
+            studentGroup: isNil(studentGroup.value) ? null : studentGroup.value,
+            semester: isNil(semester.value) ? null : semester.value,
         };
         return authenApi.get(`/registration-event/all${urlUtils.buildParams(params)}`)
     }

@@ -78,7 +78,7 @@ export default class RegisterEventsRoute extends React.Component{
                                 <button className="btn btn-next icon-btn"
                                         onClick={() => customHistory.push("/manage/registration-event/new")}
                                 >
-                                    <i class="fal fa-plus"></i>
+                                    <i className="fal fa-plus"></i>
 
 
                                     Tạo đợt đăng ký
@@ -96,6 +96,7 @@ export default class RegisterEventsRoute extends React.Component{
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
+
                                                         this.setState({year: years.find(sp => sp.value === e.target.value)})
                                                     }}
                                                 />
@@ -109,8 +110,10 @@ export default class RegisterEventsRoute extends React.Component{
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
-
-                                                        this.setState({semester: semesters.find(sp => sp.value === Number(e.target.value))})
+                                                        let value = e.target.value === null ? null : Number(e.target.value);
+                                                        console.log(value)
+                                                        console.log(semesters.find(sp => sp.value === value))
+                                                        this.setState({semester: semesters.find(sp => sp.value === value)})
                                                     }}
                                                 />
 
