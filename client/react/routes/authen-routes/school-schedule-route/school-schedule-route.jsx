@@ -84,7 +84,7 @@ export default class SchoolScheduleRoute extends React.Component{
                 <AuthenLayoutTitle
                     title={"TKB toàn trường"}
                 >
-                    <div className="school-schedule-route">
+                    <div className="school-schedule-route manage-list-route">
                         <div className="common-route-wrapper">
                             <div className="schedule-items">
                                 {!loading && (

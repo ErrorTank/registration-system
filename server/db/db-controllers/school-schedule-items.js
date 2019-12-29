@@ -34,7 +34,7 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
 
         });
     }
-    if(!isNil(semester)){
+    if(semester){
         pipeline.push({
             $match: {
                 semester: Number(semester)

@@ -1,5 +1,9 @@
 export const studentGroups = [
     {
+        label: "Tất cả",
+        value: ""
+    },
+    {
         label: "Nhóm 1",
         value: 1
     },{

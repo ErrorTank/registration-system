@@ -24,9 +24,9 @@ export default class ImportRoute extends KComponent {
         this.scheduleItems = {
             fileName: "",
             list: [],
-            year: years[0],
-            semester: semester[0],
-            studentGroup: studentGroups[0],
+            year: years[1],
+            semester: semester[1],
+            studentGroup: studentGroups[1],
         };
         this.educateProgram = {
             fileName: "",

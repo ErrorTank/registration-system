@@ -43,7 +43,7 @@ const getAll = ({year, studentGroup, semester}) => {
 
         });
     }
-    if(!isNil(semester)){
+    if(semester){
         pipeline.push({
             $match: {
                 semester: Number(semester)
@@ -52,9 +52,9 @@ const getAll = ({year, studentGroup, semester}) => {
         });
     }
 
+    let action = pipeline.length ? RegistrationEvent.aggregate(pipeline) : RegistrationEvent.find({}).lean();
 
-    return RegistrationEvent.aggregate(pipeline).then(data => {
-        console.log(data.map(each => ({...each, isActive: isActive(each)})))
+    return action.then(data => {
         return data.map(each => ({...each, isActive: isActive(each)}));
     });
 };

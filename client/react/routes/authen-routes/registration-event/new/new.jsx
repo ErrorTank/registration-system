@@ -37,9 +37,9 @@ class RegistrationEventNewRoute extends KComponent {
             toDate.setDate(toDate.getDate() + 1);
 
             return {
-                year: years[0],
-                semester: semester[0],
-                studentGroup: studentGroups[0],
+                year: years[1],
+                semester: semester[1],
+                studentGroup: studentGroups[1],
                 delay: 0,
                 from: fromDate.toISOString(),
                 to: toDate.toISOString()

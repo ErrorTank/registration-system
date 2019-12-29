@@ -30,15 +30,15 @@ export default class RegisterEventsRoute extends React.Component{
 
         }, {
             label: "Kì",
-            cellDisplay: (s) => this.state.semester.label,
+            cellDisplay: (s) => `Kì ${s.semester + 1}`,
 
         }, {
             label: "Nhóm",
-            cellDisplay: (s) => this.state.studentGroup.label,
+            cellDisplay: (s) => `Nhóm ${s.studentGroup}`,
 
         }, {
             label: "Năm học",
-            cellDisplay: (s) => this.state.year.label,
+            cellDisplay: (s) => `${s.year.from}-${s.year.to}`,
 
         },{
             label: "Trạng thái",
@@ -110,9 +110,7 @@ export default class RegisterEventsRoute extends React.Component{
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
-                                                        let value = e.target.value === null ? null : Number(e.target.value);
-                                                        console.log(value)
-                                                        console.log(semesters.find(sp => sp.value === value))
+                                                        let value = e.target.value === "" ? "" : Number(e.target.value);
                                                         this.setState({semester: semesters.find(sp => sp.value === value)})
                                                     }}
                                                 />
@@ -126,7 +124,8 @@ export default class RegisterEventsRoute extends React.Component{
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
-                                                        this.setState({studentGroup: studentGroups.find(sp => sp.value === Number(e.target.value))})
+                                                        let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                        this.setState({studentGroup: studentGroups.find(sp => sp.value === value)})
                                                     }}
                                                 />
 

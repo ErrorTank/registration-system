@@ -71,7 +71,7 @@ export class ScheduleForm extends KComponent {
                             {this.props.form.enhanceComponent("year", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
-                                    options={years}
+                                    options={years.filter(each => each.value !== "")}
                                     value={others.value}
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
@@ -87,7 +87,7 @@ export class ScheduleForm extends KComponent {
                             {this.props.form.enhanceComponent("semester", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
-                                    options={semester}
+                                    options={semester.filter(each => each.value !== "")}
                                     value={others.value}
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
@@ -103,7 +103,7 @@ export class ScheduleForm extends KComponent {
                             {this.props.form.enhanceComponent("studentGroup", ({error, onChange, onEnter, ...others}) => (
                                 <Select
                                     error={error}
-                                    options={studentGroups}
+                                    options={studentGroups.filter(each => each.value !== "")}
                                     value={others.value}
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
