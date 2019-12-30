@@ -15,12 +15,21 @@
 
 
 }
+.common-badge{
+  font-size: 1.3rem;
+  padding: 5px 8px;
+  font-weight: 450;
+}
 .common-route-wrapper{
   background-color white
   margin-top 20px
   box-shadow 0 1px 20px 0 rgba(69,90,100,.08)
   overflow hidden
   border-radius 4px
+  position relative
+  .edit-form-loading{
+    font-size 50px !important
+  }
 }
 .server-error{
   margin-bottom 12px
@@ -53,5 +62,13 @@
   &:hover{
     color white
     background-color darken(inverse, 10%)
+  }
+}
+.btn-back{
+  color white
+  background-color danger2
+  &:hover{
+    color white
+    background-color darken(danger2, 10%)
   }
 }

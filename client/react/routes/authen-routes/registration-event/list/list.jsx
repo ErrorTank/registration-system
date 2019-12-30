@@ -44,6 +44,7 @@ export default class RegisterEventsRoute extends React.Component{
             label: "Trạng thái",
             cellDisplay: (s) => {
                 return <Badge
+                    className={"common-badge"}
                     content={s.isActive ? "Diễn ra" : "Kết thúc"}
                     style={s.isActive ?  "success" : "danger"}
                 />;

@@ -11,8 +11,9 @@ import RegistrationEventForm from "../registration-event-form";
 import {customHistory} from "../../../routes";
 import omit from "lodash/omit"
 import {registrationEventApi} from "../../../../../api/common/registration-event";
-import {parseYear} from "../../../../../common/utils/common";
+import {mergeYear, parseYear} from "../../../../../common/utils/common";
 import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
+import isEqual from "lodash/isEqual";
 
 class RegistrationEventEditRoute extends KComponent {
     constructor(props) {
@@ -32,6 +33,7 @@ class RegistrationEventEditRoute extends KComponent {
             from: yup.date().notReach(yup.ref("to"), "Thời gian bắt đầu phải trước kết thúc"),
             to: yup.date()
         });
+
 
         const getInitData = () => {
             let fromDate = new Date();
@@ -57,12 +59,23 @@ class RegistrationEventEditRoute extends KComponent {
 
             this.state.error && this.setState({error: ""});
         }));
-        this.form.validateData();
-        this.fetchingData()
+
+        this.fetchingData().then(data => {
+            this.form.updateData(data);
+            this.form.validateData();
+            this.setState({draft: {...data}, fetching: false});
+        });
     };
 
     fetchingData = () => {
-        console.log(this.props)
+        return registrationEventApi.getRegistrationEventById(this.props.match.params.eventID).then(data => {
+            return {
+                ...data,
+                year: years.find(each => each.value === mergeYear(data.year)),
+                semester: semester.find(each => each.value === data.semester),
+                studentGroup: studentGroups.find(each => each.value === data.studentGroup),
+            }
+        })
     };
 
     renderServerError = () => {
@@ -74,7 +87,7 @@ class RegistrationEventEditRoute extends KComponent {
         return errMatcher.hasOwnProperty(error) ? errMatcher[error] : "Đã có lỗi xảy ra"
     };
 
-    handleCreateRegistrationEvent = () => {
+    handleUpdateRegistrationEvent = () => {
         this.setState({loading: true});
         let data = this.form.getData();
         if(!data.delay){
@@ -82,17 +95,24 @@ class RegistrationEventEditRoute extends KComponent {
         }else{
             data.delay = data.delay.toString();
         }
-        registrationEventApi.create({...data,
+        registrationEventApi.updateRegistrationEvent(this.props.match.params.eventID, {...data,
             year: parseYear(data.year.value),
             semester: data.semester.value,
             studentGroup: data.studentGroup.value,
-        }).then(newRegistrationEvent => {
-            customHistory.push("/manage/registration-events");
+        }).then(() => {
+            this.setState({draft: this.form.getData(), loading: false});
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 
+    handleDelete = () => {
+        return registrationEventApi.deleteRegistrationEvent(this.props.match.params.eventID).then(() => {
+            customHistory.push("/manage/registration-events");
+        })
+    };
+
     render() {
-        const canCreate = !this.form.getInvalidPaths().length && !this.state.error && !this.state.loading;
+        const canUpdate = !this.form.getInvalidPaths().length && !this.state.error && !this.state.loading && !isEqual(this.state.draft, this.form.getData());
+
         return (
             <PageTitle
                 title={"Cập nhật đợt đăng ký học"}
@@ -102,7 +122,11 @@ class RegistrationEventEditRoute extends KComponent {
                 >
                     <div className="registration-event-new-route">
                         <div className="common-route-wrapper">
-
+                            {this.state.fetching && (
+                                <LoadingInline
+                                    className="edit-form-loading"
+                                />
+                            )}
                             <div className="route-body">
                                 <div style={{padding: "20px 20px 0 20px"}}>
                                     {this.state.error && (
@@ -122,11 +146,17 @@ class RegistrationEventEditRoute extends KComponent {
                                 >
                                     Trở về
                                 </button>
-                                <button className="btn btn-next"
-                                        onClick={this.handleCreateRegistrationEvent}
-                                        disabled={!canCreate}
+                                <button className="btn btn-back"
+                                        onClick={this.handleDelete}
+
                                 >
-                                    Tạo mới
+                                    Xóa bỏ
+                                </button>
+                                <button className="btn btn-next"
+                                        onClick={this.handleUpdateRegistrationEvent}
+                                        disabled={!canUpdate}
+                                >
+                                    Cập nhật
                                     {this.state.loading && (
                                         <LoadingInline/>
                                     )}

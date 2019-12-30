@@ -20,7 +20,6 @@ class RegistrationEventForm extends Component {
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                     <DateTimePicker
                                         showTodayButton
-                                        disablePast
                                         value={others.value}
                                         onChange={onChange}
                                         format="dd/MM/yyyy HH:mm"
@@ -45,7 +44,6 @@ class RegistrationEventForm extends Component {
                                         showTodayButton
                                         value={others.value}
                                         onChange={onChange}
-                                        disablePast
                                         format="dd/MM/yyyy HH:mm"
                                         autoOk
                                         ampm={false}
