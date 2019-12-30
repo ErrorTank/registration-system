@@ -60,35 +60,34 @@ const structures = {
     }
 };
 
-const buildingRecursive = (structure ,pathname, result) => {
+let buildingRecursive = (structure ,pathname, result) => {
 
 
+    if(structure.regex && pathname.match(structure.regex)){
 
-    if(structure.regex && structure.regex.test(pathname)){
-
-        result.push(omit(structure, ["childrens"]));
+        result = result.concat((omit(structure, ["childrens"])));
 
         return result;
     }
 
-
-    console.log(structure.regex && structure.regex.test(pathname))
-    else if(pathname === structure.url){
-        result.push(omit(structure, ["childrens"]));
+    if(pathname === structure.url){
+        result = result.concat(omit(structure, ["childrens"]));
         return result;
     }
 
 
     if(structure.childrens){
-        for(const str of structure.childrens){
+        for(let str of structure.childrens){
 
             result = buildingRecursive(str, pathname, result);
+            console.log(result)
             if(result.length){
-                result.push(omit(structure, ["childrens"]));
+                result = result.concat(omit(structure, ["childrens"]));
                 return result;
             }
         }
     }
+
     return result;
 
 

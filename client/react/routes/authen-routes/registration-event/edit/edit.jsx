@@ -95,10 +95,10 @@ class RegistrationEventEditRoute extends KComponent {
         const canCreate = !this.form.getInvalidPaths().length && !this.state.error && !this.state.loading;
         return (
             <PageTitle
-                title={"Tạo đợt đăng ký học"}
+                title={"Cập nhật đợt đăng ký học"}
             >
                 <AuthenLayoutTitle
-                    title={"Tạo đợt đăng ký học"}
+                    title={"Cập nhật đợt đăng ký học"}
                 >
                     <div className="registration-event-new-route">
                         <div className="common-route-wrapper">
