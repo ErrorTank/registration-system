@@ -1,3 +1,5 @@
+import {appConfigCache} from "../cache/api-cache/common-cache";
+
 const wait1 = (fn, amount = 2000) => new Promise((res, rej) => {
     setTimeout(() => {
         fn();
@@ -79,6 +81,17 @@ let pronounce = (word, count, tail) => {
   return word + (count > 1 ? tail : "");
 };
 
+const getStudentGroup = (schoolYear, department) => {
+    const {latestSchoolYear} = appConfigCache.syncGet();
+    if(schoolYear === latestSchoolYear){
+        return 3;
+    }
+    if(schoolYear < latestSchoolYear - 1 && department === "KT_QL"){
+        return 1;
+    }
+    return 2;
+};
+
 export {
     wait1,
     wait2,
@@ -90,5 +103,7 @@ export {
     getMoneyValueAsText,
     parseYear,
     convertTextMoneyToNumber,
-    mergeYear
+    mergeYear,
+    getStudentGroup
+
 }

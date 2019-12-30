@@ -12,6 +12,10 @@ const specialitySchema = new Schema({
         type: String,
         required: true
     },
+    department: {
+        type: String,
+        enum: ["KT_QL", "TOAN_TIN"]
+    }
 
 });
 

@@ -11,19 +11,20 @@ import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-tit
 import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
 import {userInfo} from "../../../../common/states/common";
 import isNil from "lodash/isNil"
-import {mergeYear} from "../../../../common/utils/common";
+import {getStudentGroup, mergeYear} from "../../../../common/utils/common";
 
 export default class SchoolScheduleRoute extends React.Component{
     constructor(props){
         super(props);
-        const {currentYear, currentSemester, latestSchoolYear} = appConfigCache.syncGet();
+        const {currentYear, currentSemester} = appConfigCache.syncGet();
+        let info = userInfo.getState();
+        let studentGroup = info.role === "sv" ? getStudentGroup(info.info.schoolYear, info.info.speciality.department) : "";
 
-        let {studentGroup} = userInfo.getState();
         this.state={
             loading: false,
             keyword: "",
             semester: semesters.find(each => each.value === currentSemester),
-            studentGroup: isNil(studentGroup) ? studentGroups[0] : studentGroups.find(each => each.value === currentSemester),
+            studentGroup: studentGroups.find(each => each.value === studentGroup),
             year: years.find(each => each.value === mergeYear(currentYear))
         };
 

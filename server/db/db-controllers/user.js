@@ -22,7 +22,7 @@ const getUserEntity = role => {
         }, "gv": {
             findOne: filter => DptInsInfo.findOne(filter)
         }, "sv": {
-            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName pricePerCredit")
+            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName department")
         }
     })[role]
 };
@@ -47,7 +47,7 @@ const regularLogin = ({username, password}) => {
                         ...omit(data, ["password"]),
                         info
                     };
-                    
+
                     return {
                         token,
                         user,
