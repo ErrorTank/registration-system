@@ -12,14 +12,15 @@ export class Breadcrumbs extends React.Component {
         let {location} = customHistory;
         const buildBreadcrumbsArray = initBreadcrumb(this.props.type);
         let arr = buildBreadcrumbsArray(location.pathname);
-
+        console.log(location.pathname)
+        console.log(arr)
         return (
             <div className="breadcrumbs-container">
                 {arr.length > 1 && (
                     <div className="breadcrumbs">
-                        {arr.map((each) => (
+                        {arr.map((each, i) => (
                             <div className={"breadcrumbs__item"}
-                                 key={each.url}
+                                 key={each.url || i}
                                  onClick={() => customHistory.push(each.url || window.location.href.replace(document.location.origin, ""))}
                             >
                                 {each.label}

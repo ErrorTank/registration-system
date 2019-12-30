@@ -140,6 +140,7 @@ export default class RegisterEventsRoute extends React.Component{
                                                 semester,
                                                 year
                                             }}
+                                            rowLinkTo={(e, row) => customHistory.push(`/manage/registration-event/${row._id}/edit`)}
                                             columns={this.columns}
                                             rowTrackBy={(row, i) => row._id}
                                             emptyNotify={"Không có đợt đăng ký nào"}

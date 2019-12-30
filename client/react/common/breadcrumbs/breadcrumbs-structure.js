@@ -62,14 +62,23 @@ const structures = {
 
 const buildingRecursive = (structure ,pathname, result) => {
 
+
+
     if(structure.regex && structure.regex.test(pathname)){
+
         result.push(omit(structure, ["childrens"]));
+
         return result;
     }
+
+
+    console.log(structure.regex && structure.regex.test(pathname))
     else if(pathname === structure.url){
         result.push(omit(structure, ["childrens"]));
         return result;
     }
+
+
     if(structure.childrens){
         for(const str of structure.childrens){
 
@@ -87,6 +96,7 @@ const buildingRecursive = (structure ,pathname, result) => {
 
 const createBreadcrumbBuilder = (initStructure) => (pathname, result = []) => {
     let final = buildingRecursive(initStructure, pathname, result);
+
     return reverse(final);
 };
 

@@ -80,7 +80,7 @@ class RegistrationEventNewRoute extends KComponent {
             semester: data.semester.value,
             studentGroup: data.studentGroup.value,
         }).then(newRegistrationEvent => {
-           customHistory.push("/manage/registration-events");
+           customHistory.push(`/manage/registration-event/${newRegistrationEvent._id}/edit`);
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 

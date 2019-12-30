@@ -84,12 +84,10 @@ yup.addMethod(yup.date, "notReach", function (ref, message) {
       reference: ref.path
     },
     test: function (val) {
-      console.log(val)
-      console.log(this.resolve(ref))
 
       let valTime = new Date(val).getTime();
       let refTime = new Date(this.resolve(ref)).getTime();
-      console.log(refTime - valTime)
+
       return refTime - valTime > 0;
     }
   })

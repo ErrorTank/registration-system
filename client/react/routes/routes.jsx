@@ -20,6 +20,7 @@ const ResultRoute = lazy(delayLoad(() => import("./authen-routes/result-route/re
 const EduProgramRoute = lazy(delayLoad(() => import("./authen-routes/edu-program-route/edu-program-route")));
 const SchoolScheduleRoute = lazy(delayLoad(() => import("./authen-routes/school-schedule-route/school-schedule-route")));
 const NewRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/new/new")));
+const EditRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/edit/edit")));
 const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
 
 class App extends React.Component {
@@ -51,7 +52,7 @@ class App extends React.Component {
                                                     {...props}
                                                     exact
                                                     path={props.match.path}
-                                                    component={props => <AdminDashboard {...props} {...authenProps}/>}
+                                                    component={props => <AdminDashboard  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
@@ -59,7 +60,15 @@ class App extends React.Component {
                                                     exact
                                                     path={props.match.path + "/registration-event/new"}
                                                     component={props =>
-                                                        <NewRegistrationEventRoute {...props} {...authenProps}/>}
+                                                        <NewRegistrationEventRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/registration-event/:eventID/edit"}
+                                                    component={props =>
+                                                        <EditRegistrationEventRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
@@ -67,14 +76,14 @@ class App extends React.Component {
                                                     exact
                                                     path={props.match.path + "/registration-events"}
                                                     component={props =>
-                                                        <RegistrationEventsRoute {...props} {...authenProps}/>}
+                                                        <RegistrationEventsRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
                                                     path={props.match.path + "/import"}
-                                                    component={props => <ImportRoute {...props} {...authenProps}/>}
+                                                    component={props => <ImportRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
 
@@ -90,7 +99,7 @@ class App extends React.Component {
                                                     {...props}
                                                     exact
                                                     path={"/"}
-                                                    component={props => <Dashboard {...props} {...authenProps}/>}
+                                                    component={props => <Dashboard  {...authenProps} {...props}/>}
                                                     roles={["gv", "sv", "bm"]}
                                                 />
 
@@ -98,7 +107,7 @@ class App extends React.Component {
                                                     {...props}
                                                     exact
                                                     path={"/chuong-trinh-dao-tao"}
-                                                    component={props => <EduProgramRoute {...props} {...authenProps}/>}
+                                                    component={props => <EduProgramRoute  {...authenProps} {...props}/>}
                                                     roles={["sv", "gv"]}
                                                 />
                                                 <RoleFilterRoute
@@ -106,14 +115,14 @@ class App extends React.Component {
                                                     exact
                                                     path={"/tkb-toan-truong"}
                                                     component={props =>
-                                                        <SchoolScheduleRoute {...props} {...authenProps}/>}
+                                                        <SchoolScheduleRoute  {...authenProps} {...props}/>}
                                                     roles={["sv", "gv", "bm"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
                                                     path={"/bang-diem"}
-                                                    component={props => <ResultRoute {...props} {...authenProps}/>}
+                                                    component={props => <ResultRoute  {...authenProps} {...props}/>}
                                                     roles={["sv"]}
                                                 />
 
