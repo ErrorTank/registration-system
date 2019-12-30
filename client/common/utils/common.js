@@ -18,6 +18,9 @@ const parseYear = yearStr => {
       to
   }
 };
+const mergeYear = year => {
+    return `${year.from}-${year.to}`
+};
 const wait2 = delay => new Promise((resolve) => {
     setTimeout(() =>  resolve() ,delay)
 }) ;
@@ -76,7 +79,6 @@ let pronounce = (word, count, tail) => {
   return word + (count > 1 ? tail : "");
 };
 
-
 export {
     wait1,
     wait2,
@@ -87,5 +89,6 @@ export {
     formatMoney,
     getMoneyValueAsText,
     parseYear,
-    convertTextMoneyToNumber
+    convertTextMoneyToNumber,
+    mergeYear
 }

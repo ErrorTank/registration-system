@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import {userInfo} from "../states/common";
 import {userApi} from "../../api/common/user-api";
 import {specialityApi} from "../../api/common/speciality-api";
-import {specialitiesCache} from "./api-cache/common-cache";
+import {appConfigCache, specialitiesCache} from "./api-cache/common-cache";
 
 const cookiesEngine = {
   getItem: Cookies.get,
@@ -26,7 +26,7 @@ export const authenCache = (() => {
         if (!authen) {
           reject();
         } else {
-          userApi.getInfo().then(({user, wallet}) => {
+          userApi.getInfo().then(({user}) => {
 
             if (!user){
 
@@ -34,7 +34,7 @@ export const authenCache = (() => {
             }
 
             else {
-              return resolve(Promise.all([userInfo.setState(user), specialitiesCache.get()]));
+              return resolve(Promise.all([userInfo.setState(user), specialitiesCache.get(), appConfigCache.get()]));
 
             }
 

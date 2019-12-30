@@ -7,7 +7,7 @@ import {createSimpleForm} from "../../../../../common/form-validator/form-valida
 import {CommonInput} from "../../../../../common/common-input/common-input";
 import {Select} from "../../../../../common/select/select";
 import {years} from "../../../../../../const/years";
-import {semester} from "../../../../../../const/semester";
+import {semester as semesters, semester} from "../../../../../../const/semester";
 import {studentGroups} from "../../../../../../const/student-group";
 import classnames from "classnames"
 import {LoadingInline} from "../../../../../common/loading-inline/loading-inline";
@@ -92,7 +92,8 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(semester.find(sp => sp.value === Number(e.target.value)))
+                                        let value = e.target.value === "" ? "" : Number(e.target.value);
+                                        onChange(semesters.find(sp => sp.value === value))
                                     }}
                                 />
 
@@ -108,7 +109,8 @@ export class ScheduleForm extends KComponent {
                                     displayAs={(each) => each.label}
                                     getValue={each => each.value}
                                     onChange={e => {
-                                        onChange(studentGroups.find(sp => sp.value === Number(e.target.value)))
+                                        let value = e.target.value === "" ? "" : Number(e.target.value);
+                                        onChange(studentGroups.find(sp => sp.value === value));
                                     }}
                                 />
 

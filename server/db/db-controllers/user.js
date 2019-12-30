@@ -42,10 +42,17 @@ const regularLogin = ({username, password}) => {
                 expiresIn: "1d",
                 algorithm: "RS256"
             }), getUserEntity(data.role).findOne({user: ObjectId(data._id)})])
-                .then(([token, info]) => ({
-                    token,
-                    user: {...omit(data, ["password"]), info},
-                }))
+                .then(([token, info]) => {
+                    let user = {
+                        ...omit(data, ["password"]),
+                        info
+                    };
+                    
+                    return {
+                        token,
+                        user,
+                    }
+                })
                 .catch(err => Promise.reject(err))
         )
         .catch(err => {

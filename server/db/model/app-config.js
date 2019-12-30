@@ -12,6 +12,14 @@ const appConfigSchema = new Schema({
         enum: [0, 1, 2],
         required: true
     },
+    currentYear: {
+        from: {
+            type: Number
+        },
+        to: {
+            type: Number
+        }
+    },
     pricePerCredit: {
         type: [
             {

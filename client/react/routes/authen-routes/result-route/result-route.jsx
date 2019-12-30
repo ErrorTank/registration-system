@@ -20,7 +20,7 @@ export default class ResultRoute extends KComponent {
             speciality: null,
             specialities: []
         };
-        specialityApi.getStudentSpecs().then(specialities => this.setState({specialities, loading: false, speciality: specialities[0]}))
+        specialityApi.getStudentSpecs().then(specialities => this.setState({specialities, loading: false, speciality: specialities.find(each => each._id === userInfo.getState().info.speciality._id)}))
     };
 
     columns = [

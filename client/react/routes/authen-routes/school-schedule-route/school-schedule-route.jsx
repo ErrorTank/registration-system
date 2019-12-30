@@ -8,17 +8,23 @@ import {studentGroups} from "../../../../const/student-group";
 import {years} from "../../../../const/years";
 import {SearchInput} from "../../../common/search-input/search-input";
 import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
+import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
+import {userInfo} from "../../../../common/states/common";
+import isNil from "lodash/isNil"
+import {mergeYear} from "../../../../common/utils/common";
 
 export default class SchoolScheduleRoute extends React.Component{
     constructor(props){
         super(props);
+        const {currentYear, currentSemester, latestSchoolYear} = appConfigCache.syncGet();
 
+        let {studentGroup} = userInfo.getState();
         this.state={
             loading: false,
             keyword: "",
-            semester: semesters[0],
-            studentGroup: studentGroups[0],
-            year: years[0]
+            semester: semesters.find(each => each.value === currentSemester),
+            studentGroup: isNil(studentGroup) ? studentGroups[0] : studentGroups.find(each => each.value === currentSemester),
+            year: years.find(each => each.value === mergeYear(currentYear))
         };
 
 
@@ -64,6 +70,7 @@ export default class SchoolScheduleRoute extends React.Component{
     ];
 
     render() {
+        console.log(this.state)
         const api = (config) => schoolScheduleApi.getSchoolScheduleItems(config).then((data) => {
             this.setState({list: data});
             return {
@@ -119,8 +126,8 @@ export default class SchoolScheduleRoute extends React.Component{
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
-
-                                                        this.setState({semester: semesters.find(sp => sp.value === Number(e.target.value))})
+                                                        let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                        this.setState({semester: semesters.find(sp => sp.value === value)})
                                                     }}
                                                 />
 
@@ -133,7 +140,8 @@ export default class SchoolScheduleRoute extends React.Component{
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
-                                                        this.setState({studentGroup: studentGroups.find(sp => sp.value === Number(e.target.value))})
+                                                        let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                        this.setState({studentGroup: studentGroups.find(sp => sp.value === value)})
                                                     }}
                                                 />
 

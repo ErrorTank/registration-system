@@ -11,7 +11,7 @@ import {userApi} from "../../../../api/common/user-api";
 import {userInfo} from "../../../../common/states/common";
 import {authenCache} from "../../../../common/cache/authen-cache";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
-import {specialitiesCache} from "../../../../common/cache/api-cache/common-cache";
+import {appConfigCache, specialitiesCache} from "../../../../common/cache/api-cache/common-cache";
 import {GetLocation} from "../../../common/location-tracker";
 import {mapRoleToDefaultPath} from "../../route-types/role-filter-route";
 
@@ -53,7 +53,8 @@ class LoginForm extends KComponent {
             authenCache.setAuthen(token, {expires: 1});
             return Promise.all([
                 specialitiesCache.get(),
-                userInfo.setState({...user})
+                userInfo.setState({...user}),
+                appConfigCache.get()
             ]).then(() => customHistory.push(prevLocation ? prevLocation : mapRoleToDefaultPath[userInfo.getState().role]));
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
