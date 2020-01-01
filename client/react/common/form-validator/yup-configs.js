@@ -90,9 +90,10 @@ yup.addMethod(yup.date, "notReach", function (message) {
       // console.log(this.resolve(this.path))
       // console.log(this.path)
       // this.resolve(ref)
+      // console.log(item)
       let valTime = new Date(val).getTime();
       let refTime = new Date(item.to).getTime();
-
+      // console.log(refTime - valTime)
       return refTime - valTime > 0;
     }
   })

@@ -54,7 +54,7 @@ class RegistrationEventEditRoute extends React.Component {
             }else{
                 each.delay = each.delay.toString();
             }
-            each = omit(each, "id");
+            each = omit(each, ["id", "status"]);
             return each;
         });
         registrationEventApi.updateRegistrationEvent(this.props.match.params.eventID, {
@@ -62,8 +62,8 @@ class RegistrationEventEditRoute extends React.Component {
             year: parseYear(data.year.value),
             semester: data.semester.value,
             studentGroup: data.studentGroup.value,
-        }).then(() => {
-            this.setState({draft: {...form.getData()}, loading: false});
+        }).then((updatedData) => {
+            this.setState({draft: {...updatedData, childEvents: updatedData.childEvents.map(each => ({...each, id: uniqid()}))}, loading: false});
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 
@@ -105,6 +105,10 @@ class RegistrationEventEditRoute extends React.Component {
                                     serverError={this.state.error}
                                     renderActions={(form, childEventsError) => {
                                         let formData = {...form.getData()};
+                                        console.log(form.getInvalidPaths())
+                                        console.log(isEqual({...this.state.draft}, formData))
+                                        console.log(childEventsError)
+
                                         const canUpdate = !form.getInvalidPaths().length && !this.state.error && !this.state.loading && !isEqual({...this.state.draft}, formData) && !childEventsError;
                                         return (
                                             <>

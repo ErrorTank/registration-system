@@ -12,6 +12,7 @@ import uniqid from "uniqid";
 import {createSimpleForm} from "../../../common/form-validator/form-validator";
 import classnames from "classnames"
 import isEqual from "lodash/isEqual"
+import {Badge} from "../../../common/badge/badge";
 
 export class RegistrationEventForm extends KComponent {
     constructor(props) {
@@ -24,20 +25,23 @@ export class RegistrationEventForm extends KComponent {
             childEvents: yup.array().of(yup.object().shape({
                 delay: yup.number().min(0, "Thời gian delay phải lớn hơn 0 mili giây").typeError('Không được để trống'),
                 from: yup.date().notReach("Thời gian bắt đầu phải trước kết thúc"),
-                to: yup.date()
+                to: yup.date(),
+                id: yup.string().notRequired(),
+                _id: yup.string().notRequired(),
+                status: yup.object().notRequired()
             })),
 
         });
 
         this.getInitChildEvent = (lastElem) => {
-            let fromDate = new Date();
-            let toDate = new Date();
+            let fromDate = lastElem ? new Date(lastElem.to) : new Date();
+            fromDate.setDate(fromDate.getDate() + (lastElem ? 1 : 0));
+            let toDate = new Date(fromDate);
             fromDate.setSeconds(0);
             fromDate.setMilliseconds(0);
             toDate.setSeconds(0);
             toDate.setMilliseconds(0);
 
-            fromDate.setDate(fromDate.getDate() + (lastElem ? new Date(lastElem.to).getDate() : 0));
             toDate.setDate(fromDate.getDate() + 1);
 
             return {
@@ -79,7 +83,7 @@ export class RegistrationEventForm extends KComponent {
                     ...nextProps,
                     childEvents: JSON.parse(JSON.stringify([...nextProps.childEvents]))
                 });
-
+                this.form.validateData();
             }
         })
     }
@@ -102,6 +106,7 @@ export class RegistrationEventForm extends KComponent {
     addMoreEvent = () => {
         let events = this.form.getPathData("childEvents");
         let lastElem = {...events[events.length - 1]};
+        console.log(lastElem)
         this.form.updatePathData("childEvents", events.concat({...this.getInitChildEvent(lastElem)}));
 
     };
@@ -127,10 +132,26 @@ export class RegistrationEventForm extends KComponent {
         return false;
     };
 
+    getBadgeStyle = type => {
+        let matcher = [
+            {
+                style: "success",
+            },
+            {
+                style: "danger"
+            },
+            {
+                style: "warning"
+            }
+        ];
+        return matcher[type].style;
+    };
+
     render() {
         let childEvents = [...this.form.getPathData("childEvents")];
         let childEventsError = this.getChildEventsError(childEvents);
         console.log(this.form.getData())
+        console.log(this.props.initData)
         return (
             <>
                 <div style={{padding: "20px 20px 0 20px"}}>
@@ -206,13 +227,17 @@ export class RegistrationEventForm extends KComponent {
                             <div
                                 className={classnames("child-event", {error: childEventsError && childEventsError.includes(each.id)})}
                                 key={each.id}>
-                                {this.props.isEdit && (
+                                {(this.props.isEdit && each.status) && (
                                     <div className="child-status">
                                     <span className="label">
                                         Trạng thái:
                                     </span>
                                         <span className="value">
-                                            {}
+                                            <Badge
+                                                className={"common-badge"}
+                                                content={each.status.message}
+                                                style={this.getBadgeStyle(each.status.value)}
+                                            />
                                     </span>
                                     </div>
                                 )}
@@ -247,7 +272,12 @@ export class RegistrationEventForm extends KComponent {
                                                         <DateTimePicker
                                                             showTodayButton
                                                             value={others.value}
-                                                            onChange={onChange}
+                                                            onChange={(value) => {
+                                                                let newDate = new Date(value);
+                                                                value.setSeconds(0);
+                                                                value.setMilliseconds(0);
+                                                                onChange(newDate.toISOString())
+                                                            }}
                                                             format="dd/MM/yyyy HH:mm"
                                                             autoOk
                                                             ampm={false}
@@ -272,7 +302,12 @@ export class RegistrationEventForm extends KComponent {
                                                         <DateTimePicker
                                                             showTodayButton
                                                             value={others.value}
-                                                            onChange={onChange}
+                                                            onChange={(value) => {
+                                                                let newDate = new Date(value);
+                                                                value.setSeconds(0);
+                                                                value.setMilliseconds(0);
+                                                                onChange(newDate.toISOString())
+                                                            }}
                                                             format="dd/MM/yyyy HH:mm"
                                                             autoOk
                                                             ampm={false}

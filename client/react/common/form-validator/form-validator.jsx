@@ -115,6 +115,7 @@ export const createSimpleForm = (schema, _options) => {
     getErrorPath: (path) => touched[path] ? {...errors[path]} : null,
     getData: () => ({...state}),
     updatePathData: async (path, data) => {
+      // console.log(errors)
       updatePathData(path, data);
       await validatePath(path);
       eventManagement.emit("change", state);
