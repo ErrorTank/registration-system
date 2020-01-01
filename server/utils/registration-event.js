@@ -1,4 +1,4 @@
-const moment = required("moment");
+const moment = require("moment");
 moment.locale("vi");
 
 const isActive = (event, currentDate) => {
