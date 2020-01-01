@@ -62,7 +62,7 @@ export default class ResultRoute extends KComponent {
         }
         let passList = list.filter(each => each.grade >= 5 && !["PG121", "PG100"].includes(each.subject.subjectID));
 
-        return (list.reduce((total, cur) => total + ((cur.grade < 5 || ["PG121", "PG100"].includes(cur.subject.subjectID)) ? 0 : cur.grade),0) / passList.length).toFixed(1);
+        return (list.reduce((total, cur) => total + ((cur.grade < 5 || ["PG121", "PG100"].includes(cur.subject.subjectID)) ? 0 : cur.grade),0) / passList.length).toFixed(2);
     };
     calculatePendingCredits = (list) => {
         if(!list){

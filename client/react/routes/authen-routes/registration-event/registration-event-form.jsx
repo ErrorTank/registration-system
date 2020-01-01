@@ -10,8 +10,10 @@ import {KComponent} from "../../../common/k-component";
 import * as yup from "yup";
 import uniqid from "uniqid";
 import {createSimpleForm} from "../../../common/form-validator/form-validator";
+import classnames from "classnames"
+import isEqual from "lodash/isEqual"
 
-class RegistrationEventForm extends KComponent {
+export class RegistrationEventForm extends KComponent {
     constructor(props) {
         super(props);
 
@@ -27,10 +29,16 @@ class RegistrationEventForm extends KComponent {
 
         });
 
-        this.getInitChildEvent = () => {
+        this.getInitChildEvent = (lastElem) => {
             let fromDate = new Date();
             let toDate = new Date();
-            toDate.setDate(toDate.getDate() + 1);
+            fromDate.setSeconds(0);
+            fromDate.setMilliseconds(0);
+            toDate.setSeconds(0);
+            toDate.setMilliseconds(0);
+
+            fromDate.setDate(fromDate.getDate() + (lastElem ? new Date(lastElem.to).getDate() : 0));
+            toDate.setDate(fromDate.getDate() + 1);
 
             return {
                 id: uniqid(),
@@ -63,8 +71,28 @@ class RegistrationEventForm extends KComponent {
             this.props.onFormChange(state);
 
         }));
-        this.form.validateData();
+
+
+        this.watchProps("initData", (nextProps, currentProps) => {
+            if (nextProps && !isEqual(currentProps, nextProps)) {
+                this.form.updateData({
+                    ...nextProps,
+                    childEvents: JSON.parse(JSON.stringify([...nextProps.childEvents]))
+                });
+
+            }
+        })
     }
+
+    renderServerError = () => {
+        let {serverError} = this.props;
+        let {year, semester, studentGroup} = this.form.getData();
+        let errMatcher = {
+            "existed": `Đợt đăng ký học ${semester.label} ${studentGroup.label} năm học ${year.label} đã tồn tại`,
+        };
+        return errMatcher.hasOwnProperty(serverError) ? errMatcher[serverError] : "Đã có lỗi xảy ra"
+    };
+
 
     removeEvent = (eventID) => {
         let events = this.form.getPathData("childEvents");
@@ -73,176 +101,221 @@ class RegistrationEventForm extends KComponent {
 
     addMoreEvent = () => {
         let events = this.form.getPathData("childEvents");
-        events = [...events.concat({...this.getInitChildEvent()})];
-        this.form.updatePathData("childEvents", events);
+        let lastElem = {...events[events.length - 1]};
+        this.form.updatePathData("childEvents", events.concat({...this.getInitChildEvent(lastElem)}));
 
     };
 
+    getChildEventsError = (childEvents) => {
+        if (childEvents.length === 1) {
+            return false;
+        }
+        for (let i = 0; i < childEvents.length - 1; i++) {
+            for (let j = i + 1; j < childEvents.length; j++) {
+                let firstStart = new Date(childEvents[i].from).getTime();
+                let firstEnd = new Date(childEvents[i].to).getTime();
+                let lastStart = new Date(childEvents[j].from).getTime();
+                let lastEnd = new Date(childEvents[j].to).getTime();
+                // console.log(lastStart - firstEnd)
+                // console.log(firstStart - lastEnd)
+                if (!(lastStart - firstEnd > 0 || firstStart - lastEnd > 0)) {
+                    return [childEvents[i].id, childEvents[j].id];
+                }
+            }
+
+        }
+        return false;
+    };
+
     render() {
-        let form = this.form;
-        let childEvents = form.getPathData("childEvents");
+        let childEvents = [...this.form.getPathData("childEvents")];
+        let childEventsError = this.getChildEventsError(childEvents);
+        console.log(this.form.getData())
         return (
-            <div className="registration-event-form manage-form">
-                <div className="form-row row">
-                    <div className="form-item col-4">
-                        <p className="form-label">Năm học</p>
-                        {form.enhanceComponent("year", ({error, onChange, onEnter, ...others}) => (
-                            <Select
-                                error={error}
-                                options={years.filter(each => each.value !== "")}
-                                value={others.value}
-                                displayAs={(each) => each.label}
-                                getValue={each => each.value}
-                                onChange={e => {
-                                    onChange(years.find(sp => sp.value === e.target.value))
-                                }}
-                            />
-
-                        ), true)}
-                    </div>
-                    <div className="form-item col-4">
-                        <p className="form-label">Học kì</p>
-                        {form.enhanceComponent("semester", ({error, onChange, onEnter, ...others}) => (
-                            <Select
-                                error={error}
-                                options={semester.filter(each => each.value !== "")}
-                                value={others.value}
-                                displayAs={(each) => each.label}
-                                getValue={each => each.value}
-                                onChange={e => {
-                                    onChange(semester.find(sp => sp.value === Number(e.target.value)))
-                                }}
-                            />
-
-                        ), true)}
-
-                    </div>
-                    <div className="form-item col-4">
-                        <p className="form-label">Nhóm</p>
-                        {form.enhanceComponent("studentGroup", ({error, onChange, onEnter, ...others}) => (
-                            <Select
-                                error={error}
-                                options={studentGroups.filter(each => each.value !== "")}
-                                value={others.value}
-                                displayAs={(each) => each.label}
-                                getValue={each => each.value}
-                                onChange={e => {
-                                    onChange(studentGroups.find(sp => sp.value === Number(e.target.value)))
-                                }}
-                            />
-
-                        ), true)}
-                    </div>
+            <>
+                <div style={{padding: "20px 20px 0 20px"}}>
+                    {this.props.serverError && (
+                        <div className="server-error">
+                            {this.renderServerError()}
+                        </div>
+                    )}
                 </div>
-                <div className="child-summary">
-                    <span className="label">Tổng số đợt nhỏ:</span>
-                    <span className="value">{childEvents.length}</span>
-                    <p className="sub">*Số đợt nhỏ tối đa là 3</p>
-                </div>
-                {childEvents.map((each, i) => {
-                    return (
-                        <div className="child-event" key={each.id}>
-                            <div className="child-action">
-                                {(i === childEvents.length -1 && childEvents.length < 3) && (
-                                    <div className="action-btn plus"
-                                         onClick={this.addMoreEvent}
-                                    >
-                                        <i className="fal fa-plus"></i>
-                                    </div>
-                                )
+                <div className="registration-event-form manage-form">
+                    <div className="form-row row">
+                        <div className="form-item col-4">
+                            <p className="form-label">Năm học</p>
+                            {this.form.enhanceComponent("year", ({error, onChange, onEnter, ...others}) => (
+                                <Select
+                                    error={error}
+                                    options={years.filter(each => each.value !== "")}
+                                    value={others.value}
+                                    displayAs={(each) => each.label}
+                                    getValue={each => each.value}
+                                    onChange={e => {
+                                        onChange(years.find(sp => sp.value === e.target.value))
+                                    }}
+                                />
 
-                                }
+                            ), true)}
+                        </div>
+                        <div className="form-item col-4">
+                            <p className="form-label">Học kì</p>
+                            {this.form.enhanceComponent("semester", ({error, onChange, onEnter, ...others}) => (
+                                <Select
+                                    error={error}
+                                    options={semester.filter(each => each.value !== "")}
+                                    value={others.value}
+                                    displayAs={(each) => each.label}
+                                    getValue={each => each.value}
+                                    onChange={e => {
+                                        onChange(semester.find(sp => sp.value === Number(e.target.value)))
+                                    }}
+                                />
 
-                                {childEvents.length > 1 && (
-                                    <div className="action-btn minus"
-                                         onClick={() => this.removeEvent(each.id)}
-                                    >
-                                        <i className="fal fa-minus"></i>
+                            ), true)}
+
+                        </div>
+                        <div className="form-item col-4">
+                            <p className="form-label">Nhóm</p>
+                            {this.form.enhanceComponent("studentGroup", ({error, onChange, onEnter, ...others}) => (
+                                <Select
+                                    error={error}
+                                    options={studentGroups.filter(each => each.value !== "")}
+                                    value={others.value}
+                                    displayAs={(each) => each.label}
+                                    getValue={each => each.value}
+                                    onChange={e => {
+                                        onChange(studentGroups.find(sp => sp.value === Number(e.target.value)))
+                                    }}
+                                />
+
+                            ), true)}
+                        </div>
+                    </div>
+                    <div className="child-summary">
+                        <span className="label">Tổng số đợt nhỏ:</span>
+                        <span className="value">{childEvents.length}</span>
+                        {childEventsError && (
+                            <span className="error">Khoảng thời gian giữa các đợt nhỏ không được trùng nhau</span>
+                        )}
+
+                        <p className="sub">*Số đợt nhỏ tối đa là 3</p>
+                    </div>
+                    {childEvents.map((each, i) => {
+                        return (
+                            <div
+                                className={classnames("child-event", {error: childEventsError && childEventsError.includes(each.id)})}
+                                key={each.id}>
+                                {this.props.isEdit && (
+                                    <div className="child-status">
+                                    <span className="label">
+                                        Trạng thái:
+                                    </span>
+                                        <span className="value">
+                                            {}
+                                    </span>
                                     </div>
                                 )}
+                                <div className="child-action">
+                                    {(i === childEvents.length - 1 && childEvents.length < 3) && (
+                                        <div className="action-btn plus"
+                                             onClick={this.addMoreEvent}
+                                        >
+                                            <i className="fal fa-plus"></i>
+                                        </div>
+                                    )
 
+                                    }
+
+                                    {childEvents.length > 1 && (
+                                        <div className="action-btn minus"
+                                             onClick={() => this.removeEvent(each.id)}
+                                        >
+                                            <i className="fal fa-minus"></i>
+                                        </div>
+                                    )}
+
+                                </div>
+                                <div className="form-row row">
+                                    <div className="form-item col-4">
+                                        <p className="form-label">Thời gian bắt đầu</p>
+                                        {this.form.enhanceComponent(`childEvents[${i}].from`, ({error, onChange, onEnter, ...others}) => {
+
+                                            return (
+                                                <div className="date-picker-wrapper">
+                                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                                        <DateTimePicker
+                                                            showTodayButton
+                                                            value={others.value}
+                                                            onChange={onChange}
+                                                            format="dd/MM/yyyy HH:mm"
+                                                            autoOk
+                                                            ampm={false}
+
+                                                        />
+
+                                                    </MuiPickersUtilsProvider>
+                                                    {error && (
+                                                        <p className="form-error">{error.message}</p>
+                                                    )}
+                                                </div>
+                                            )
+                                        }, true)}
+                                    </div>
+                                    <div className="form-item col-4">
+                                        <p className="form-label">Thời gian kết thúc</p>
+                                        {this.form.enhanceComponent(`childEvents[${i}].to`, ({error, onChange, onEnter, ...others}) => {
+
+                                            return (
+                                                <div className="date-picker-wrapper">
+                                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                                        <DateTimePicker
+                                                            showTodayButton
+                                                            value={others.value}
+                                                            onChange={onChange}
+                                                            format="dd/MM/yyyy HH:mm"
+                                                            autoOk
+                                                            ampm={false}
+                                                        />
+
+                                                    </MuiPickersUtilsProvider>
+                                                    {error && (
+                                                        <p className="form-error">{error.message}</p>
+                                                    )}
+                                                </div>
+                                            )
+                                        }, true, [`childEvents[${i}].from`])}
+                                    </div>
+                                    <div className="form-item col-4">
+                                        {this.form.enhanceComponent(`childEvents[${i}].delay`, ({error, onChange, onEnter, ...others}) => (
+                                            <CommonInput
+                                                className="pt-0"
+                                                id={`delay-${each.id}`}
+                                                type={"number"}
+                                                error={error}
+                                                label={"Thời gian delay (Mili giây)"}
+
+                                                placeholder={"Nhập thời gian delay"}
+                                                onChange={e => {
+
+                                                    onChange(e.target.value ? Number(e.target.value) : 0);
+
+                                                }}
+                                                {...others}
+                                            />
+                                        ), true)}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="form-row row" >
-                                <div className="form-item col-4">
-                                    <p className="form-label">Thời gian bắt đầu</p>
-                                    {form.enhanceComponent(`childEvents[${i}].from`, ({error, onChange, onEnter, ...others}) => {
 
-                                        return (
-                                            <div className="date-picker-wrapper">
-                                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                                    <DateTimePicker
-                                                        showTodayButton
-                                                        value={others.value}
-                                                        onChange={onChange}
-                                                        format="dd/MM/yyyy HH:mm"
-                                                        autoOk
-                                                        ampm={false}
-
-                                                    />
-
-                                                </MuiPickersUtilsProvider>
-                                                {error && (
-                                                    <p className="form-error">{error.message}</p>
-                                                )}
-                                            </div>
-                                        )
-                                    }, true)}
-                                </div>
-                                <div className="form-item col-4">
-                                    <p className="form-label">Thời gian kết thúc</p>
-                                    {form.enhanceComponent(`childEvents[${i}].to`, ({error, onChange, onEnter, ...others}) => {
-
-                                        return (
-                                            <div className="date-picker-wrapper">
-                                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                                    <DateTimePicker
-                                                        showTodayButton
-                                                        value={others.value}
-                                                        onChange={onChange}
-                                                        format="dd/MM/yyyy HH:mm"
-                                                        autoOk
-                                                        ampm={false}
-                                                    />
-
-                                                </MuiPickersUtilsProvider>
-                                                {error && (
-                                                    <p className="form-error">{error.message}</p>
-                                                )}
-                                            </div>
-                                        )
-                                    }, true, ["from"])}
-                                </div>
-                                <div className="form-item col-4">
-                                    {form.enhanceComponent(`childEvents[${i}].delay`, ({error, onChange, onEnter, ...others}) => (
-                                        <CommonInput
-                                            className="pt-0"
-                                            id={"delay"}
-                                            type={"text"}
-                                            error={error}
-                                            label={"Thời gian delay (Mili giây)"}
-
-                                            placeholder={"Nhập thời gian delay"}
-                                            onChange={e => {
-
-                                                onChange(e);
-
-                                            }}
-                                            {...others}
-                                        />
-                                    ), true)}
-                                </div>
-                            </div>
-                        </div>
-
-                    )
-                })}
-                <div className="form-actions">
-                    {this.props.renderActions(form)}
+                        )
+                    })}
+                    <div className="form-actions">
+                        {this.props.renderActions(this.form, childEventsError)}
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 }
 
-
-export default RegistrationEventForm;

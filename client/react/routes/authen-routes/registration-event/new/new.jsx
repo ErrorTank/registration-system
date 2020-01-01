@@ -1,7 +1,7 @@
 import React from 'react';
 import {AuthenLayoutTitle} from "../../../../layout/authen-layout/authen-layout-title";
 import {PageTitle} from "../../../../common/page-title/page-title";
-import RegistrationEventForm from "../registration-event-form";
+import {RegistrationEventForm} from "../registration-event-form";
 import {customHistory} from "../../../routes";
 import omit from "lodash/omit"
 import {registrationEventApi} from "../../../../../api/common/registration-event";
@@ -20,23 +20,21 @@ class RegistrationEventNewRoute extends React.Component {
 
     };
 
-    renderServerError = () => {
-        let {error} = this.state;
-        let {year, semester, studentGroup} = this.form.getData();
-        let errMatcher = {
-            "existed": `Đợt đăng ký học ${semester.label} ${studentGroup.label} năm học ${year.label} đã tồn tại`,
-        };
-        return errMatcher.hasOwnProperty(error) ? errMatcher[error] : "Đã có lỗi xảy ra"
-    };
 
     handleCreateRegistrationEvent = (form) => {
         this.setState({loading: true});
         let data = form.getData();
-        if(!data.delay){
-            data = omit(data, "delay");
-        }else{
-            data.delay = data.delay.toString();
-        }
+        let childEvents = [...data.childEvents];
+        data.childEvents = childEvents.map(each => {
+            if(!each.delay){
+                each = omit(each, "delay");
+            }else{
+                each.delay = each.delay.toString();
+            }
+            each = omit(each, "id");
+            return each;
+        });
+
         registrationEventApi.create({...data,
             year: parseYear(data.year.value),
             semester: data.semester.value,
@@ -59,20 +57,14 @@ class RegistrationEventNewRoute extends React.Component {
                         <div className="common-route-wrapper">
 
                             <div className="route-body">
-                                <div style={{padding: "20px 20px 0 20px"}}>
-                                    {this.state.error && (
-                                        <div className="server-error">
-                                            {this.renderServerError()}
-                                        </div>
-                                    )}
-                                </div>
+
                                 <RegistrationEventForm
                                     onFormChange={(formData) => {
                                         this.state.error && this.setState({error: ""});
                                     }}
                                     serverError={this.state.error}
-                                    renderActions={(form) => {
-                                        const canCreate = !form.getInvalidPaths().length && !this.state.error && !this.state.loading;
+                                    renderActions={(form, childEventsError) => {
+                                        const canCreate = !form.getInvalidPaths().length && !this.state.error && !this.state.loading && !childEventsError;
                                         return (
                                             <>
                                                 <button className="btn btn-cancel"

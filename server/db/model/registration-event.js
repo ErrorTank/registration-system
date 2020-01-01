@@ -13,16 +13,23 @@ const registrationEventSchema = new Schema({
         type: Boolean,
         default: true
     },
-    from: {
-        type: Date,
-        required: true
-    },
-    delay: {
-        type: String,
-        default: "60000",
-    },
-    to: {
-        type: Date,
+    childEvents: {
+        type: [
+            {
+                from: {
+                    type: Date,
+                    required: true
+                },
+                delay: {
+                    type: String,
+                    default: "60000",
+                },
+                to: {
+                    type: Date,
+                    required: true
+                }
+            }
+        ],
         required: true
     },
     year: {

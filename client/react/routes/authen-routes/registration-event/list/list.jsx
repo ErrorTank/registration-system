@@ -41,11 +41,15 @@ export default class RegisterEventsRoute extends React.Component{
             cellDisplay: (s) => `${s.year.from}-${s.year.to}`,
 
         },{
+            label: "Số đợt nhỏ",
+            cellDisplay: (s) => `${s.childEventsCount}`,
+
+        },{
             label: "Trạng thái",
             cellDisplay: (s) => {
                 return <Badge
                     className={"common-badge"}
-                    content={s.isActive ? "Diễn ra" : "Kết thúc"}
+                    content={s.isActive ? "Diễn ra" : "Không diễn ra"}
                     style={s.isActive ?  "success" : "danger"}
                 />;
             }

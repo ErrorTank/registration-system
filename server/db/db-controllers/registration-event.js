@@ -55,15 +55,28 @@ const getAll = ({year, studentGroup, semester}) => {
     let action = pipeline.length ? RegistrationEvent.aggregate(pipeline) : RegistrationEvent.find({}).lean();
 
     return action.then(data => {
-        return data.map(each => ({...each, isActive: isActive(each)}));
+        return data.map(each => omit({...each, isActive: isActive(each), childEventsCount: each.childEvents.length}, ["childEvents"]));
     });
 };
 
 const getRegisterEventById = (rID) => {
-    return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean()
+    return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean().then(data => ({...data, isActive: isActive(data)}))
 };
 const updateRegisterEvent = (rID, data) => {
-    return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean();
+    return RegistrationEvent.findOne({
+        _id: {
+            $ne: ObjectId(rID)
+        },
+        studentGroup: Number(data.studentGroup),
+        semester: Number(data.semester),
+        "year.from": Number(data.year.from),
+        "year.to": Number(data.year.to),
+    }).then((re) => {
+        if(re){
+            return Promise.reject(new ApplicationError("existed"));
+        }
+        return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean();
+    })
 };
 const deleteRegisterEvent = (rID) => {
     return RegistrationEvent.findOneAndDelete({_id: ObjectId(rID)})

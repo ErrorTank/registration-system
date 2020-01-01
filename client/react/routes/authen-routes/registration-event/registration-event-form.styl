@@ -17,6 +17,11 @@
   padding 20px
   .child-summary{
     margin-bottom 20px
+    .error{
+      margin-left 10px
+      font-size 1.4rem
+      color danger
+    }
     .sub{
       font-size 1.3rem
       margin-top 6px
@@ -35,7 +40,19 @@
     }
   }
   .child-event{
+    margin-bottom 20px
+    flex-wrap wrap
+    border-left 2px solid transparent
+    &.error{
+      border-left-color danger
+    }
+    .form-row{
+      margin 0 !important
+    }
     display flex
+    .child-status{
+      flex-grow 1
+    }
     .child-action{
       flex 0 0 80px
       .action-btn{
