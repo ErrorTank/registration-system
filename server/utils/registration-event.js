@@ -1,4 +1,4 @@
-import moment from "moment"
+const moment = required("moment");
 moment.locale("vi");
 
 const isActive = (event, currentDate) => {
