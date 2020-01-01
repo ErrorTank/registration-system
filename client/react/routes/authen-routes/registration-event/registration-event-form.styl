@@ -15,9 +15,65 @@
     max-width 350px
   }
   padding 20px
+  .child-summary{
+    margin-bottom 20px
+    .sub{
+      font-size 1.3rem
+      margin-top 6px
+      color lightgrey
+    }
+    .label{
+      color inverse
+      font-weight 500
+      font-size 1.6rem
+    }
+    .value{
+      color info
+      font-weight 500
+      font-size 1.7rem
+      margin-left 8px
+    }
+  }
+  .child-event{
+    display flex
+    .child-action{
+      flex 0 0 80px
+      .action-btn{
+        width 30px
+        height 30px
+        text-align center
+        margin auto
+        line-height 37px
+        cursor pointer
+        border-radius 3px
+        i{
+          font-size 1.8rem
+          color white
+        }
+        &.plus{
+          background-color success
+          &:hover{
+            background-color darken(success, 10%)
+          }
+        }
+        &.minus{
+          margin-top 6px
+          background-color danger
+          &:hover{
+            background-color darken(danger, 10%)
+          }
+        }
+      }
+    }
+    .form-row{
+      flex 0 0 calc(100% - 80px)
+    }
+  }
   .form-row{
     margin-bottom 20px
     justify-content space-between
+
+
     .form-item{
       .common-select{
         max-width 350px
@@ -48,4 +104,10 @@
     }
   }
 
+  .form-actions{
+    text-align right
+    button{
+      margin-left 10px
+    }
+  }
 }
