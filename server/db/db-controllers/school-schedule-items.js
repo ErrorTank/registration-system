@@ -171,12 +171,13 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
 };
 
 const getInstructorSchedule = (instructorID, {semester, year}) => {
+    let [from, to] = year.split("-");
     return SchoolScheduleItems.aggregate([
         {$match: {
                 instructor: ObjectId(instructorID),
-                semester,
-                "year.from": year.from,
-                "year.to": year.to
+                semester: Number(semester),
+                "year.from": Number(from),
+                "year.to": Number(to)
             }
         },
         {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
@@ -208,7 +209,7 @@ const getInstructorSchedule = (instructorID, {semester, year}) => {
             }
         },
     ]).then(data => {
-        return data.length ? data[0] : null;
+        return data;
     });
 };
 

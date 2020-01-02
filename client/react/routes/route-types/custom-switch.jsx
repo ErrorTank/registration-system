@@ -1,5 +1,5 @@
 import React from "react";
-import Switch from "react-router-dom/Switch"
+import {Switch} from "react-router-dom"
 import {Redirect} from "react-router-dom";
 
 export const CustomSwitch = (props) => (
