@@ -27,7 +27,7 @@ export class AuthenLayout extends React.Component {
                 <div className="main-content">
 
                     <Breadcrumbs
-                        type={mapRoleToDefaultPath[userInfo.getState().role]}
+
                     >
                         {this.props.children()}
 

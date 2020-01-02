@@ -5,6 +5,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 import FormatListNumberedRtlIcon from '@material-ui/icons/FormatListNumberedRtl';
 import CreateIcon from '@material-ui/icons/Create';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 export const navItems = [
     {
@@ -13,7 +14,7 @@ export const navItems = [
         icon: <HomeIcon
             fontSize={"inherit"}
         />,
-        roles: ["bm", "sv", "gv"]
+        roles: ["sv"]
     }, {
         label: "Trang chủ quản lý",
         url: "/manage",
@@ -21,6 +22,20 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["admin", "pdt"]
+    },{
+        label: "Trang chủ giảng viên",
+        url: "/giao-vien",
+        icon: <HomeIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["gv"]
+    },{
+        label: "Lịch giảng dạy",
+        url: "/giao-vien/lich-giang-day",
+        icon: <AccessTimeIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["gv"]
     },{
         label: "Import dữ liệu",
         url: "/manage/import",

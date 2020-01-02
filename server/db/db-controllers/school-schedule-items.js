@@ -170,9 +170,51 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
         })
 };
 
+const getInstructorSchedule = (instructorID, {semester, year}) => {
+    return SchoolScheduleItems.aggregate([
+        {$match: {
+                instructor: ObjectId(instructorID),
+                semester,
+                "year.from": year.from,
+                "year.to": year.to
+            }
+        },
+        {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
+        {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
+        {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+        {$lookup: {from: 'classrooms', localField: 'classRoom', foreignField: '_id', as: "classRoom"}},
+        {
+            $addFields: {
+                'from': {
+                    $arrayElemAt: ["$from", 0]
+                },
+                'to': {
+                    $arrayElemAt: ["$to", 0]
+                },
+                'class': {
+                    $arrayElemAt: ["$class", 0]
+                },
+                'classRoom': {
+                    $arrayElemAt: ["$classRoom", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'subjects', localField: 'class.subject', foreignField: '_id', as: "class.subject"}},
+        {
+            $addFields: {
+                'class.subject': {
+                    $arrayElemAt: ["$class.subject", 0]
+                }
+            }
+        },
+    ]).then(data => {
+        return data.length ? data[0] : null;
+    });
+};
 
 module.exports = {
     getSchoolScheduleItems,
-    importData
+    importData,
+    getInstructorSchedule
 
 }

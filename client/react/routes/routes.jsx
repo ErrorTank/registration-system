@@ -22,6 +22,8 @@ const SchoolScheduleRoute = lazy(delayLoad(() => import("./authen-routes/school-
 const NewRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/new/new")));
 const EditRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/edit/edit")));
 const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
+const InsScheduleRoute = lazy(delayLoad(() => import("./authen-routes/ins-schedule-route/ins-schedule-route")));
+const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/ins-dashboard")));
 
 class App extends React.Component {
     constructor(props) {
@@ -92,6 +94,27 @@ class App extends React.Component {
                                         )}
                                     />
                                     <Route
+                                        path={"/giao-vien"}
+                                        render={props => (
+                                            <CustomSwitch>
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path}
+                                                    component={props => <InsDashboard  {...authenProps} {...props}/>}
+                                                    roles={["gv"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/lich-giang-day"}
+                                                    component={props => <InsScheduleRoute  {...authenProps} {...props}/>}
+                                                    roles={["gv"]}
+                                                />
+                                            </CustomSwitch>
+                                        )}
+                                    />
+                                    <Route
                                         path={"/"}
                                         render={props => (
                                             <CustomSwitch>
@@ -100,7 +123,7 @@ class App extends React.Component {
                                                     exact
                                                     path={"/"}
                                                     component={props => <Dashboard  {...authenProps} {...props}/>}
-                                                    roles={["gv", "sv", "bm"]}
+                                                    roles={["sv"]}
                                                 />
 
                                                 <RoleFilterRoute

@@ -14,15 +14,15 @@ const {getPrivateKey, getPublicKey} = require("../../authorization/keys/keys");
 const getUserEntity = role => {
     return ({
         "admin": {
-            findOne: filter => CommonUserInfo.findOne(filter)
+            findOne: filter => CommonUserInfo.findOne(filter).lean()
         }, "pdt": {
-            findOne: filter => CommonUserInfo.findOne(filter)
+            findOne: filter => CommonUserInfo.findOne(filter).lean()
         }, "bm": {
-            findOne: filter => DptInsInfo.findOne(filter)
+            findOne: filter => DptInsInfo.findOne(filter).populate("division").lean()
         }, "gv": {
-            findOne: filter => DptInsInfo.findOne(filter)
+            findOne: filter => DptInsInfo.findOne(filter).populate("division").lean()
         }, "sv": {
-            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName department")
+            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName department").lean()
         }
     })[role]
 };
