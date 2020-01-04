@@ -30,8 +30,10 @@ const getAll = ({year, studentGroup, semester}) => {
         let [from, to] = year.split("-");
         pipeline.push({
             $match: {
-                "year.from": Number(from),
-                "year.to": Number(to)
+                $and: [
+                    {"year.from": Number(from)},
+                    {"year.to": Number(to)}
+                ]
             }
         });
     }
@@ -88,7 +90,7 @@ const updateRegisterEvent = (rID, data) => {
         if (re) {
             return Promise.reject(new ApplicationError("existed"));
         }
-        return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data =>{
+        return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data => {
             let currentDate = new Date().getTime();
             return {
                 ...data, childEvents: data.childEvents.map(each => ({
@@ -103,10 +105,46 @@ const deleteRegisterEvent = (rID) => {
     return RegistrationEvent.findOneAndDelete({_id: ObjectId(rID)})
 };
 
+const getActiveRegistrationEvent = () => {
+    let currentDate = new Date();
+    currentDate.setMilliseconds(0);
+    currentDate.setSeconds(0);
+
+    return RegistrationEvent.aggregate([
+        {
+            $addFields: {
+                activeChildEvent: {
+                    $filter: {
+                        input: "$childEvents",
+                        as: "child",
+                        cond: {
+                            $and: [
+                                {$gt: ["$$child.to", currentDate]},
+                                {$lt: ["$$child.from", currentDate]},
+                                {active: true}
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $addFields: {
+                activeChildEvent: {
+                    $arrayElemAt: ["$activeChildEvent", 0]
+                }
+            }
+        }
+    ]).then(data => {
+        return data.filter(each => each.activeChildEvent).map(each => ({...each, difference: new Date(each.activeChildEvent.to).getTime() - currentDate.getTime()}));
+    })
+};
+
 module.exports = {
     createRegistrationEvent,
     getAll,
     getRegisterEventById,
     updateRegisterEvent,
-    deleteRegisterEvent
+    deleteRegisterEvent,
+    getActiveRegistrationEvent
 };

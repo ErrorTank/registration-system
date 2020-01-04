@@ -24,6 +24,7 @@ const EditRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/
 const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
 const InsScheduleRoute = lazy(delayLoad(() => import("./authen-routes/ins-schedule-route/ins-schedule-route")));
 const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/ins-dashboard")));
+const RegistrationRoute = lazy(delayLoad(() => import("./authen-routes/registration-route/registration-route")));
 
 class App extends React.Component {
     constructor(props) {
@@ -148,7 +149,13 @@ class App extends React.Component {
                                                     component={props => <ResultRoute  {...authenProps} {...props}/>}
                                                     roles={["sv"]}
                                                 />
-
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={"/dang-ky-hoc"}
+                                                    component={props => <RegistrationRoute  {...authenProps} {...props}/>}
+                                                    roles={["sv"]}
+                                                />
                                             </CustomSwitch>
                                         )}
                                     />

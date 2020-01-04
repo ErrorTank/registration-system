@@ -6,6 +6,7 @@ import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 import FormatListNumberedRtlIcon from '@material-ui/icons/FormatListNumberedRtl';
 import CreateIcon from '@material-ui/icons/Create';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 
 export const navItems = [
     {
@@ -45,6 +46,13 @@ export const navItems = [
         label: "Bảng điểm",
         url: "/bang-diem",
         icon: <AssignmentIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["sv"]
+    }, {
+        label: "Đăng ký học",
+        url: "/dang-ky-hoc",
+        icon: <DoneAllIcon
             fontSize={"inherit"}
         />,
         roles: ["sv"]

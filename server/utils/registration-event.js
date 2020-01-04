@@ -1,6 +1,7 @@
 const moment = require("moment");
 moment.locale("vi");
 
+
 const isActive = (event, currentDate) => {
     let childEvents = event.childEvents;
 
@@ -42,7 +43,13 @@ const getEventStatus = (event, currentDate) => {
 
 };
 
+const startRegistrationEventCountdown = () => {
+
+}
+
+
 module.exports = {
     isActive,
-    getEventStatus
+    getEventStatus,
+    startRegistrationEventCountdown
 };

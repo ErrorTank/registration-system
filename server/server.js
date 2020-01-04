@@ -3,6 +3,7 @@ require("dotenv").config({path: process.env.NODE_ENV === "production" ? "./env/p
 const http= require("http");
 const fs = require("fs");
 const path = require("path");
+const serviceManager = require("./config/services");
 const createExpressServer = require("./config/express");
 const app = createExpressServer({useCors: true});
 const {initDatabase} = require("./config/db");
@@ -10,7 +11,14 @@ const createRoutes = require("./config/routes");
 const createErrorHandlersMiddleware = require("./utils/error/error-handlers");
 
 
-initDatabase().then(db => {
+initDatabase()
+    .then((db) => {
+        serviceManager.init();
+        return {
+            db
+        }
+    })
+    .then(({db}) => {
     let server = http.createServer(app);
     app.use("/", createRoutes(db));
     app.use(createErrorHandlersMiddleware);
