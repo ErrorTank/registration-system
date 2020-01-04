@@ -2,7 +2,7 @@ const registrationCountdownService = require("./common/registration-countdown-se
 
 
 const services = [
-    registrationCountdownService.getConfig(),
+    // registrationCountdownService.getConfig(),
 
 ];
 

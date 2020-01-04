@@ -81,7 +81,8 @@ export class RegistrationEventForm extends KComponent {
             if (nextProps && !isEqual(currentProps, nextProps)) {
                 this.form.updateData({
                     ...nextProps,
-                    childEvents: JSON.parse(JSON.stringify([...nextProps.childEvents]))
+                    childEvents: JSON.parse(JSON.stringify([...nextProps.childEvents])),
+
                 });
                 this.form.validateData();
             }

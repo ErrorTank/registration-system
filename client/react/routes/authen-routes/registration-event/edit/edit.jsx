@@ -49,9 +49,9 @@ class RegistrationEventEditRoute extends React.Component {
         let data = {...form.getData()};
         let childEvents = [...data.childEvents];
         data.childEvents = childEvents.map(each => {
-            if(!each.delay){
+            if (!each.delay) {
                 each = omit(each, "delay");
-            }else{
+            } else {
                 each.delay = each.delay.toString();
             }
             each = omit(each, ["id", "status"]);
@@ -63,7 +63,15 @@ class RegistrationEventEditRoute extends React.Component {
             semester: data.semester.value,
             studentGroup: data.studentGroup.value,
         }).then((updatedData) => {
-            this.setState({draft: {...updatedData, childEvents: updatedData.childEvents.map(each => ({...each, id: uniqid()}))}, loading: false});
+            this.setState({
+                draft: {
+                    ...updatedData,
+                    childEvents: updatedData.childEvents.map(each => ({...each, id: uniqid()})),
+                    year: years.find(each => each.value === mergeYear(updatedData.year)),
+                    semester: semester.find(each => each.value === updatedData.semester),
+                    studentGroup: studentGroups.find(each => each.value === updatedData.studentGroup),
+                }, loading: false
+            });
         }).catch(err => this.setState({loading: false, error: err.message}));
     };
 
