@@ -214,9 +214,20 @@ const getInstructorSchedule = (instructorID, {semester, year}) => {
     });
 };
 
+const getShiftsOverview = () => {
+    return Shift.aggregate([
+        {$match: {
+                name: {
+                    $lte: 10
+                }
+            }
+        },{$sort: {name: 1}},
+    ])
+};
+
 module.exports = {
     getSchoolScheduleItems,
     importData,
-    getInstructorSchedule
-
-}
+    getInstructorSchedule,
+    getShiftsOverview,
+};

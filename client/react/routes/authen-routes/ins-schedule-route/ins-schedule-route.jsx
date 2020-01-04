@@ -106,6 +106,7 @@ export default class InsScheduleRoute extends React.Component {
                                     getDayOfWeek={item => item.dayOfWeek}
                                     getShiftStart={item => item.from.name}
                                     getShiftEnd={item => item.to.name}
+                                    showSuggestion
                                 />
                             </div>
 

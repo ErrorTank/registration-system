@@ -1,6 +1,7 @@
 import React from "react";
 import {shifts, daysOfWeek} from "../../../../const/schedule";
 import classnames from "classnames";
+import {ShiftOverview} from "../../shift-overview/shift-overview";
 
 
 export class ScheduleBoard extends React.Component {
@@ -25,7 +26,7 @@ export class ScheduleBoard extends React.Component {
     };
 
     render() {
-        let {displayItem, onClickItem, getShiftStart, getShiftEnd, list} = this.props;
+        let {displayItem, onClickItem, getShiftStart, getShiftEnd, list, showSuggestion} = this.props;
         let {curDay, curShiftStart, curShiftEnd} = this.state;
         return (
             <div className="schedule-board">
@@ -87,6 +88,9 @@ export class ScheduleBoard extends React.Component {
                         )
                     })}
                 </div>
+                {showSuggestion && (
+                    <ShiftOverview/>
+                )}
             </div>
         );
     }
