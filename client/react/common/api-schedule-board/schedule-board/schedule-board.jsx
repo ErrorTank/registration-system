@@ -38,7 +38,7 @@ export class ScheduleBoard extends React.Component {
                                     <p>Ca</p>
                                 </div>
                                 <div className="top-cell-alias">
-                                    <p>Thứ</p>
+                                    <p>Ngày</p>
                                 </div>
                             </div>
                         </div>

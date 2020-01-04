@@ -97,6 +97,7 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
                 $or : [
                     {"class.subject.name": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
                     {"class.subject.subjectID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
+                    {"instructor.user.identityID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
                 ]
             }
 

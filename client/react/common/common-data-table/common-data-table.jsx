@@ -134,7 +134,7 @@ export class CommonDataTable extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {isEmpty(list) ? (
+                        {!loading && (isEmpty(list) ? (
                             <tr>
                                 <td className="no-data" colSpan={columns.length}>{emptyNotify}</td>
                             </tr>
@@ -153,7 +153,7 @@ export class CommonDataTable extends React.Component {
                                     ) : null;
                                 })}
                             </tr>
-                        ))}
+                        )))}
                         </tbody>
                     </table>
                 )}

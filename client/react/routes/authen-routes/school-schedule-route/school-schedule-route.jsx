@@ -100,7 +100,7 @@ export default class SchoolScheduleRoute extends React.Component{
                                         <div className="table-actions">
                                             <div className="spec-select search-schedules">
                                                 <SearchInput
-                                                    placeholder={`Tìm theo tên hoặc mã môn`}
+                                                    placeholder={`Tìm theo tên môn, mã môn hoặc mã GV`}
                                                     onSearch={(keyword) => this.setState({keyword})}
                                                     value={keyword}
                                                 />
