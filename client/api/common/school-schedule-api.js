@@ -32,5 +32,8 @@ export const schoolScheduleApi = {
             semester: semester.value === "" ? null : semester.value,
         };
         return authenApi.get(`/school-schedule/instructor-schedule/${info.info._id}${urlUtils.buildParams(params)}`)
+    },
+    getShiftsOverview(){
+        return authenApi.get(`/shift/overview`)
     }
 };
