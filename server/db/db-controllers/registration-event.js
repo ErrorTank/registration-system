@@ -70,10 +70,13 @@ const getRegisterEventById = (rID) => {
     return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean().then(data => {
         let currentDate = new Date().getTime();
         return {
-            ...data, childEvents: data.childEvents.map(each => ({
+            ...data,
+            childEvents: data.childEvents.map(each => ({
                 ...each,
-                status: getEventStatus(each, currentDate)
-            }))
+                status: getEventStatus(each, currentDate),
+
+            })),
+            isActive: isActive(data, currentDate),
         }
     })
 };

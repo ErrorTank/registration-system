@@ -12,6 +12,7 @@ import {mergeYear, parseYear} from "../../../../../common/utils/common";
 import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
 import isEqual from "lodash/isEqual";
 import uniqid from "uniqid";
+import {appModal} from "../../../../common/modal/modals";
 
 class RegistrationEventEditRoute extends React.Component {
     constructor(props) {
@@ -57,12 +58,22 @@ class RegistrationEventEditRoute extends React.Component {
             each = omit(each, ["id", "status"]);
             return each;
         });
-        registrationEventApi.updateRegistrationEvent(this.props.match.params.eventID, {
+        if(this.state.draft.isActive){
+            return appModal.alert({
+                text: "Bạn không thể sửa đổi Đợt đăng ký đang diễn ra",
+                title: "Thông báo",
+                btnText: "Đồng ý"
+            }).then(() => {
+                this.setState({loading: false});
+            });
+        }
+        return registrationEventApi.updateRegistrationEvent(this.props.match.params.eventID, {
             ...data,
             year: parseYear(data.year.value),
             semester: data.semester.value,
             studentGroup: data.studentGroup.value,
         }).then((updatedData) => {
+
             this.setState({
                 draft: {
                     ...updatedData,
@@ -76,6 +87,13 @@ class RegistrationEventEditRoute extends React.Component {
     };
 
     handleDelete = () => {
+        if(this.state.draft.isActive){
+            return appModal.alert({
+                text: "Bạn không thể xóa Đợt đăng ký đang diễn ra",
+                title: "Thông báo",
+                btnText: "Đồng ý"
+            })
+        }
         return registrationEventApi.deleteRegistrationEvent(this.props.match.params.eventID).then(() => {
             customHistory.push("/manage/registration-events");
         })
@@ -113,9 +131,9 @@ class RegistrationEventEditRoute extends React.Component {
                                     serverError={this.state.error}
                                     renderActions={(form, childEventsError) => {
                                         let formData = {...form.getData()};
-                                        console.log(form.getInvalidPaths())
-                                        console.log(isEqual({...this.state.draft}, formData))
-                                        console.log(childEventsError)
+                                        // console.log(form.getInvalidPaths())
+                                        // console.log(isEqual({...this.state.draft}, formData))
+                                        // console.log(childEventsError)
 
                                         const canUpdate = !form.getInvalidPaths().length && !this.state.error && !this.state.loading && !isEqual({...this.state.draft}, formData) && !childEventsError;
                                         return (

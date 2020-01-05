@@ -107,7 +107,6 @@ export class RegistrationEventForm extends KComponent {
     addMoreEvent = () => {
         let events = this.form.getPathData("childEvents");
         let lastElem = {...events[events.length - 1]};
-        console.log(lastElem)
         this.form.updatePathData("childEvents", events.concat({...this.getInitChildEvent(lastElem)}));
 
     };
@@ -151,8 +150,7 @@ export class RegistrationEventForm extends KComponent {
     render() {
         let childEvents = [...this.form.getPathData("childEvents")];
         let childEventsError = this.getChildEventsError(childEvents);
-        console.log(this.form.getData())
-        console.log(this.props.initData)
+
         return (
             <>
                 <div style={{padding: "20px 20px 0 20px"}}>
