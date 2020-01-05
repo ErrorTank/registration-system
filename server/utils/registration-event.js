@@ -2,9 +2,11 @@ const moment = require("moment");
 moment.locale("vi");
 
 
-const isActive = (event, currentDate) => {
+const isActive = (event, currentDate, {currentSemester, currentYear}) => {
     let childEvents = event.childEvents;
-
+    if(event.semester !== currentSemester || event.year.from !== currentYear.from || event.year.to !== currentYear.to){
+        return false;
+    }
 
     // console.log("current " + moment(currentDate).format("DD/MM/YYYY HH:mm"))
     for(let ev of childEvents){

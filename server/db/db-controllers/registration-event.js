@@ -1,5 +1,6 @@
 const appDb = require("../../config/db").getDbs().appDb;
 const RegistrationEvent = require("../model/registration-event")(appDb);
+const AppConfig = require("../model/app-config")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
@@ -56,54 +57,60 @@ const getAll = ({year, studentGroup, semester}) => {
 
     let action = pipeline.length ? RegistrationEvent.aggregate(pipeline) : RegistrationEvent.find({}).lean();
 
-    return action.then(data => {
-        let currentDate = new Date().getTime();
-        return data.map(each => omit({
-            ...each,
-            isActive: isActive(each, currentDate),
-            childEventsCount: each.childEvents.length
-        }, ["childEvents"]));
-    });
+    return AppConfig.find({}).lean().then((config) => {
+        return action.then(data => {
+            let currentDate = new Date().getTime();
+            return data.map(each => omit({
+                ...each,
+                isActive: isActive(each, currentDate, config[0]),
+                childEventsCount: each.childEvents.length
+            }, ["childEvents"]));
+        });
+    })
 };
 
 const getRegisterEventById = (rID) => {
-    return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean().then(data => {
-        let currentDate = new Date().getTime();
-        return {
-            ...data,
-            childEvents: data.childEvents.map(each => ({
-                ...each,
-                status: getEventStatus(each, currentDate),
-
-            })),
-            isActive: isActive(data, currentDate),
-        }
-    })
-};
-const updateRegisterEvent = (rID, data) => {
-    return RegistrationEvent.findOne({
-        _id: {
-            $ne: ObjectId(rID)
-        },
-        studentGroup: Number(data.studentGroup),
-        semester: Number(data.semester),
-        "year.from": Number(data.year.from),
-        "year.to": Number(data.year.to),
-    }).then((re) => {
-        if (re) {
-            return Promise.reject(new ApplicationError("existed"));
-        }
-        return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data => {
+    return AppConfig.find({}).then(config => {
+        return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean().then(data => {
             let currentDate = new Date().getTime();
             return {
                 ...data,
-                isActive: isActive(data, currentDate),
                 childEvents: data.childEvents.map(each => ({
                     ...each,
-                    status: getEventStatus(each, currentDate)
-                }))
+                    status: getEventStatus(each, currentDate),
+
+                })),
+                isActive: isActive(data, currentDate, config[0]),
             }
-        });
+        })
+    })
+};
+const updateRegisterEvent = (rID, data) => {
+    return AppConfig.find({}).lean().then(config => {
+        return RegistrationEvent.findOne({
+            _id: {
+                $ne: ObjectId(rID)
+            },
+            studentGroup: Number(data.studentGroup),
+            semester: Number(data.semester),
+            "year.from": Number(data.year.from),
+            "year.to": Number(data.year.to),
+        }).then((re) => {
+            if (re) {
+                return Promise.reject(new ApplicationError("existed"));
+            }
+            return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data => {
+                let currentDate = new Date().getTime();
+                return {
+                    ...data,
+                    isActive: isActive(data, currentDate, config[0]),
+                    childEvents: data.childEvents.map(each => ({
+                        ...each,
+                        status: getEventStatus(each, currentDate)
+                    }))
+                }
+            });
+        })
     })
 };
 const deleteRegisterEvent = (rID) => {
@@ -115,33 +122,48 @@ const getActiveRegistrationEvent = () => {
     currentDate.setMilliseconds(0);
     currentDate.setSeconds(0);
 
-    return RegistrationEvent.aggregate([
-        {
-            $addFields: {
-                activeChildEvent: {
-                    $filter: {
-                        input: "$childEvents",
-                        as: "child",
-                        cond: {
-                            $and: [
-                                {$gt: ["$$child.to", currentDate]},
-                                {$lt: ["$$child.from", currentDate]},
-                                {active: true}
-                            ]
+    return AppConfig.find({}).lean().then((configs) => {
+        let config = configs[0];
+        let {currentSemester, currentYear} = config;
+        return RegistrationEvent.aggregate([
+            {
+                $match: {
+                    $and: [
+                        {"year.from": Number(currentYear.from)},
+                        {"year.to": Number(currentYear.to)},
+                        {semester: Number(currentSemester)}
+                    ],
+
+                }
+            },
+            {
+                $addFields: {
+                    activeChildEvent: {
+                        $filter: {
+                            input: "$childEvents",
+                            as: "child",
+                            cond: {
+                                $and: [
+                                    {$gt: ["$$child.to", currentDate]},
+                                    {$lt: ["$$child.from", currentDate]},
+                                    {active: true}
+                                ]
+                            }
                         }
                     }
                 }
-            }
-        },
-        {
-            $addFields: {
-                activeChildEvent: {
-                    $arrayElemAt: ["$activeChildEvent", 0]
+            },
+            {
+                $addFields: {
+                    activeChildEvent: {
+                        $arrayElemAt: ["$activeChildEvent", 0]
+                    }
                 }
             }
-        }
-    ]).then(data => {
-        return data.filter(each => each.activeChildEvent).map(each => ({...each, difference: new Date(each.activeChildEvent.to).getTime() - currentDate.getTime()}));
+        ]).then(data => {
+            console.log(data)
+            return data.filter(each => each.activeChildEvent).map(each => ({...each, difference: new Date(each.activeChildEvent.to).getTime() - currentDate.getTime()}));
+        })
     })
 };
 
