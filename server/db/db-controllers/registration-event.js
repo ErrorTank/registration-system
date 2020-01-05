@@ -96,7 +96,9 @@ const updateRegisterEvent = (rID, data) => {
         return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data => {
             let currentDate = new Date().getTime();
             return {
-                ...data, childEvents: data.childEvents.map(each => ({
+                ...data,
+                isActive: isActive(data, currentDate),
+                childEvents: data.childEvents.map(each => ({
                     ...each,
                     status: getEventStatus(each, currentDate)
                 }))
