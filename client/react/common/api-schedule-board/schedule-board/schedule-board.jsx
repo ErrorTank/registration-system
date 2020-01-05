@@ -12,6 +12,7 @@ export class ScheduleBoard extends React.Component {
             curShiftStart: null,
             curShiftEnd: null,
         };
+
         this.state = {
             ...this.initState
         };
