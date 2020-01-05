@@ -70,14 +70,15 @@ const getAll = ({year, studentGroup, semester}) => {
 };
 
 const getRegisterEventById = (rID) => {
-    return AppConfig.find({}).then(config => {
+    return AppConfig.find({}).lean().then(config => {
         return RegistrationEvent.findOne({_id: ObjectId(rID)}).lean().then(data => {
             let currentDate = new Date().getTime();
+
             return {
                 ...data,
                 childEvents: data.childEvents.map(each => ({
                     ...each,
-                    status: getEventStatus(each, currentDate),
+                    status: getEventStatus(each, currentDate, config[0], data),
 
                 })),
                 isActive: isActive(data, currentDate, config[0]),
@@ -106,7 +107,7 @@ const updateRegisterEvent = (rID, data) => {
                     isActive: isActive(data, currentDate, config[0]),
                     childEvents: data.childEvents.map(each => ({
                         ...each,
-                        status: getEventStatus(each, currentDate)
+                        status: getEventStatus(each, currentDate, config[0], data)
                     }))
                 }
             });
@@ -161,7 +162,6 @@ const getActiveRegistrationEvent = () => {
                 }
             }
         ]).then(data => {
-            console.log(data)
             return data.filter(each => each.activeChildEvent).map(each => ({...each, difference: new Date(each.activeChildEvent.to).getTime() - currentDate.getTime()}));
         })
     })

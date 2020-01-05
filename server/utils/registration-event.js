@@ -21,12 +21,19 @@ const isActive = (event, currentDate, {currentSemester, currentYear}) => {
     return false;
 };
 
-const getEventStatus = (event, currentDate) => {
+const getEventStatus = (event, currentDate, {currentYear, currentSemester}, {year, semester}) => {
+    if(year.from !== currentYear.from || semester !== currentSemester){
+        return {
+            message: "Diễn ra trong kì khác",
+            value: 1
+        };
+    }
 
     let fromDate = new Date(event.from).getTime();
     // console.log("from " + moment(fromDate).format("DD/MM/YYYY HH:mm"))
     let toDate = new Date(event.to).getTime();
     // console.log("to " + moment(toDate).format("DD/MM/YYYY HH:mm"))
+
     if(!!(toDate - currentDate > 0 && currentDate - fromDate > 0))
         return {
             message: "Đang diễn ra",
