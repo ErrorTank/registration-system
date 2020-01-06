@@ -24,7 +24,7 @@ const isActive = (event, currentDate, {currentSemester, currentYear}) => {
 const getEventStatus = (event, currentDate, {currentYear, currentSemester}, {year, semester}) => {
     if(year.from !== currentYear.from || semester !== currentSemester){
         return {
-            message: "Diễn ra trong kì khác",
+            message: "Thuộc kì khác",
             value: 1
         };
     }

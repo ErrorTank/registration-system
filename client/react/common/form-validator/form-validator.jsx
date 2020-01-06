@@ -72,9 +72,14 @@ export const createSimpleForm = (schema, _options) => {
         touched[path] = true;
       }
       if(relativeFields && relativeFields.length){
-        console.log(relativeFields)
-        for(let p of relativeFields)
+
+        for(let p of relativeFields){
+          if(!touched[p]){
+            touched[p] = true;
+          }
           await validatePath(p)
+        }
+
       }
       if (options && options.validateAll) {
         await validateData()
@@ -112,7 +117,9 @@ export const createSimpleForm = (schema, _options) => {
       eventManagement.emit("change", state, {validate: true});
     },
     getInvalidPaths: () => Object.keys(errors),
-    getErrorPath: (path) => touched[path] ? {...errors[path]} : null,
+    getErrorPath: (path) => {
+      return touched[path] ? {...errors[path]} : null
+    },
     getData: () => ({...state}),
     updatePathData: async (path, data) => {
       // console.log(errors)

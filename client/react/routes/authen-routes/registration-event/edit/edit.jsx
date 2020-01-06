@@ -68,10 +68,21 @@ class RegistrationEventEditRoute extends React.Component {
         //     });
         // }
         registrationEventApi.updateRegistrationEvent(this.props.match.params.eventID, {
-            ...data,
-            year: parseYear(data.year.value),
-            semester: data.semester.value,
-            studentGroup: data.studentGroup.value,
+            data: {
+                ...data,
+                year: parseYear(data.year.value),
+                semester: data.semester.value,
+                studentGroup: data.studentGroup.value,
+            },
+            oldEvents: this.state.draft.childEvents.map(each => {
+                if (!each.delay) {
+                    each = omit(each, "delay");
+                } else {
+                    each.delay = each.delay.toString();
+                }
+                each = omit(each, ["id", "status"]);
+                return each;
+            })
         }).then((updatedData) => {
 
             this.setState({
@@ -94,7 +105,17 @@ class RegistrationEventEditRoute extends React.Component {
         //         btnText: "Đồng ý"
         //     })
         // }
-        return registrationEventApi.deleteRegistrationEvent(this.props.match.params.eventID).then(() => {
+        return registrationEventApi.deleteRegistrationEvent(this.props.match.params.eventID, {
+            events: this.state.draft.childEvents.map(each => {
+                if (!each.delay) {
+                    each = omit(each, "delay");
+                } else {
+                    each.delay = each.delay.toString();
+                }
+                each = omit(each, ["id", "status"]);
+                return each;
+            })
+        }).then(() => {
             customHistory.push("/manage/registration-events");
         })
     };
@@ -123,6 +144,7 @@ class RegistrationEventEditRoute extends React.Component {
                             )}
                             <div className="route-body">
                                 <RegistrationEventForm
+                                    disabledSelect={this.state.draft.isActive}
                                     isEdit
                                     onFormChange={(formData) => {
                                         this.state.error && this.setState({error: ""});

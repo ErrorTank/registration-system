@@ -9,6 +9,7 @@ const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
 const {isActive, getEventStatus} = require("../../utils/registration-event");
 
+
 const createRegistrationEvent = (data) => {
     return RegistrationEvent.findOne({
         studentGroup: Number(data.studentGroup),
@@ -86,8 +87,20 @@ const getRegisterEventById = (rID) => {
         })
     })
 };
-const updateRegisterEvent = (rID, data) => {
+const updateRegisterEvent = (rID, {data, oldEvents}) => {
+    const registrationCountdownService = require("../../utils/background-service/common/registration-countdown-service");
+    console.log(registrationCountdownService)
     return AppConfig.find({}).lean().then(config => {
+        let currentDate = new Date().getTime();
+        // let isDataActive = isActive(data, currentDate, config[0]);
+        console.log(registrationCountdownService)
+        let existed = registrationCountdownService.getExistedEventsByIds(oldEvents.map(each => each._id.toString()));
+        if(existed.length){
+            for(let event of existed){
+                registrationCountdownService.terminate(event.event._id)
+            }
+
+        }
         return RegistrationEvent.findOne({
             _id: {
                 $ne: ObjectId(rID)
@@ -101,7 +114,7 @@ const updateRegisterEvent = (rID, data) => {
                 return Promise.reject(new ApplicationError("existed"));
             }
             return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data => {
-                let currentDate = new Date().getTime();
+
                 return {
                     ...data,
                     isActive: isActive(data, currentDate, config[0]),
@@ -114,14 +127,21 @@ const updateRegisterEvent = (rID, data) => {
         })
     })
 };
-const deleteRegisterEvent = (rID) => {
+const deleteRegisterEvent = (rID, {events}) => {
+    const registrationCountdownService = require("../../utils/background-service/common/registration-countdown-service");
+    console.log(registrationCountdownService)
+    let existed = registrationCountdownService.getExistedEventsByIds(events.map(each =>  each._id.toString()));
+    if(existed.length){
+        for(let event of existed){
+            registrationCountdownService.terminate(event.event._id)
+        }
+
+    }
     return RegistrationEvent.findOneAndDelete({_id: ObjectId(rID)})
 };
 
 const getActiveRegistrationEvent = () => {
     let currentDate = new Date();
-    currentDate.setMilliseconds(0);
-    currentDate.setSeconds(0);
 
     return AppConfig.find({}).lean().then((configs) => {
         let config = configs[0];

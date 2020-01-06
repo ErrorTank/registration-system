@@ -5,18 +5,24 @@ const createCustomTimeout = require("../../custom-timeout");
 const createRegistrationCountdownService = () => {
     let existed = [];
     return {
+        terminate: (eventID) => {
+            for(let i = 0; i < existed.length; i++){
+
+                if(existed[i].event._id.toString() === eventID.toString()){
+                    existed[i].terminator.clear();
+                    break;
+                }
+            }
+
+        },
+        getExistedEventsByIds: ids => existed.filter(each => ids.includes(each.event._id.toString())),
         getConfig: () => ({
             delay: 5000,
             name: "track-registration-event",
             func: (...args) => {
                 getActiveRegistrationEvent().then(data => {
                     // console.log(data);
-                    let activeEvents = data.map(each => ({event: each.activeChildEvent, difference: each.difference}));
-                    for(let ee of existed){
-                        if(!activeEvents.find(e => e.event._id.toString() === ee.event._id.toString())){
-                            ee.terminator.clear();
-                        }
-                    }
+                    let activeEvents = data.map(each => ({parentID: each._id, event: each.activeChildEvent, difference: each.difference}));
                     existed = existed.filter(each => {
                         return each.terminator.isClear() === false;
                     });
@@ -28,33 +34,19 @@ const createRegistrationCountdownService = () => {
                         console.log("Event existed ID: ", eventInExisted ? eventInExisted.event._id : null)
 
                         if (!eventInExisted) {
-                            existed.push({
+                            let newItem = {
                                 event: {...e.event},
                                 terminator: createCustomTimeout(() => {
                                     console.log("hehehe")
                                     console.log(e);
+                                    newItem.terminator.clear();
                                 }, e.difference)
-                            })
+                            };
+                            existed.push(newItem)
                         }
-                        else if (!isEqual(eventInExisted.event, e.event)){
-                            for(let ee of existed){
-                                if(ee.event._id.toString() === e.event._id.toString()){
-                                    ee.terminator.clear();
-                                    break;
-                                }
-                            }
-                            existed = existed.filter(item => {
-                                return item.terminator.isClear() === false;
-                            });
-                            existed.push({
-                                event: {...e.event},
-                                terminator: createCustomTimeout(() => {
-                                    console.log("hehehe")
-                                    console.log(e);
-                                }, e.difference)
-                            })
-                        }
+
                     }
+
 
                 })
             },

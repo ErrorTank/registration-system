@@ -19,8 +19,8 @@ export const registrationEventApi = {
     getRegistrationEventById(rID){
         return authenApi.get(`/registration-event/${rID}`)
     },
-    deleteRegistrationEvent(rID){
-        return authenApi.delete(`/registration-event/${rID}`)
+    deleteRegistrationEvent(rID, events){
+        return authenApi.post(`/registration-event/${rID}/delete`, events)
     },
     updateRegistrationEvent(rID, data){
         return authenApi.put(`/registration-event/${rID}`, data)

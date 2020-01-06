@@ -150,7 +150,7 @@ export class RegistrationEventForm extends KComponent {
     render() {
         let childEvents = [...this.form.getPathData("childEvents")];
         let childEventsError = this.getChildEventsError(childEvents);
-
+        console.log(this.form.getErrorPath("childEvents[0].from"))
         return (
             <>
                 <div style={{padding: "20px 20px 0 20px"}}>
@@ -166,6 +166,7 @@ export class RegistrationEventForm extends KComponent {
                             <p className="form-label">Năm học</p>
                             {this.form.enhanceComponent("year", ({error, onChange, onEnter, ...others}) => (
                                 <Select
+                                    disabled={this.props.disabledSelect}
                                     error={error}
                                     options={years.filter(each => each.value !== "")}
                                     value={others.value}
@@ -182,6 +183,7 @@ export class RegistrationEventForm extends KComponent {
                             <p className="form-label">Học kì</p>
                             {this.form.enhanceComponent("semester", ({error, onChange, onEnter, ...others}) => (
                                 <Select
+                                    disabled={this.props.disabledSelect}
                                     error={error}
                                     options={semester.filter(each => each.value !== "")}
                                     value={others.value}
@@ -199,6 +201,7 @@ export class RegistrationEventForm extends KComponent {
                             <p className="form-label">Nhóm</p>
                             {this.form.enhanceComponent("studentGroup", ({error, onChange, onEnter, ...others}) => (
                                 <Select
+                                    disabled={this.props.disabledSelect}
                                     error={error}
                                     options={studentGroups.filter(each => each.value !== "")}
                                     value={others.value}
@@ -264,7 +267,7 @@ export class RegistrationEventForm extends KComponent {
                                     <div className="form-item col-4">
                                         <p className="form-label">Thời gian bắt đầu</p>
                                         {this.form.enhanceComponent(`childEvents[${i}].from`, ({error, onChange, onEnter, ...others}) => {
-
+                                            console.log(error)
                                             return (
                                                 <div className="date-picker-wrapper">
                                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>

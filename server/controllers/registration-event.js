@@ -9,7 +9,13 @@ const authMiddleware = authorization(getPublicKey(), {expiresIn: "1 day", algori
 
 module.exports = () => {
 
+    router.post("/registration-event/:rID/delete", authMiddleware ,(req, res, next) => {
 
+        return deleteRegisterEvent(req.params.rID, req.body).then((data) => {
+            return res.status(200).json(data);
+        }).catch(err => next(err));
+
+    });
     router.post("/registration-event/create", authMiddleware ,(req, res, next) => {
 
         return createRegistrationEvent(req.body).then((data) => {
@@ -38,13 +44,7 @@ module.exports = () => {
         }).catch(err => next(err));
 
     });
-    router.delete("/registration-event/:rID", authMiddleware ,(req, res, next) => {
 
-        return deleteRegisterEvent(req.params.rID).then((data) => {
-            return res.status(200).json(data);
-        }).catch(err => next(err));
-
-    });
 
     return router;
 };
