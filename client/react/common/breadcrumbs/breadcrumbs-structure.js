@@ -25,6 +25,9 @@ const structures = {
                 }, {
                     url: "/tkb-toan-truong",
                     label: <span className="label">TKB toàn trường</span>
+                },{
+                    url: "/dang-ky-hoc",
+                    label: <span className="label">Đăng ký học</span>
                 },
             ]
         },
