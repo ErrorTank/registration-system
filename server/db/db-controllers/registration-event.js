@@ -11,7 +11,7 @@ const omit = require("lodash/omit");
 const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
 const {isActive, getEventStatus, getStudentGroup} = require("../../utils/registration-event");
-
+const {calculateTotalCredits} = require("../../utils/result");
 
 const createRegistrationEvent = (data) => {
     return RegistrationEvent.findOne({
@@ -193,7 +193,7 @@ const getActiveRegistrationEvent = () => {
     })
 };
 
-const getSubjectsForRegistration = ({info}) => {
+const getSubjectsForRegistration = ({info, _id}) => {
     let currentDate = new Date();
 
     return AppConfig.find({}).lean().then(configs => {
@@ -215,24 +215,27 @@ const getSubjectsForRegistration = ({info}) => {
                 let toDate = new Date(e.to);
                 let differenceFrom = fromDate.getTime() - currentDate.getTime();
                 let differenceTo = toDate.getTime() - currentDate.getTime();
-                console.log(currentDate)
-                console.log(fromDate)
-                console.log(toDate)
-                console.log(differenceFrom)
-                console.log(differenceTo)
+                // console.log(currentDate)
+                // console.log(fromDate)
+                // console.log(toDate)
+                // console.log(differenceFrom)
+                // console.log(differenceTo)
                 if (fromDate - currentDate > 0 && fromDate - currentDate <= Number(e.delay)) {
                     return {delayEvent: {...event, activeChildEvent: e}};
                 }
                 if (getEventStatus(e, currentDate, config, event).value === 0) {
-                    return [
-                        EducateProgram.findOne({
-                            speciality: ObjectId(info.speciality._id)
-                        }).populate("subjects"),
-                        Result.findOne({
-                            speciality: ObjectId(info.speciality._id),
-                            owner: ObjectId(info._id)
-                        }).populate("results.subject")
-                    ];
+
+                    return Promise.all(
+                        [
+                            EducateProgram.findOne({
+                                speciality: ObjectId(info.speciality._id)
+                            }).populate("subjects"),
+                            Result.findOne({
+                                speciality: ObjectId(info.speciality._id),
+                                owner: ObjectId(_id)
+                            }).populate("results.subject")
+                        ]
+                    );
 
                 }
             }
@@ -241,9 +244,10 @@ const getSubjectsForRegistration = ({info}) => {
         })
             .then(([program, result]) => {
                 let subjects = program.subjects;
+
                 let passedSubjects = result.results.filter(each => each.grade > -1);
                 let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
-                console.log(typeof subjects)
+
                 return SchoolScheduleItems.aggregate([
                     {
                         $match: {
@@ -255,6 +259,7 @@ const getSubjectsForRegistration = ({info}) => {
                             ],
                         }
                     },
+
                     {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
                     {
                         $addFields: {
@@ -262,22 +267,6 @@ const getSubjectsForRegistration = ({info}) => {
                                 $arrayElemAt: ["$class", 0]
                             },
 
-                        }
-                    },
-
-                    {
-                        $match: {
-                            $and: [
-                                {
-                                    "class.subject": {
-                                        "$in": subjects.map(each => ObjectId(each._id))
-                                    }
-                                },{
-                                    "class.subject": {
-                                        "$nin": passedSubjects.map(each => ObjectId(each.subject._id))
-                                    }
-                                },
-                            ]
                         }
                     },
                     {
@@ -292,10 +281,96 @@ const getSubjectsForRegistration = ({info}) => {
                         $addFields: {
                             'class.subject': {
                                 $arrayElemAt: ["$class.subject", 0]
+                            },
+                        }
+                    },
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    "class.subject._id": {
+                                        "$in": subjects.map(each => ObjectId(each._id))
+                                    }
+                                }, {
+                                    "class.subject._id": {
+                                        "$nin": passedSubjects.map(each => ObjectId(each.subject._id))
+                                    }
+                                },
+
+                            ]
+                        }
+                    },
+
+                    {
+                        $unwind: {
+                            path: "$class.subject.subjectsRequired",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    },
+                    {
+                        $match: {
+                            $or: [
+                                {
+                                    "class.subject.subjectRequired": null
+                                },
+                                {
+                                    "class.subject.subjectRequired": {
+                                        "$in": passedSubjects2.map(each => each.subject.subjectID)
+                                    }
+                                },
+
+                            ]
+                        }
+                    },
+                    {
+                        $match: {
+                            "class.subject.creditsRequired": {
+                                $lte: calculateTotalCredits(result.results)
                             }
                         }
                     },
-                ])
+                    {
+                        $group: {
+                            _id: "$class.subject._id",
+                            coefficient: {
+                                $first: "$class.subject.coefficient"
+                            },
+                            creditsRequired: {
+                                $first: "$class.subject.creditsRequired"
+                            },
+                            subjectID: {
+                                $first: "$class.subject.subjectID"
+                            },
+                            name: {
+                                $first: "$class.subject.name"
+                            },
+                            credits: {
+                                $first: "$class.subject.credits"
+                            },
+                            subjectsRequired: {
+                               $addToSet: "$class.subject.subjectsRequired"
+                            },
+                            classes: {
+                                $push: "$class"
+                            },
+                        }
+                    }
+
+                ]).then(result => {
+                    console.log(result.find(each => each.subjectID === "GE201A"))
+                    // console.log(passedSubjects.map(each => each.subject.subjectID))
+                    let isGDTCPasses = passedSubjects.find(each => each.subject.subjectID === "PG100");
+                    // console.log(isGDTCPasses)
+                    return result.filter(each => {
+                        if(["PG122", "PG123", "PG124", "PG125", "PG121E", "PG121D"].includes(each.subjectID)){
+                            return false;
+                        }
+                        if(isGDTCPasses && /GDTC:/gi.test(each.name)){
+                            return false;
+                        }
+                        return true;
+                    })
+                })
             })
     })
 

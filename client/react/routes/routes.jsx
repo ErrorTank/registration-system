@@ -134,13 +134,14 @@ class App extends React.Component {
                                                     component={props => <EduProgramRoute  {...authenProps} {...props}/>}
                                                     roles={["sv", "gv"]}
                                                 />
+
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
                                                     path={"/tkb-toan-truong"}
                                                     component={props =>
                                                         <SchoolScheduleRoute  {...authenProps} {...props}/>}
-                                                    roles={["sv", "gv", "bm"]}
+                                                    roles={["sv", "gv", "bm", "admin"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
