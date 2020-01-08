@@ -81,8 +81,7 @@ let pronounce = (word, count, tail) => {
   return word + (count > 1 ? tail : "");
 };
 
-const getStudentGroup = (schoolYear, department) => {
-    const {latestSchoolYear} = appConfigCache.syncGet();
+const getStudentGroup = (schoolYear, department, latestSchoolYear) => {
     if(schoolYear === latestSchoolYear){
         return 3;
     }

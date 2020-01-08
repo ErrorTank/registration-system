@@ -24,5 +24,8 @@ export const registrationEventApi = {
     },
     updateRegistrationEvent(rID, data){
         return authenApi.put(`/registration-event/${rID}`, data)
+    },
+    getSubjectListForRegistration(){
+        return authenApi.post(`/registration-event/subjects`, userInfo.getState())
     }
 };

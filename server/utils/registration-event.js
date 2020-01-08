@@ -1,3 +1,5 @@
+import {appConfigCache} from "../../client/common/cache/api-cache/common-cache";
+
 const moment = require("moment");
 moment.locale("vi");
 
@@ -55,10 +57,20 @@ const getEventStatus = (event, currentDate, {currentYear, currentSemester}, {yea
 const startRegistrationEventCountdown = () => {
 
 }
+const getStudentGroup = (schoolYear, department, latestSchoolYear) => {
+    if(schoolYear === latestSchoolYear){
+        return 3;
+    }
+    if(schoolYear < latestSchoolYear - 1 && department === "KT_QL"){
+        return 1;
+    }
+    return 2;
+};
 
 
 module.exports = {
     isActive,
     getEventStatus,
-    startRegistrationEventCountdown
+    startRegistrationEventCountdown,
+    getStudentGroup
 };

@@ -1,6 +1,5 @@
 .common-alert{
   font-size 1.5rem
-  margin-bottom 2rem
   border-radius 4px
   position relative
   padding 1.2rem 2rem
@@ -16,9 +15,12 @@
       position absolute
       top 50%
       transform translateY(-50%)
-      font-size 1.6rem
+
       left -32px
       color white
+      i{
+        font-size 1.8rem
+      }
     }
   }
   &.warning-alert{
@@ -26,6 +28,13 @@
       background-color white
       border-color warning
       color warning
+    }
+  }
+  &.success-alert{
+    &.icon-alert{
+      background-color white
+      border-color success
+      color success
     }
   }
   &.danger-alert{

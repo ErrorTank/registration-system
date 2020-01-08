@@ -28,10 +28,10 @@ const createRegistrationCountdownService = () => {
                     });
                     for (let e of activeEvents) {
                         let eventInExisted = existed.find(each => each.event._id.toString() === e.event._id.toString());
-                        console.log(new Date().getTime())
-                        console.log("Event ID: ", e.event._id)
-                        console.log("Existed arr length: ", existed.length)
-                        console.log("Event existed ID: ", eventInExisted ? eventInExisted.event._id : null)
+                        // console.log(new Date().getTime())
+                        // console.log("Event ID: ", e.event._id)
+                        // console.log("Existed arr length: ", existed.length)
+                        // console.log("Event existed ID: ", eventInExisted ? eventInExisted.event._id : null)
 
                         if (!eventInExisted) {
                             let newItem = {

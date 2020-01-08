@@ -18,7 +18,8 @@ export default class SchoolScheduleRoute extends React.Component{
         super(props);
         const {currentYear, currentSemester} = appConfigCache.syncGet();
         let info = userInfo.getState();
-        let studentGroup = info.role === "sv" ? getStudentGroup(info.info.schoolYear, info.info.speciality.department) : "";
+        let latestSchoolYear = appConfigCache.syncGet();
+        let studentGroup = info.role === "sv" ? getStudentGroup(info.info.schoolYear, info.info.speciality.department,latestSchoolYear ) : "";
 
         this.state={
             loading: false,

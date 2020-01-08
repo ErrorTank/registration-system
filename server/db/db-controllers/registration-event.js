@@ -1,13 +1,14 @@
 const appDb = require("../../config/db").getDbs().appDb;
 const RegistrationEvent = require("../model/registration-event")(appDb);
 const AppConfig = require("../model/app-config")(appDb);
+const SchoolScheduleItems = require("../model/school-schedule-items")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
 const omit = require("lodash/omit");
 const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
-const {isActive, getEventStatus} = require("../../utils/registration-event");
+const {isActive, getEventStatus, getStudentGroup} = require("../../utils/registration-event");
 
 
 const createRegistrationEvent = (data) => {
@@ -187,11 +188,52 @@ const getActiveRegistrationEvent = () => {
     })
 };
 
+const getSubjectsForRegistration = ({info}) => {
+    let currentDate = new Date();
+
+    return AppConfig.find({}).lean().then(configs => {
+        let config = configs[0];
+        let {currentSemester, currentYear, latestSchoolYear} = config;
+        return RegistrationEvent.findOne({
+            studentGroup: getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear),
+            semester: Number(currentSemester),
+            "year.from": Number(currentYear.from),
+            "year.to": Number(currentYear.to),
+        }).lean().then(event => {
+            console.log(event)
+            if(!event){
+                return Promise.reject(new ApplicationError("Bạn chưa thuộc đối tượng được đăng ký học kì này!"));
+            }
+            for(let e of event.childEvents){
+                let fromDate = new Date(e.from);
+                let toDate = new Date(e.to);
+                let differenceFrom = fromDate.getTime() - currentDate.getTime();
+                let differenceTo = toDate.getTime() - currentDate.getTime();
+                console.log(currentDate)
+                console.log(fromDate)
+                console.log(toDate)
+                console.log(differenceFrom)
+                console.log(differenceTo)
+                if(fromDate - currentDate > 0 && fromDate - currentDate <= Number(e.delay)){
+                    return {delayEvent: {...event, activeChildEvent: e}};
+                }
+                if(getEventStatus(e, currentDate, config, event).value === 0){
+                    return SchoolScheduleItems.find({});
+                }
+            }
+
+            return Promise.reject(new ApplicationError("Bạn chưa thuộc đối tượng được đăng ký học kì này!"));
+        })
+    })
+
+};
+
 module.exports = {
     createRegistrationEvent,
     getAll,
     getRegisterEventById,
     updateRegisterEvent,
     deleteRegisterEvent,
-    getActiveRegistrationEvent
+    getActiveRegistrationEvent,
+    getSubjectsForRegistration
 };

@@ -15,6 +15,9 @@ module.exports =  (appDb) => {
     const StudentInfo = require("../db/model/student-info")(appDb);
     const Subject = require("../db/model/subject")(appDb);
     const User = require("../db/model/user")(appDb);
+    // SchoolScheduleItems.updateMany({studentGroup: 1}, {studentGroup: 2}).then(() => {
+    //     console.log("cac")
+    // })
     // Class.deleteMany({}).then(() => console.log("cac"));
     // Classroom.deleteMany({}).then(() => console.log("cac"));
     // DptInsInfo.deleteMany({}).then(() => console.log("cac"));
