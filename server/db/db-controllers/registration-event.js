@@ -2,6 +2,8 @@ const appDb = require("../../config/db").getDbs().appDb;
 const RegistrationEvent = require("../model/registration-event")(appDb);
 const AppConfig = require("../model/app-config")(appDb);
 const SchoolScheduleItems = require("../model/school-schedule-items")(appDb);
+const Result = require("../model/result")(appDb);
+const EducateProgram = require("../model/educate-program")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
@@ -96,8 +98,8 @@ const updateRegisterEvent = (rID, {data, oldEvents}) => {
         // let isDataActive = isActive(data, currentDate, config[0]);
         console.log(registrationCountdownService)
         let existed = registrationCountdownService.getExistedEventsByIds(oldEvents.map(each => each._id.toString()));
-        if(existed.length){
-            for(let event of existed){
+        if (existed.length) {
+            for (let event of existed) {
                 registrationCountdownService.terminate(event.event._id)
             }
 
@@ -131,9 +133,9 @@ const updateRegisterEvent = (rID, {data, oldEvents}) => {
 const deleteRegisterEvent = (rID, {events}) => {
     const registrationCountdownService = require("../../utils/background-service/common/registration-countdown-service");
     console.log(registrationCountdownService)
-    let existed = registrationCountdownService.getExistedEventsByIds(events.map(each =>  each._id.toString()));
-    if(existed.length){
-        for(let event of existed){
+    let existed = registrationCountdownService.getExistedEventsByIds(events.map(each => each._id.toString()));
+    if (existed.length) {
+        for (let event of existed) {
             registrationCountdownService.terminate(event.event._id)
         }
 
@@ -183,7 +185,10 @@ const getActiveRegistrationEvent = () => {
                 }
             }
         ]).then(data => {
-            return data.filter(each => each.activeChildEvent).map(each => ({...each, difference: new Date(each.activeChildEvent.to).getTime() - currentDate.getTime()}));
+            return data.filter(each => each.activeChildEvent).map(each => ({
+                ...each,
+                difference: new Date(each.activeChildEvent.to).getTime() - currentDate.getTime()
+            }));
         })
     })
 };
@@ -194,17 +199,18 @@ const getSubjectsForRegistration = ({info}) => {
     return AppConfig.find({}).lean().then(configs => {
         let config = configs[0];
         let {currentSemester, currentYear, latestSchoolYear} = config;
+        let studentGroup = getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear);
         return RegistrationEvent.findOne({
-            studentGroup: getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear),
+            studentGroup,
             semester: Number(currentSemester),
             "year.from": Number(currentYear.from),
             "year.to": Number(currentYear.to),
         }).lean().then(event => {
             console.log(event)
-            if(!event){
+            if (!event) {
                 return Promise.reject(new ApplicationError("Bạn chưa thuộc đối tượng được đăng ký học kì này!"));
             }
-            for(let e of event.childEvents){
+            for (let e of event.childEvents) {
                 let fromDate = new Date(e.from);
                 let toDate = new Date(e.to);
                 let differenceFrom = fromDate.getTime() - currentDate.getTime();
@@ -214,16 +220,83 @@ const getSubjectsForRegistration = ({info}) => {
                 console.log(toDate)
                 console.log(differenceFrom)
                 console.log(differenceTo)
-                if(fromDate - currentDate > 0 && fromDate - currentDate <= Number(e.delay)){
+                if (fromDate - currentDate > 0 && fromDate - currentDate <= Number(e.delay)) {
                     return {delayEvent: {...event, activeChildEvent: e}};
                 }
-                if(getEventStatus(e, currentDate, config, event).value === 0){
-                    return SchoolScheduleItems.find({});
+                if (getEventStatus(e, currentDate, config, event).value === 0) {
+                    return [
+                        EducateProgram.findOne({
+                            speciality: ObjectId(info.speciality._id)
+                        }).populate("subjects"),
+                        Result.findOne({
+                            speciality: ObjectId(info.speciality._id),
+                            owner: ObjectId(info._id)
+                        }).populate("results.subject")
+                    ];
+
                 }
             }
 
             return Promise.reject(new ApplicationError("Bạn chưa thuộc đối tượng được đăng ký học kì này!"));
         })
+            .then(([program, result]) => {
+                let subjects = program.subjects;
+                let passedSubjects = result.results.filter(each => each.grade > -1);
+                let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
+                console.log(typeof subjects)
+                return SchoolScheduleItems.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {"year.from": Number(currentYear.from)},
+                                {"year.to": Number(currentYear.to)},
+                                {semester: Number(currentSemester)},
+                                {studentGroup}
+                            ],
+                        }
+                    },
+                    {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+                    {
+                        $addFields: {
+                            'class': {
+                                $arrayElemAt: ["$class", 0]
+                            },
+
+                        }
+                    },
+
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    "class.subject": {
+                                        "$in": subjects.map(each => ObjectId(each._id))
+                                    }
+                                },{
+                                    "class.subject": {
+                                        "$nin": passedSubjects.map(each => ObjectId(each.subject._id))
+                                    }
+                                },
+                            ]
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'subjects',
+                            localField: 'class.subject',
+                            foreignField: '_id',
+                            as: "class.subject"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            'class.subject': {
+                                $arrayElemAt: ["$class.subject", 0]
+                            }
+                        }
+                    },
+                ])
+            })
     })
 
 };

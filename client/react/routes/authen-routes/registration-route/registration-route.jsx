@@ -5,6 +5,7 @@ import {Alert} from "../../../common/alert/alert";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 import {registrationEventApi} from "../../../../api/common/registration-event";
 import moment from "moment";
+import {ApiScheduleBoard} from "../../../common/api-schedule-board/api-schedule-board";
 
 
 export default class RegistrationRoute extends React.Component{
@@ -27,7 +28,9 @@ export default class RegistrationRoute extends React.Component{
 
     render(){
         let {subjectList, error, loading, delayEvent} = this.state;
-
+        const api = async () => {
+            return {list: []}
+        };
         return(
             <PageTitle
                 title={"Đăng ký học"}
@@ -81,9 +84,17 @@ export default class RegistrationRoute extends React.Component{
                                     )}
                                 </div>
 
-                                <div className="">
-
-                                </div>
+                                <ApiScheduleBoard
+                                    className={"ins-schedule-board"}
+                                    api={api}
+                                    // displayItem={this.displayInsScheduleItem}
+                                    emptyNotify={"Đăng ký học không khả dụng lúc này"}
+                                    // onClickItem={this.onClickScheduleItem}
+                                    getDayOfWeek={item => item.dayOfWeek}
+                                    getShiftStart={item => item.from.name}
+                                    getShiftEnd={item => item.to.name}
+                                    showSuggestion
+                                />
 
                             </div>
 
