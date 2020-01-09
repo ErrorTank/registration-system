@@ -8,10 +8,10 @@ import moment from "moment";
 import {ApiScheduleBoard} from "../../../common/api-schedule-board/api-schedule-board";
 
 
-export default class RegistrationRoute extends React.Component{
-    constructor(props){
+export default class RegistrationRoute extends React.Component {
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             subjectList: [],
             error: null,
             loading: true,
@@ -25,13 +25,13 @@ export default class RegistrationRoute extends React.Component{
     };
 
 
-
-    render(){
+    render() {
         let {subjectList, error, loading, delayEvent} = this.state;
         const api = async () => {
             return {list: []}
         };
-        return(
+        let boardErr = (delayEvent || error) ? "Đăng ký học không khả dụng lúc này" : "";
+        return (
             <PageTitle
                 title={"Đăng ký học"}
             >
@@ -60,7 +60,7 @@ export default class RegistrationRoute extends React.Component{
                                         <LoadingInline/>
                                     ) : delayEvent ? (
                                         <div className="registration-notify">
-                                            <div className="notify-title"> Thông báo thời gian đăng ký học</div>
+                                            <div className="small-title"> Thông báo thời gian đăng ký học</div>
 
                                             <Alert
                                                 icon={(
@@ -71,29 +71,41 @@ export default class RegistrationRoute extends React.Component{
                                                 content={(
                                                     <>
 
-                                                        <span className="pl-3">Từ <strong>{moment(delayEvent.activeChildEvent.from).format("HH:mm DD/MM/YYYY")}</strong> đến <strong>{moment(delayEvent.activeChildEvent.to).format("HH:mm DD/MM/YYYY")}</strong></span>
+                                                        <span
+                                                            className="pl-3">Từ <strong>{moment(delayEvent.activeChildEvent.from).format("HH:mm DD/MM/YYYY")}</strong> đến <strong>{moment(delayEvent.activeChildEvent.to).format("HH:mm DD/MM/YYYY")}</strong></span>
                                                     </>
                                                 )}
                                             />
                                         </div>
 
-                                        ) : (
-                                        <div className="list-container">
-
-                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="small-title">Danh sách môn đăng ký</div>
+                                            <div className="list-container">
+                                                {subjectList.map(each => {
+                                                    return (
+                                                        <div className="registration-subject" key={each._id}>
+                                                            <div className="s-name">{each.name}</div>
+                                                            <div className="class-count">{}</div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </>
                                     )}
                                 </div>
-
+                                <div className="small-title"> Thời khóa biểu tạm thời</div>
                                 <ApiScheduleBoard
                                     className={"ins-schedule-board"}
                                     api={api}
                                     // displayItem={this.displayInsScheduleItem}
-                                    emptyNotify={"Đăng ký học không khả dụng lúc này"}
+                                    // emptyNotify={"Đăng ký học không khả dụng lúc này"}
                                     // onClickItem={this.onClickScheduleItem}
                                     getDayOfWeek={item => item.dayOfWeek}
                                     getShiftStart={item => item.from.name}
                                     getShiftEnd={item => item.to.name}
                                     showSuggestion
+                                    error={boardErr}
                                 />
 
                             </div>

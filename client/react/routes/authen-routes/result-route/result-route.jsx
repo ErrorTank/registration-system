@@ -69,7 +69,7 @@ export default class ResultRoute extends KComponent {
             return 0;
         }
 
-        return list.reduce((total, cur) => total + (cur.grade === -2 ? 0 : cur.subject.credits),0);
+        return list.reduce((total, cur) => total + (cur.grade === -2 ? cur.subject.credits : 0),0);
     };
 
     render() {

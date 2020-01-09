@@ -235,143 +235,238 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                 owner: ObjectId(_id)
                             }).populate("results.subject")
                         ]
-                    );
+                    ).then(([program, result]) => {
+                        let subjects = program.subjects;
+
+                        let passedSubjects = result.results.filter(each => each.grade > -1);
+                        let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
+
+                        return SchoolScheduleItems.aggregate([
+                            {
+                                $match: {
+                                    $and: [
+                                        {"year.from": Number(currentYear.from)},
+                                        {"year.to": Number(currentYear.to)},
+                                        {semester: Number(currentSemester)},
+                                        {studentGroup}
+                                    ],
+                                }
+                            },
+
+                            {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+                            {
+                                $addFields: {
+                                    'class': {
+                                        $arrayElemAt: ["$class", 0]
+                                    },
+
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: 'subjects',
+                                    localField: 'class.subject',
+                                    foreignField: '_id',
+                                    as: "class.subject"
+                                }
+                            },
+                            {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
+                            {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
+                            {
+                                $lookup: {
+                                    from: 'dptinsinfos',
+                                    localField: 'instructor',
+                                    foreignField: '_id',
+                                    as: "instructor"
+                                }
+                            },
+                            {
+                                $addFields: {
+                                    'instructor': {
+                                        $arrayElemAt: ["$instructor", 0]
+                                    },
+                                    'class.subject': {
+                                        $arrayElemAt: ["$class.subject", 0]
+                                    },
+                                    'from': {
+                                        $arrayElemAt: ["$from", 0]
+                                    },
+                                    'to': {
+                                        $arrayElemAt: ["$to", 0]
+                                    },
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: 'users',
+                                    localField: 'instructor.user',
+                                    foreignField: '_id',
+                                    as: "instructor.user"
+                                }
+                            },
+                            {
+                                $addFields: {
+                                    'instructor.user': {
+                                        $arrayElemAt: ["$instructor.user", 0]
+                                    }
+                                }
+                            },
+                            {
+                                $addFields: {
+                                    "shortSubjectID": {$substr: ["$class.subject.subjectID", 0, 5]}
+                                }
+                            },
+                            {
+                                $match: {
+                                    $and: [
+                                        {
+                                            "class.subject._id": {
+                                                "$in": subjects.map(each => ObjectId(each._id))
+                                            }
+                                        }, {
+                                            "class.subject.subjectID": {
+                                                "$nin": passedSubjects.map(each => each.subject.subjectID.slice(0, 5))
+                                            }
+                                        },
+
+                                    ]
+                                }
+                            },
+
+                            {
+                                $unwind: {
+                                    path: "$class.subject.subjectsRequired",
+                                    preserveNullAndEmptyArrays: true
+                                }
+                            },
+                            {
+                                $match: {
+                                    $or: [
+                                        {
+                                            "class.subject.subjectRequired": null
+                                        },
+                                        {
+                                            "class.subject.subjectRequired": {
+                                                "$in": passedSubjects2.map(each => each.subject.subjectID.slice(0, 5))
+                                            }
+                                        },
+
+                                    ]
+                                }
+                            },
+                            {
+                                $match: {
+                                    "class.subject.creditsRequired": {
+                                        $lte: calculateTotalCredits(result.results)
+                                    }
+                                }
+                            },
+                            {
+                                $group: {
+                                    _id: "$_id",
+                                    year: {
+                                        $first: "$year"
+                                    },
+                                    semester: {
+                                        $first: "$semester"
+                                    },
+                                    studentGroup: {
+                                        $first: "$studentGroup"
+                                    },
+                                    class: {
+                                        $first: "$class"
+                                    },
+                                    dayOfWeek: {
+                                        $first: "$dayOfWeek"
+                                    },
+                                    classRoom: {
+                                        $first: "$classRoom"
+                                    },
+                                    from: {
+                                        $first: "$from"
+                                    },
+                                    to: {
+                                        $first: "$to"
+                                    },
+                                    instructor: {
+                                        $first: "$instructor"
+                                    },
+                                    required: {
+                                        $push: "$class.subject.subjectsRequired"
+                                    }
+                                }
+                            },
+                            {
+                              $addFields: {
+                                  "class._id": "$_id",
+                                  "class.dayOfWeek": "$dayOfWeek",
+                                  "class.classRoom": "$classRoom",
+                                  "class.from": "$from",
+                                  "class.to": "$to",
+                                  "class.instructor": "$instructor",
+                              }
+                            },
+                            {
+                                $group: {
+                                    _id: "$class.subject._id",
+                                    coefficient: {
+                                        $first: "$class.subject.coefficient"
+                                    },
+                                    creditsRequired: {
+                                        $first: "$class.subject.creditsRequired"
+                                    },
+                                    subjectID: {
+                                        $first: "$class.subject.subjectID"
+                                    },
+                                    name: {
+                                        $first: "$class.subject.name"
+                                    },
+                                    credits: {
+                                        $first: "$class.subject.credits"
+                                    },
+                                    subjectsRequired: {
+                                        $addToSet: "$class.subject.subjectsRequired"
+                                    },
+                                    lessons: {
+                                        $addToSet: "$class",
+
+                                    },
+                                },
+
+                            },
+                            {
+                                $project: {
+                                    "lessons": {
+                                        subject: {
+                                            subjectsRequired: 0
+                                        }
+
+                                    }
+                                }
+                            },
+
+                        ]).then(result => {
+                            // return result
+
+                            let isGDTCPassed = passedSubjects.find(each => each.subject.subjectID === "PG100");
+                            return result.filter(each => {
+                                if (["PG122", "PG123", "PG124", "PG125", "PG121E", "PG121D"].includes(each.subjectID)) {
+                                    return false;
+                                }
+                                if (isGDTCPassed && /GDTC:/gi.test(each.name)) {
+                                    return false;
+                                }
+                                return true;
+                            })
+                        })
+                    });
 
                 }
             }
 
             return Promise.reject(new ApplicationError("Bạn chưa thuộc đối tượng được đăng ký học kì này!"));
         })
-            .then(([program, result]) => {
-                let subjects = program.subjects;
 
-                let passedSubjects = result.results.filter(each => each.grade > -1);
-                let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
-
-                return SchoolScheduleItems.aggregate([
-                    {
-                        $match: {
-                            $and: [
-                                {"year.from": Number(currentYear.from)},
-                                {"year.to": Number(currentYear.to)},
-                                {semester: Number(currentSemester)},
-                                {studentGroup}
-                            ],
-                        }
-                    },
-
-                    {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
-                    {
-                        $addFields: {
-                            'class': {
-                                $arrayElemAt: ["$class", 0]
-                            },
-
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: 'subjects',
-                            localField: 'class.subject',
-                            foreignField: '_id',
-                            as: "class.subject"
-                        }
-                    },
-                    {
-                        $addFields: {
-                            'class.subject': {
-                                $arrayElemAt: ["$class.subject", 0]
-                            },
-                        }
-                    },
-                    {
-                        $match: {
-                            $and: [
-                                {
-                                    "class.subject._id": {
-                                        "$in": subjects.map(each => ObjectId(each._id))
-                                    }
-                                }, {
-                                    "class.subject._id": {
-                                        "$nin": passedSubjects.map(each => ObjectId(each.subject._id))
-                                    }
-                                },
-
-                            ]
-                        }
-                    },
-
-                    {
-                        $unwind: {
-                            path: "$class.subject.subjectsRequired",
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $match: {
-                            $or: [
-                                {
-                                    "class.subject.subjectRequired": null
-                                },
-                                {
-                                    "class.subject.subjectRequired": {
-                                        "$in": passedSubjects2.map(each => each.subject.subjectID)
-                                    }
-                                },
-
-                            ]
-                        }
-                    },
-                    {
-                        $match: {
-                            "class.subject.creditsRequired": {
-                                $lte: calculateTotalCredits(result.results)
-                            }
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: "$class.subject._id",
-                            coefficient: {
-                                $first: "$class.subject.coefficient"
-                            },
-                            creditsRequired: {
-                                $first: "$class.subject.creditsRequired"
-                            },
-                            subjectID: {
-                                $first: "$class.subject.subjectID"
-                            },
-                            name: {
-                                $first: "$class.subject.name"
-                            },
-                            credits: {
-                                $first: "$class.subject.credits"
-                            },
-                            subjectsRequired: {
-                               $addToSet: "$class.subject.subjectsRequired"
-                            },
-                            classes: {
-                                $push: "$class"
-                            },
-                        }
-                    }
-
-                ]).then(result => {
-                    console.log(result.find(each => each.subjectID === "GE201A"))
-                    // console.log(passedSubjects.map(each => each.subject.subjectID))
-                    let isGDTCPasses = passedSubjects.find(each => each.subject.subjectID === "PG100");
-                    // console.log(isGDTCPasses)
-                    return result.filter(each => {
-                        if(["PG122", "PG123", "PG124", "PG125", "PG121E", "PG121D"].includes(each.subjectID)){
-                            return false;
-                        }
-                        if(isGDTCPasses && /GDTC:/gi.test(each.name)){
-                            return false;
-                        }
-                        return true;
-                    })
-                })
-            })
     })
 
 };

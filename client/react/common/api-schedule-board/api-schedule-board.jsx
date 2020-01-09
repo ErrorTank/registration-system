@@ -49,7 +49,7 @@ export class ApiScheduleBoard extends React.Component{
     }
 
     render(){
-        let {className, emptyNotify, api, filter , ...rest} = this.props;
+        let {className, emptyNotify, api, filter , error, ...rest} = this.props;
         let {list, loading} = this.state;
         return(
             <div className={classnames("api-schedule-board", className)}>
@@ -61,12 +61,16 @@ export class ApiScheduleBoard extends React.Component{
                     <LoadingInline className={"schedule-board-loading"}/>
                 )}
 
-                {(list && !list.length) && (
+                {(list && !list.length && emptyNotify) && (
                     <div className="empty-notify">
                         <span>{emptyNotify}</span>
                     </div>
                 )}
-
+                {error && (
+                    <div className="empty-notify">
+                        <span>{error}</span>
+                    </div>
+                )}
             </div>
         );
     }
