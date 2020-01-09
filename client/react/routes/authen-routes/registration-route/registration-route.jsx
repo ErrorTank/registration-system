@@ -6,7 +6,7 @@ import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 import {registrationEventApi} from "../../../../api/common/registration-event";
 import moment from "moment";
 import {ApiScheduleBoard} from "../../../common/api-schedule-board/api-schedule-board";
-
+import classnames from "classnames"
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
@@ -15,7 +15,8 @@ export default class RegistrationRoute extends React.Component {
             subjectList: [],
             error: null,
             loading: true,
-            delayEvent: null
+            delayEvent: null,
+            pickedSubject: null
         };
         registrationEventApi.getSubjectListForRegistration().then(data => {
             this.setState({...data, loading: false});
@@ -26,7 +27,8 @@ export default class RegistrationRoute extends React.Component {
 
 
     render() {
-        let {subjectList, error, loading, delayEvent} = this.state;
+        let {subjectList, error, loading, delayEvent, pickedSubject} = this.state;
+        console.log(typeof pickedSubject)
         const api = async () => {
             return {list: []}
         };
@@ -84,9 +86,11 @@ export default class RegistrationRoute extends React.Component {
                                             <div className="list-container">
                                                 {subjectList.map(each => {
                                                     return (
-                                                        <div className="registration-subject" key={each._id}>
+                                                        <div className={classnames("registration-subject", {active: pickedSubject && (pickedSubject._id === each._id)})} key={each._id}
+                                                             onClick={() => this.setState({pickedSubject: each})}
+
+                                                        >
                                                             <div className="s-name">{each.name}</div>
-                                                            <div className="class-count">{}</div>
                                                         </div>
                                                     )
                                                 })}

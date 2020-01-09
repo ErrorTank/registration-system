@@ -12,6 +12,7 @@ const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
 const {isActive, getEventStatus, getStudentGroup} = require("../../utils/registration-event");
 const {calculateTotalCredits} = require("../../utils/result");
+const {transformSubjectLesson} = require("../../utils/registration-event");
 
 const createRegistrationEvent = (data) => {
     return RegistrationEvent.findOne({
@@ -449,15 +450,17 @@ const getSubjectsForRegistration = ({info, _id}) => {
                             // return result
 
                             let isGDTCPassed = passedSubjects.find(each => each.subject.subjectID === "PG100");
-                            return result.filter(each => {
-                                if (["PG122", "PG123", "PG124", "PG125", "PG121E", "PG121D"].includes(each.subjectID)) {
-                                    return false;
-                                }
-                                if (isGDTCPassed && /GDTC:/gi.test(each.name)) {
-                                    return false;
-                                }
-                                return true;
-                            })
+                            return {
+                                subjectList: result.filter(each => {
+                                    if (["PG122", "PG123", "PG124", "PG125", "PG121E", "PG121D"].includes(each.subjectID)) {
+                                        return false;
+                                    }
+                                    if (isGDTCPassed && /GDTC:/gi.test(each.name)) {
+                                        return false;
+                                    }
+                                    return true;
+                                }).map(transformSubjectLesson)
+                            }
                         })
                     });
 
