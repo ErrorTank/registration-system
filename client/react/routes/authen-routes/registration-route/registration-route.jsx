@@ -28,7 +28,7 @@ export default class RegistrationRoute extends React.Component {
 
     render() {
         let {subjectList, error, loading, delayEvent, pickedSubject} = this.state;
-        console.log(typeof pickedSubject)
+
         const api = async () => {
             return {list: []}
         };
@@ -44,7 +44,7 @@ export default class RegistrationRoute extends React.Component {
                         <div className="common-route-wrapper">
                             <div className="content-wrapper">
                                 <div className="subject-list">
-                                    {error && (
+                                    {error ? (
                                         <Alert
                                             icon={(
                                                 <i className="fas fa-info-circle"></i>
@@ -57,8 +57,7 @@ export default class RegistrationRoute extends React.Component {
                                                 </>
                                             )}
                                         />
-                                    )}
-                                    {loading ? (
+                                    ) : loading ? (
                                         <LoadingInline/>
                                     ) : delayEvent ? (
                                         <div className="registration-notify">
@@ -86,8 +85,10 @@ export default class RegistrationRoute extends React.Component {
                                             <div className="list-container">
                                                 {subjectList.map(each => {
                                                     return (
-                                                        <div className={classnames("registration-subject", {active: pickedSubject && (pickedSubject._id === each._id)})} key={each._id}
-                                                             onClick={() => this.setState({pickedSubject: each})}
+                                                        <div
+                                                            className={classnames("registration-subject", {active: pickedSubject && (pickedSubject._id === each._id)})}
+                                                            key={each._id}
+                                                            onClick={() => this.setState({pickedSubject: each})}
 
                                                         >
                                                             <div className="s-name">{each.name}</div>
@@ -95,8 +96,56 @@ export default class RegistrationRoute extends React.Component {
                                                     )
                                                 })}
                                             </div>
+                                            {pickedSubject && (
+                                                <>
+                                                    <div className="small-title mt-3 mb-3">Chi tiết</div>
+                                                    <div className="registration-details">
+
+                                                        {pickedSubject.lessons.map((each, i) => {
+                                                            let isSame = each.filter(i => i.name === each[0].name).length === each.length;
+                                                            return (
+                                                                <div className={classnames("each-lesson")} key={i}>
+                                                                    {isSame ? (
+                                                                        <>
+                                                                            <span
+                                                                                className="lesson-name">{each[0].name}</span>
+                                                                            {each.map((cl) => {
+                                                                                return (
+                                                                                    <span
+                                                                                        className={classnames("class")}
+                                                                                        key={cl._id}>
+                                                                                    <span
+                                                                                        className="day">{cl.dayOfWeek < 7 ? "Thứ " + (cl.dayOfWeek + 1) : "Chủ nhật"}:</span>
+                                                                                    <span
+                                                                                        className="shift">Ca {cl.from.name} - Ca {cl.to.name}</span>
+                                                                                </span>
+                                                                                )
+                                                                            })}
+                                                                        </>
+                                                                    ) : each.map((cl) => {
+                                                                        return (
+                                                                            <span key={cl._id}>
+                                                                                <span
+                                                                                    className="lesson-name">{each[0].name}</span>
+                                                                                <span className={classnames("class")}>
+
+                                                                            <span
+                                                                                className="day">{cl.dayOfWeek < 7 ? "Thứ " + (cl.dayOfWeek + 1) : "Chủ nhật"}:</span>
+                                                                            <span className="shift">Ca {cl.from.name} - Ca {cl.to.name}</span>
+                                                                        </span>
+                                                                            </span>
+                                                                        )
+                                                                    })}
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </>
+                                            )}
+
                                         </>
                                     )}
+
                                 </div>
                                 <div className="small-title"> Thời khóa biểu tạm thời</div>
                                 <ApiScheduleBoard

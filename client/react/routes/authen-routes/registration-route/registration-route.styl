@@ -45,4 +45,31 @@
       }
     }
   }
+  .registration-details{
+    .each-lesson{
+      padding 8px
+      border 1px solid common-border
+      margin-bottom 1.4rem
+      border-radius 3px
+      font-size 1.3rem
+      color info
+      .day{
+        margin-right 8px
+      }
+      .class{
+        padding-right 12px
+        &:not(:last-of-type){
+          border-right 1px solid inverse
+        }
+        &:not(:first-of-type){
+          padding-left 12px
+        }
+      }
+      .lesson-name{
+        color inverse
+        font-weight 500
+
+      }
+    }
+  }
 }

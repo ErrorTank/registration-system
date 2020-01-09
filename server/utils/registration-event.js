@@ -1,5 +1,6 @@
 import {appConfigCache} from "../../client/common/cache/api-cache/common-cache";
 
+const omit = require("lodash/omit");
 const moment = require("moment");
 moment.locale("vi");
 
@@ -69,26 +70,38 @@ const getStudentGroup = (schoolYear, department, latestSchoolYear) => {
 
 const transformSubjectLesson = subject => {
     let {lessons} = subject;
-    let transformVersion = [];
-    let classes = [];
     let tracker = {};
-    for (let l of lessons) {
-        let result = /.*?\.(.+)_(\w+)/gi.exec(l) || /.*?\.(.+)/gi.exec(l);
-        if (result) {
-            let cl = result[2].split(".");
-            tracker[cl.length] = true;
-            classes.push({
-                id: l._id,
-                class: cl
-            });
+    let testArr = lessons.map(each => {
+        return {
+            ...each,
+            length: (/.*?\.(.+)_(\w+)/gi.exec(each.name) || /.*?\.(.+)/gi.exec(each.name))[1].split(".").length
+        }
+    }).sort((a, b) => b.length - a.length).map(each => omit(each, "length"));
+    for (let l of testArr) {
+        let result = /.*?\.(.+)_(\w+)/gi.exec(l.name) || /.*?\.(.+)/gi.exec(l.name);
+        let cl = result[1];
+        console.log(l.name)
+        console.log(Object.keys(tracker))
+        if (tracker.hasOwnProperty(cl)) {
+            tracker[cl] = tracker[cl].concat(l);
+        } else {
+            let isInclude = false;
+            for (let key of Object.keys(tracker)) {
+                if (key.startsWith(cl)) {
+                    isInclude = true;
+                    tracker[key] = tracker[key].concat(l);
+                }
+            }
+            if (!isInclude) {
+                tracker[cl] = [l]
+            }
+
         }
 
 
     }
-    for(let type of Object.keys(tracker)){
 
-    }
-
+    return {...subject, lessons: [...Object.values(tracker)]}
 };
 
 module.exports = {
