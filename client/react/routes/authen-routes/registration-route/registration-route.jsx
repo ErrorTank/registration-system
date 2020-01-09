@@ -126,7 +126,7 @@ export default class RegistrationRoute extends React.Component {
                                                                         return (
                                                                             <span key={cl._id}>
                                                                                 <span
-                                                                                    className="lesson-name">{each[0].name}</span>
+                                                                                    className="lesson-name">{cl.name}</span>
                                                                                 <span className={classnames("class")}>
 
                                                                             <span
