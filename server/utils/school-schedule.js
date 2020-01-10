@@ -40,6 +40,7 @@ const transformSchoolScheduleItem = item => {
         name: i.insInfo.replace(/\(\w+\)/gi, ""),
         identityID: /\((\w+)\)/gi.exec(i.insInfo)[1]
     };
+    i.dayOfWeek = i.dayOfWeek - 1;
     return i;
 
 };

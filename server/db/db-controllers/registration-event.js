@@ -459,7 +459,12 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                         return false;
                                     }
                                     return true;
-                                }).map(transformSubjectLesson)
+                                }).map(transformSubjectLesson).map(each => {
+                                    return {
+                                        ...each,
+                                        lessons: each.lessons.map(lesson => lesson.sort((a,b) => a.dayOfWeek - b.dayOfWeek))
+                                    }
+                                })
                             }
                         })
                     });

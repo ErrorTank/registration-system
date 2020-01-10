@@ -9,5 +9,6 @@ module.exports = (db) => {
   router.use('/api', require("../controllers/result")(db));
   router.use('/api', require("../controllers/educate-program")(db));
   router.use('/api', require("../controllers/registration-event")(db));
+  router.use('/api', require("../controllers/schedule")(db));
   return router;
 };

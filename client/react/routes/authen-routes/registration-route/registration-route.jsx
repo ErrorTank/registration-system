@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import {PageTitle} from "../../../common/page-title/page-title";
 import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
 import {Alert} from "../../../common/alert/alert";
@@ -7,6 +8,7 @@ import {registrationEventApi} from "../../../../api/common/registration-event";
 import moment from "moment";
 import {ApiScheduleBoard} from "../../../common/api-schedule-board/api-schedule-board";
 import classnames from "classnames"
+import {RegistrationDetails} from "./registration-details";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
@@ -88,7 +90,15 @@ export default class RegistrationRoute extends React.Component {
                                                         <div
                                                             className={classnames("registration-subject", {active: pickedSubject && (pickedSubject._id === each._id)})}
                                                             key={each._id}
-                                                            onClick={() => this.setState({pickedSubject: each})}
+                                                            onClick={() => {
+
+                                                                this.setState({pickedSubject: each}, () => {
+                                                                    const yOffset = -100;
+                                                                    const element = document.querySelector(".registration-details");
+                                                                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                                                    window.scrollTo({top: y, behavior: 'smooth'});
+                                                                })
+                                                            }}
 
                                                         >
                                                             <div className="s-name">{each.name}</div>
@@ -97,50 +107,10 @@ export default class RegistrationRoute extends React.Component {
                                                 })}
                                             </div>
                                             {pickedSubject && (
-                                                <>
-                                                    <div className="small-title mt-3 mb-3">Chi tiết</div>
-                                                    <div className="registration-details">
+                                                <RegistrationDetails
+                                                    subject={pickedSubject}
 
-                                                        {pickedSubject.lessons.map((each, i) => {
-                                                            let isSame = each.filter(i => i.name === each[0].name).length === each.length;
-                                                            return (
-                                                                <div className={classnames("each-lesson")} key={i}>
-                                                                    {isSame ? (
-                                                                        <>
-                                                                            <span
-                                                                                className="lesson-name">{each[0].name}</span>
-                                                                            {each.map((cl) => {
-                                                                                return (
-                                                                                    <span
-                                                                                        className={classnames("class")}
-                                                                                        key={cl._id}>
-                                                                                    <span
-                                                                                        className="day">{cl.dayOfWeek < 7 ? "Thứ " + (cl.dayOfWeek + 1) : "Chủ nhật"}:</span>
-                                                                                    <span
-                                                                                        className="shift">Ca {cl.from.name} - Ca {cl.to.name}</span>
-                                                                                </span>
-                                                                                )
-                                                                            })}
-                                                                        </>
-                                                                    ) : each.map((cl) => {
-                                                                        return (
-                                                                            <span key={cl._id}>
-                                                                                <span
-                                                                                    className="lesson-name">{cl.name}</span>
-                                                                                <span className={classnames("class")}>
-
-                                                                            <span
-                                                                                className="day">{cl.dayOfWeek < 7 ? "Thứ " + (cl.dayOfWeek + 1) : "Chủ nhật"}:</span>
-                                                                            <span className="shift">Ca {cl.from.name} - Ca {cl.to.name}</span>
-                                                                        </span>
-                                                                            </span>
-                                                                        )
-                                                                    })}
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </>
+                                                />
                                             )}
 
                                         </>

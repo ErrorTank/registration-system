@@ -4,6 +4,20 @@
     font-size 1.6rem
     font-weight 500
     color inverse
+    span{
+      color #F1C40F
+      &.class-count{
+        font-size 1.5rem
+        margin-left 1.5rem
+
+        font-weight 500
+      }
+      &.class-name{
+
+        font-size 1.4rem
+        margin-left 6px
+      }
+    }
     margin-bottom 1.5rem
   }
   .subject-list{
@@ -46,20 +60,52 @@
     }
   }
   .registration-details{
+    .lesson-tooltip{
+      width 100%
+      .tool-tip{
+        .tooltip-content{
+          background-color #2ECC71
+          color white
+        }
+
+      }
+      &.is-registered{
+
+        .tool-tip{
+          .tooltip-content{
+            background-color danger
+          }
+
+        }
+      }
+      &:not(:first-of-type){
+        .each-lesson{
+          margin-top 1.4rem
+        }
+      }
+    }
     .each-lesson{
+      cursor pointer
+      &.full{
+        border-color danger !important
+      }
+      .status-bar{
+        margin-left auto
+      }
+      display flex
       padding 8px
       border 1px solid common-border
-      margin-bottom 1.4rem
+
       border-radius 3px
       font-size 1.3rem
-      color info
+      color #1a1a1a
       .day{
         margin-right 8px
       }
       .class{
         padding-right 12px
         &:not(:last-of-type){
-          border-right 1px solid inverse
+          border-right 1px solid darken(#f1f1f1, 10%)
         }
         &:not(:first-of-type){
           padding-left 12px
