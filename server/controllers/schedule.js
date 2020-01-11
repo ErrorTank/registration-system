@@ -8,7 +8,13 @@ const authMiddleware = authorization(getPublicKey(), {expiresIn: "1 day", algori
 
 module.exports = () => {
 
+    router.put("/schedule/student/:studentID/semester/:semester/year/:year/toggle-register", authMiddleware ,(req, res, next) => {
 
+        return getStudentSchedule(req.params, req.body).then((data) => {
+            return res.status(200).json(data);
+        }).catch(err => next(err));
+
+    });
 
     router.get("/schedule/student/:studentID/semester/:semester/year/:year", authMiddleware ,(req, res, next) => {
 

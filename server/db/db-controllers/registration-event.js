@@ -399,14 +399,14 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                 }
                             },
                             {
-                              $addFields: {
-                                  "class._id": "$_id",
-                                  "class.dayOfWeek": "$dayOfWeek",
-                                  "class.classRoom": "$classRoom",
-                                  "class.from": "$from",
-                                  "class.to": "$to",
-                                  "class.instructor": "$instructor",
-                              }
+                                $addFields: {
+                                    "class._id": "$_id",
+                                    "class.dayOfWeek": "$dayOfWeek",
+                                    "class.classRoom": "$classRoom",
+                                    "class.from": "$from",
+                                    "class.to": "$to",
+                                    "class.instructor": "$instructor",
+                                }
                             },
                             {
                                 $group: {
@@ -463,19 +463,60 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                 }).map(transformSubjectLesson).map(each => {
                                     return {
                                         ...each,
-                                        lessons: each.lessons.map(lesson => lesson.sort((a,b) => a.dayOfWeek - b.dayOfWeek))
+                                        lessons: each.lessons.map(lesson => lesson.sort((a, b) => a.dayOfWeek - b.dayOfWeek))
                                     }
                                 })
                             }
                         }).then(result => {
                             let {subjectList} = result;
-                            let allClasses = subjectList.reduce((total, cur) => {
-                                let {lessons} = cur;
-                                return total.concat(lessons.reduce((total2, lesson) => {
-                                    return total2.concat(lesson)
-                                }, []));
-                            } ,[]);
-                            return Schedule
+                            // let allClasses = subjectList.reduce((total, cur) => {
+                            //     let {lessons} = cur;
+                            //     return total.concat(lessons.reduce((total2, lesson) => {
+                            //         return total2.concat(lesson)
+                            //     }, []));
+                            // } ,[]);
+                            return Schedule.aggregate([
+                                {
+                                    $match: {
+                                        $and: [
+                                            {"year.from": Number(currentYear.from)},
+                                            {"year.to": Number(currentYear.to)},
+                                            {semester: Number(currentSemester)}
+                                        ]
+                                    }
+                                },
+                                {$lookup: {from: 'schoolscheduleitems', localField: 'list', foreignField: '_id', as: "list"}},
+                                {
+                                    $addFields: {
+                                        'list': {
+                                            $arrayElemAt: ["$list", 0]
+                                        },
+
+                                    }
+                                },
+                                {$lookup: {from: 'classes', localField: 'list.class', foreignField: '_id', as: "list.class"}},
+                                {
+                                    $addFields: {
+                                        'list.class': {
+                                            $arrayElemAt: ["$list.class", 0]
+                                        },
+
+                                    }
+                                },
+                            ]).then(schedules => {
+                                return {
+                                    subjectList: subjectList.map((each) => {
+                                        let {lessons} = each;
+                                        return {
+                                            ...each, lessons: lessons.map(lesson => {
+                                                return lesson.map(e => {
+                                                    return {...e, count: schedules.filter(sc => sc.list.find(item => item.class._id.toString() === e._id.toString())).length}
+                                                })
+                                            })
+                                        }
+                                    })
+                                }
+                            })
                         })
                     });
 

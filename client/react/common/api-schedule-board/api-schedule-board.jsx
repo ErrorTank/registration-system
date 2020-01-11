@@ -24,7 +24,7 @@ export class ApiScheduleBoard extends React.Component{
 
         this.setState({loading: true});
 
-        this.props.api({
+        return this.props.api({
             filter: options.filter,
         }).then((data) => {
             if (this.isDesiredLoad(options)) {
@@ -33,6 +33,7 @@ export class ApiScheduleBoard extends React.Component{
                     list: data.list,
                 });
             }
+            return;
         });
     };
 

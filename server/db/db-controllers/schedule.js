@@ -15,9 +15,11 @@ const getStudentSchedule = ({studentID, semester, year}) => {
 };
 
 
-
+const toggleRegisterLesson = ({studentID, semester, year}, lesson) => {
+    return null;
+};
 
 module.exports = {
     getStudentSchedule,
-
+    toggleRegisterLesson
 }

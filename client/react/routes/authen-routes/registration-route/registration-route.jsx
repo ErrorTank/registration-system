@@ -9,6 +9,9 @@ import moment from "moment";
 import {ApiScheduleBoard} from "../../../common/api-schedule-board/api-schedule-board";
 import classnames from "classnames"
 import {RegistrationDetails} from "./registration-details";
+import {scheduleApi} from "../../../../api/common/schedule-api";
+import {userInfo} from "../../../../common/states/common";
+import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
@@ -25,6 +28,14 @@ export default class RegistrationRoute extends React.Component {
         }).catch((error) => {
             this.setState({error, loading: false});
         })
+    };
+
+    toggleRegister = (lesson) => {
+        let {info} = userInfo.getState();
+        let {currentYear, currentSemester} = appConfigCache.syncGet();
+        scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, lesson).then(() => {
+            return this.board.loadData();
+        });
     };
 
 
@@ -109,7 +120,7 @@ export default class RegistrationRoute extends React.Component {
                                             {pickedSubject && (
                                                 <RegistrationDetails
                                                     subject={pickedSubject}
-
+                                                    toggleRegister={this.toggleRegister}
                                                 />
                                             )}
 
@@ -119,6 +130,7 @@ export default class RegistrationRoute extends React.Component {
                                 </div>
                                 <div className="small-title">Thời khóa biểu tạm thời</div>
                                 <ApiScheduleBoard
+                                    ref={board => this.board = board}
                                     className={"ins-schedule-board"}
                                     api={api}
                                     // displayItem={this.displayInsScheduleItem}
