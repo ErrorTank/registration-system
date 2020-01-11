@@ -65,7 +65,7 @@ export default class RegistrationRoute extends React.Component {
             let {currentYear, currentSemester} = appConfigCache.syncGet();
             return scheduleApi.getStudentSchedule(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester).then(schedule => {
                 this.setState({schedule});
-                return schedule;
+                return schedule || {list: []};
             })
         };
         let boardErr = (delayEvent || error) ? "Đăng ký học không khả dụng lúc này" : "";
