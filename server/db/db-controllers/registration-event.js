@@ -466,6 +466,15 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                     }
                                 })
                             }
+                        }).then(result => {
+                            let {subjectList} = result;
+                            let allClasses = subjectList.reduce((total, cur) => {
+                                let {lessons} = cur;
+                                return total.concat(lessons.reduce((total2, lesson) => {
+                                    return total2.concat(lesson)
+                                }, []));
+                            } ,[]);
+
                         })
                     });
 

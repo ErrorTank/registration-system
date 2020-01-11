@@ -117,7 +117,7 @@ export default class RegistrationRoute extends React.Component {
                                     )}
 
                                 </div>
-                                <div className="small-title"> Thời khóa biểu tạm thời</div>
+                                <div className="small-title">Thời khóa biểu tạm thời</div>
                                 <ApiScheduleBoard
                                     className={"ins-schedule-board"}
                                     api={api}
