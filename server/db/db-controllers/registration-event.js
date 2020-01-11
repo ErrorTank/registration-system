@@ -3,6 +3,7 @@ const RegistrationEvent = require("../model/registration-event")(appDb);
 const AppConfig = require("../model/app-config")(appDb);
 const SchoolScheduleItems = require("../model/school-schedule-items")(appDb);
 const Result = require("../model/result")(appDb);
+const Schedule = require("../model/schedule")(appDb);
 const EducateProgram = require("../model/educate-program")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
@@ -474,7 +475,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                     return total2.concat(lesson)
                                 }, []));
                             } ,[]);
-
+                            return Schedule
                         })
                     });
 
