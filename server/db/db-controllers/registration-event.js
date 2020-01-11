@@ -486,31 +486,24 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                     }
                                 },
                                 {$lookup: {from: 'schoolscheduleitems', localField: 'list', foreignField: '_id', as: "list"}},
-                                {
-                                    $addFields: {
-                                        'list': {
-                                            $arrayElemAt: ["$list", 0]
-                                        },
+                                // {
+                                //     $addFields: {
+                                //         'list': {
+                                //             $arrayElemAt: ["$list", 0]
+                                //         },
+                                //
+                                //     }
+                                // },
 
-                                    }
-                                },
-                                {$lookup: {from: 'classes', localField: 'list.class', foreignField: '_id', as: "list.class"}},
-                                {
-                                    $addFields: {
-                                        'list.class': {
-                                            $arrayElemAt: ["$list.class", 0]
-                                        },
-
-                                    }
-                                },
                             ]).then(schedules => {
+                                console.log(schedules)
                                 return {
                                     subjectList: subjectList.map((each) => {
                                         let {lessons} = each;
                                         return {
                                             ...each, lessons: lessons.map(lesson => {
                                                 return lesson.map(e => {
-                                                    return {...e, count: schedules.filter(sc => sc.list.find(item => item.class._id.toString() === e._id.toString())).length}
+                                                    return {...e, count: schedules.filter(sc => sc.list.find(item => item._id.toString() === e._id.toString())).length}
                                                 })
                                             })
                                         }

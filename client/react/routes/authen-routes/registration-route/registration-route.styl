@@ -62,6 +62,7 @@
   .registration-details{
     .lesson-tooltip{
       width 100%
+
       .tool-tip{
         .tooltip-content{
           background-color #2ECC71
@@ -86,6 +87,12 @@
     }
     .each-lesson{
       cursor pointer
+      position relative
+      .loading-inline{
+        i{
+          font-size 20px
+        }
+      }
       &.full{
         border-color danger !important
       }

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import classnames from "classnames";
 import {Tooltip} from "../../../common/tooltip/tooltip";
+import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 
 
 
@@ -21,6 +22,7 @@ class LessonDisplay extends Component {
     };
 
     toggleRegister = (lesson) => {
+
         this.setState({loading: true});
         this.props.toggleRegister(lesson).then(() => {
             this.setState({loading: false});
@@ -28,16 +30,20 @@ class LessonDisplay extends Component {
     };
 
     render() {
-        let {lesson, isSame} = this.props;
+        let {lesson, isSame, isInScheduleList} = this.props;
         return (
             <Tooltip
-                text={() => "Click để đăng ký"}
+                text={() => isInScheduleList ? "Click để hủy" : "Click để đăng ký"}
                 position={"bottom"}
-                className={classnames("lesson-tooltip")}
+                className={classnames("lesson-tooltip", {"is-registered": isInScheduleList})}
             >
                 <div className={classnames("each-lesson", {full: this.isFullLesson(lesson)})}
                      onClick={() => this.toggleRegister(lesson)}
                 >
+                    {this.state.loading && (
+                        <LoadingInline
+                        />
+                    )}
                     <div className="info-bar">
                         {isSame ? (
                             <>
@@ -89,7 +95,9 @@ export class RegistrationDetails extends Component {
 
 
     render() {
-        let {subject} = this.props;
+        let {subject, schedule, toggleRegister} = this.props ;
+        let list = schedule ? schedule.list  || [] : [];
+        console.log(list)
         return (
             <>
                 <div className="small-title mt-3 mb-3">Chi tiết: <span className="class-count">{subject.lessons.length}</span><span className="class-name">Lớp {subject.name}</span></div>
@@ -97,11 +105,16 @@ export class RegistrationDetails extends Component {
 
                     {subject.lessons.map((each, i) => {
                         let isSame = each.filter(i => i.name === each[0].name).length === each.length;
+                        let idArr = each.map(test => test._id);
+                        console.log(idArr);
+
                         return (
                             <LessonDisplay
                                 lesson={each}
                                 key={i}
+                                toggleRegister={toggleRegister}
                                 isSame={isSame}
+                                isInScheduleList={list.filter(item => idArr.includes(item._id)).length === each.length}
                             />
 
                         )

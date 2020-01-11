@@ -21,7 +21,8 @@ export default class RegistrationRoute extends React.Component {
             error: null,
             loading: true,
             delayEvent: null,
-            pickedSubject: null
+            pickedSubject: null,
+            schedule: null
         };
         registrationEventApi.getSubjectListForRegistration().then(data => {
             this.setState({...data, loading: false});
@@ -33,9 +34,26 @@ export default class RegistrationRoute extends React.Component {
     toggleRegister = (lesson) => {
         let {info} = userInfo.getState();
         let {currentYear, currentSemester} = appConfigCache.syncGet();
-        scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, lesson).then(() => {
+        return scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, lesson).then(() => {
             return this.board.loadData();
         });
+    };
+
+    displayInsScheduleItem = (item) => {
+        return (
+            <div className="common-inner-task">
+                <div className="class-name">
+                    {item.class.name}
+                </div>
+                <div className="class-room-name">
+                    {item.classRoom.name}
+                </div>
+            </div>
+        )
+    };
+
+    onClickScheduleItem = item => {
+
     };
 
 
@@ -43,7 +61,12 @@ export default class RegistrationRoute extends React.Component {
         let {subjectList, error, loading, delayEvent, pickedSubject} = this.state;
 
         const api = async () => {
-            return {list: []}
+            let {info} = userInfo.getState();
+            let {currentYear, currentSemester} = appConfigCache.syncGet();
+            return scheduleApi.getStudentSchedule(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester).then(schedule => {
+                this.setState({schedule});
+                return schedule;
+            })
         };
         let boardErr = (delayEvent || error) ? "Đăng ký học không khả dụng lúc này" : "";
         return (
@@ -119,6 +142,7 @@ export default class RegistrationRoute extends React.Component {
                                             </div>
                                             {pickedSubject && (
                                                 <RegistrationDetails
+                                                    schedule={this.state.schedule}
                                                     subject={pickedSubject}
                                                     toggleRegister={this.toggleRegister}
                                                 />
@@ -133,9 +157,9 @@ export default class RegistrationRoute extends React.Component {
                                     ref={board => this.board = board}
                                     className={"ins-schedule-board"}
                                     api={api}
-                                    // displayItem={this.displayInsScheduleItem}
+                                    displayItem={this.displayInsScheduleItem}
                                     // emptyNotify={"Đăng ký học không khả dụng lúc này"}
-                                    // onClickItem={this.onClickScheduleItem}
+                                    onClickItem={this.onClickScheduleItem}
                                     getDayOfWeek={item => item.dayOfWeek}
                                     getShiftStart={item => item.from.name}
                                     getShiftEnd={item => item.to.name}

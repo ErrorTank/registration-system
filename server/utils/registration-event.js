@@ -80,8 +80,8 @@ const transformSubjectLesson = subject => {
     for (let l of testArr) {
         let result = /.*?\.(.+)_(\w+)/gi.exec(l.name) || /.*?\.(.+)/gi.exec(l.name);
         let cl = result[1];
-        console.log(l.name)
-        console.log(Object.keys(tracker))
+        // console.log(l.name)
+        // console.log(Object.keys(tracker))
         if (tracker.hasOwnProperty(cl)) {
             tracker[cl] = tracker[cl].concat(l);
         } else {
