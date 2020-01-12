@@ -35,10 +35,11 @@ export default class RegistrationRoute extends React.Component {
     };
 
     onRegister = (lesson) => {
-        let {schedule} = this.state;
-
+        let {schedule, pickedSubject} = this.state;
+        let pickedSchoolSchedule = pickedSubject.lessons.reduce((total, cur) => total.concat(cur.map(each => each._id)),[]);
+        let currentList = schedule.list.map(each => each._id);
         let match = null;
-        if (!schedule.list.find(each => !!lesson.find(item => {
+        if (currentList.find(each => !!pickedSchoolSchedule.includes(each)) || !schedule.list.find(each => !!lesson.find(item => {
             if(item.dayOfWeek === each.dayOfWeek && !(item.from.name > each.to.name || item.to.name < each.from.name)){
                 match = {
                     newItem: item,
@@ -175,12 +176,14 @@ export default class RegistrationRoute extends React.Component {
                                                             className={classnames("registration-subject", {active: pickedSubject && (pickedSubject._id === each._id)})}
                                                             key={each._id}
                                                             onClick={() => {
-
-                                                                this.setState({pickedSubject: each}, () => {
-                                                                    const yOffset = -100;
-                                                                    const element = document.querySelector(".registration-details");
-                                                                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                                                    window.scrollTo({top: y, behavior: 'smooth'});
+                                                                let isToggle = pickedSubject && each._id === pickedSubject._id;
+                                                                this.setState({pickedSubject: isToggle ? null : each}, () => {
+                                                                   if(!isToggle){
+                                                                       const yOffset = -100;
+                                                                       const element = document.querySelector(".registration-details");
+                                                                       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                                                       window.scrollTo({top: y, behavior: 'smooth'});
+                                                                   }
                                                                 })
                                                             }}
 
