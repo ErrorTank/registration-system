@@ -12,6 +12,9 @@ import {RegistrationDetails} from "./registration-details";
 import {scheduleApi} from "../../../../api/common/schedule-api";
 import {userInfo} from "../../../../common/states/common";
 import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
+import pick from "lodash/pick"
+import isEqual from "lodash/isEqual"
+import {appModal} from "../../../common/modal/modals";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
@@ -29,6 +32,43 @@ export default class RegistrationRoute extends React.Component {
         }).catch((error) => {
             this.setState({error, loading: false});
         })
+    };
+
+    onRegister = (lesson) => {
+        let {schedule} = this.state;
+
+        let match = null;
+        if (!schedule.list.find(each => !!lesson.find(item => {
+            if(item.dayOfWeek === each.dayOfWeek && !(item.from.name > each.to.name || item.to.name < each.from.name)){
+                match = {
+                    newItem: item,
+                    existed: each
+                };
+                return true;
+            }
+            return false;
+        }))) {
+            return this.toggleRegister(lesson)
+        }
+        console.log(match)
+        return appModal.alert({
+            text: (
+                <Alert
+                    strongText={"Thông báo:"}
+                    type={"border"}
+                    color={"danger"}
+                    content={(
+                        <>
+
+                            <span className="pl-3">Bạn không thể đăng ký <strong>{match.newItem.name}</strong> do trùng vào <strong>{match.existed.dayOfWeek < 7 ? "Thứ " + (match.existed.dayOfWeek + 1) : "Chủ nhật"}</strong> <strong>Ca {match.existed.from.name}-{match.existed.to.name}</strong> của <strong>{match.existed.class.name}</strong></span>
+                        </>
+                    )}
+                />
+            ),
+            title: "Lỗi đăng ký",
+            btnText: "Đồng ý"
+        })
+
     };
 
     toggleRegister = (lesson) => {
@@ -52,8 +92,18 @@ export default class RegistrationRoute extends React.Component {
         )
     };
 
-    onClickScheduleItem = item => {
-
+    onClickScheduleItem = (item, utils) => {
+        let {setLoading} = utils;
+        setLoading();
+        for (let subject of this.state.subjectList) {
+            let {lessons} = subject;
+            let lesson = lessons.find(each => {
+                return !!each.find(child => child._id === item._id)
+            });
+            if (lesson) {
+                return this.toggleRegister(lesson)
+            }
+        }
     };
 
 
@@ -144,7 +194,8 @@ export default class RegistrationRoute extends React.Component {
                                                 <RegistrationDetails
                                                     schedule={this.state.schedule}
                                                     subject={pickedSubject}
-                                                    toggleRegister={this.toggleRegister}
+                                                    onRegister={this.onRegister}
+                                                    onUnregister={this.toggleRegister}
                                                 />
                                             )}
 

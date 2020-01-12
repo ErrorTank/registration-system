@@ -18,7 +18,7 @@ export const appModal = {
             />
           </div>
           <div className="modal-body">
-            <p>{text}</p>
+            <div>{text}</div>
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-confirm" onClick={() => modal.close()}>

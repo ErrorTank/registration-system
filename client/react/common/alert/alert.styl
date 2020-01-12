@@ -9,6 +9,9 @@
       font-weight 550
     }
   }
+  &.border-alert{
+    border-left-width 3px
+  }
   &.icon-alert{
     border-left-width 48px
     .alert-icon{
@@ -29,6 +32,11 @@
       border-color warning
       color warning
     }
+    &.border-alert{
+      border-color warning
+      background-color white
+      color warning
+    }
   }
   &.success-alert{
     &.icon-alert{
@@ -38,6 +46,11 @@
     }
   }
   &.danger-alert{
+    &.border-alert{
+      background-color white
+      border-color danger
+      color danger
+    }
     &.icon-alert{
       background-color white
       border-color danger

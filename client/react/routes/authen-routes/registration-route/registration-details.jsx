@@ -24,7 +24,7 @@ class LessonDisplay extends Component {
     toggleRegister = (lesson) => {
 
         this.setState({loading: true});
-        this.props.toggleRegister(lesson).then(() => {
+        (this.props.isInScheduleList ? this.props.onUnregister(lesson) : this.props.onRegister(lesson)).then(() => {
             this.setState({loading: false});
         });
     };
@@ -95,7 +95,7 @@ export class RegistrationDetails extends Component {
 
 
     render() {
-        let {subject, schedule, toggleRegister} = this.props ;
+        let {subject, schedule, onRegister, onUnregister} = this.props ;
         let list = schedule ? schedule.list  || [] : [];
         console.log(list)
         return (
@@ -112,7 +112,8 @@ export class RegistrationDetails extends Component {
                             <LessonDisplay
                                 lesson={each}
                                 key={i}
-                                toggleRegister={toggleRegister}
+                                onRegister={onRegister}
+                                onUnregister={onUnregister}
                                 isSame={isSame}
                                 isInScheduleList={list.filter(item => idArr.includes(item._id)).length === each.length}
                             />

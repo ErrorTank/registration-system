@@ -17,6 +17,10 @@ export class ApiScheduleBoard extends React.Component{
         this.loadData();
     }
 
+    setLoading = () => {
+        this.setState({loading: true});
+    };
+
     loadData = (changes = {}) => {
         let options = {
             filter: changes.filter === undefined ? this.props.filter : changes.filter,
@@ -50,12 +54,13 @@ export class ApiScheduleBoard extends React.Component{
     }
 
     render(){
-        let {className, emptyNotify, api, filter , error, ...rest} = this.props;
+        let {className, emptyNotify, api, filter , error, onClickItem, ...rest} = this.props;
         let {list, loading} = this.state;
         return(
             <div className={classnames("api-schedule-board", className)}>
                 <ScheduleBoard
                     list={list}
+                    onClickItem={(item) => onClickItem(item, {setLoading: this.setLoading})}
                     {...rest}
                 />
                 {loading && (

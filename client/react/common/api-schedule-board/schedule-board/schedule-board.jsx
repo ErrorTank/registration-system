@@ -29,8 +29,6 @@ export class ScheduleBoard extends React.Component {
     render() {
         let {displayItem, onClickItem, getShiftStart, getShiftEnd, list, showSuggestion} = this.props;
         let {curDay, curShiftStart, curShiftEnd} = this.state;
-        console.log(curShiftStart)
-        console.log(shifts[0])
         return (
             <div className="schedule-board">
                 <div className={classnames("board-wrapper")}>
