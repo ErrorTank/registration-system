@@ -113,6 +113,26 @@ export default class RegistrationRoute extends React.Component {
             }).catch((error) => {
                 this.setState({error, loading: false});
             })]);
+        }).catch(err => {
+            if(err.message === "full"){
+                return appModal.alert({
+                    text: (
+                        <Alert
+                            strongText={"Thông báo:"}
+                            type={"border"}
+                            color={"danger"}
+                            content={(
+                                <>
+
+                                    <span className="pl-3">Bạn không thể đăng ký <strong>{err.extra.name}</strong> do lớp đã đầy</span>
+                                </>
+                            )}
+                        />
+                    ),
+                    title: "Lỗi đăng ký",
+                    btnText: "Đồng ý"
+                })
+            }
         });
     };
 

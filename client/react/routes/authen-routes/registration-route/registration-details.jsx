@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import classnames from "classnames";
 import {Tooltip} from "../../../common/tooltip/tooltip";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
+import {Badge} from "../../../common/badge/badge";
 
 
 
@@ -31,13 +32,14 @@ class LessonDisplay extends Component {
 
     render() {
         let {lesson, isSame, isInScheduleList} = this.props;
+        let isFull = this.isFullLesson(lesson);
         return (
             <Tooltip
                 text={() => isInScheduleList ? "Click để hủy" : "Click để đăng ký"}
                 position={"bottom"}
                 className={classnames("lesson-tooltip", {"is-registered": isInScheduleList})}
             >
-                <div className={classnames("each-lesson", {full: this.isFullLesson(lesson)})}
+                <div className={classnames("each-lesson", {full: isFull})}
                      onClick={() => this.toggleRegister(lesson)}
                 >
                     {this.state.loading && (
@@ -72,11 +74,22 @@ class LessonDisplay extends Component {
                             )
                         })}
                     </div>
-                    {/*<div className="status-bar">*/}
-                    {/*    {status.map(each => each.condition() ? (*/}
-                    {/*        */}
-                    {/*    ) : null}*/}
-                    {/*</div>*/}
+                    <div className="status-bar">
+                        {isInScheduleList && (
+                            <Badge
+                                className={"common-badge lesson-badge"}
+                                content={"Đã đăng ký"}
+                                style={"success2"}
+                            />
+                        )}
+                        {isFull && (
+                            <Badge
+                                className={"common-badge lesson-badge"}
+                                content={"Đã đầy"}
+                                style={"danger"}
+                            />
+                        )}
+                    </div>
                 </div>
             </Tooltip>
         );

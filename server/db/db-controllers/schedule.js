@@ -51,54 +51,74 @@ const toggleRegisterLesson = ({studentID, semester, year}, {lesson}) => {
     console.log(classStringIds)
     let [from, to] = year.split("-");
 
-    return Schedule.findOne({
-        owner: ObjectId(studentID),
-        "year.from": Number(from),
-        "year.to": Number(to),
-        semester: Number(semester)
-    }).lean()
-        .then(schedule => {
-            console.log(schedule)
-            if (!schedule) {
-                return new Schedule({
-                    owner: ObjectId(studentID),
-                    year: {
-                        from: Number(from),
-                        to: Number(to)
-                    },
-                    semester,
-                    list: classIds
-                }).save();
+    return Schedule.aggregate([
+        {
+            $match: {
+                $and: [
+                    {"year.from": Number(from)},
+                    {"year.to": Number(to)},
+                    {semester: Number(semester)}
+                ]
             }
-            let filter = {
-                owner: ObjectId(studentID),
-                "year.from": Number(from),
-                "year.to": Number(to),
-                semester: Number(semester)
-            };
-            // subject: ObjectId(lesson[0].subject._id)
-            return SchoolScheduleItem.aggregate([
-                {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
-                {
-                    $addFields: {
-                        'class': {
-                            $arrayElemAt: ["$class", 0]
+        },
+        {$lookup: {from: 'schoolscheduleitems', localField: 'list', foreignField: '_id', as: "list"}},
+
+
+    ]).then(schedules => {
+        return Schedule.findOne({
+            owner: ObjectId(studentID),
+            "year.from": Number(from),
+            "year.to": Number(to),
+            semester: Number(semester)
+        }).lean()
+            .then(schedule => {
+                console.log(schedule)
+                if (!schedule) {
+                    return new Schedule({
+                        owner: ObjectId(studentID),
+                        year: {
+                            from: Number(from),
+                            to: Number(to)
                         },
-                    }
-                },
-                {
-                    $match: {
-                        "class.subject": ObjectId(lesson[0].subject._id)
-                    }
+                        semester,
+                        list: classIds
+                    }).save();
                 }
-            ]).then(all => {
-                console.log(all.map(each => ObjectId(each._id)))
-                return schedule.list.filter(each => classStringIds.includes(each._id.toString())).length === lesson.length ?
-                    Schedule.findOneAndUpdate(filter, {$pull: {list: {$in: classStringIds}}}, {new: true}).lean() :
-                    Schedule.findOneAndUpdate(filter, {$pull: {list: {$in: all.map(each => ObjectId(each._id))}},}, {new: true}).then(() =>
-                        Schedule.findOneAndUpdate(filter, {$push: {list: {$each: classIds}},}, {new: true}).lean());
-            })
-        });
+                let filter = {
+                    owner: ObjectId(studentID),
+                    "year.from": Number(from),
+                    "year.to": Number(to),
+                    semester: Number(semester)
+                };
+                // subject: ObjectId(lesson[0].subject._id)
+                return SchoolScheduleItem.aggregate([
+                    {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+                    {
+                        $addFields: {
+                            'class': {
+                                $arrayElemAt: ["$class", 0]
+                            },
+                        }
+                    },
+                    {
+                        $match: {
+                            "class.subject": ObjectId(lesson[0].subject._id)
+                        }
+                    }
+                ]).then(all => {
+                    let overSlot = lesson.find(e => {
+                        let count = schedules.filter(sc => sc.list.find(item => item._id.toString() === e._id.toString())).length;
+                        return e.capacity.max === count
+
+                    });
+                    return schedule.list.filter(each => classStringIds.includes(each._id.toString())).length === lesson.length ?
+                        Schedule.findOneAndUpdate(filter, {$pull: {list: {$in: classStringIds}}}, {new: true}).lean() :
+                        overSlot ? Promise.reject(new ApplicationError("full", overSlot)) :
+                        Schedule.findOneAndUpdate(filter, {$pull: {list: {$in: all.map(each => ObjectId(each._id))}},}, {new: true}).then(() =>
+                            Schedule.findOneAndUpdate(filter, {$push: {list: {$each: classIds}},}, {new: true}).lean());
+                })
+            });
+    })
 };
 
 module.exports = {

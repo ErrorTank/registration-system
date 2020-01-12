@@ -98,8 +98,14 @@
       }
       .status-bar{
         margin-left auto
+        .lesson-badge{
+          &:not(:last-of-type){
+            margin-right 6px
+          }
+        }
       }
       display flex
+      align-items center
       padding 8px
       border 1px solid common-border
 
