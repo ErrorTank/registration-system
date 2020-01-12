@@ -44,7 +44,7 @@ const getStudentSchedule = ({studentID, semester, year}) => {
 };
 
 
-const toggleRegisterLesson = ({studentID, semester, year}, lesson) => {
+const toggleRegisterLesson = ({studentID, semester, year}, {lesson}) => {
     let classIds = lesson.map(each => ObjectId(each._id));
     let classStringIds = lesson.map(each => each._id);
     console.log(classIds)

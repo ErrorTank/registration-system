@@ -10,7 +10,7 @@ const appNamespaces = [
         onDisconnect: (socket, context) => {
             console.log(socket.id + " is disconnect to /subject-registered")
         },
-        handlers: "./namespaces/mine-block/handlers/index"
+        handlers: "./namespaces/registration-tracker/handlers/index"
     },
 ];
 
@@ -19,6 +19,10 @@ const configIO = (nspIO, context) => {
         nspIO.onConnect(socket, context);
         socket.on("disconnect", function () {
             nspIO.onDisconnect(socket, context);
+        });
+        socket.on('join', function(room) {
+            console.log("room " +room)
+            socket.join(room);
         });
         require(nspIO.handlers)(socket, nspIO.io, context);
     });

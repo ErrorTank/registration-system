@@ -498,6 +498,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
                             ]).then(schedules => {
                                 console.log(schedules)
                                 return {
+                                    event,
                                     subjectList: subjectList.map((each) => {
                                         let {lessons} = each;
                                         return {

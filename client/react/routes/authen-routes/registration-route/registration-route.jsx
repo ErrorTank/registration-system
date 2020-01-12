@@ -15,11 +15,13 @@ import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
 import pick from "lodash/pick"
 import isEqual from "lodash/isEqual"
 import {appModal} from "../../../common/modal/modals";
+import io from "socket.io-client";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            event: null,
             subjectList: [],
             error: null,
             loading: true,
@@ -27,16 +29,46 @@ export default class RegistrationRoute extends React.Component {
             pickedSubject: null,
             schedule: null
         };
-        registrationEventApi.getSubjectListForRegistration().then(data => {
+        this.socket = null;
+        this.socket = io( document.location.origin + "/subject-registered");
+        this.socket.on('connect', () => {
+
+            this.socket.on("update-subject-list", ({eventID, socketID}) => {
+                if(this.state.event && this.state.event._id === eventID && this.socket.id !== socketID){
+                    console.log(this.socket.id);
+                    this.loadData().then(data => {
+                        this.setState({...data, loading: false});
+                    }).catch((error) => {
+                        this.setState({error, loading: false});
+                    });
+                }
+            })
+
+        });
+        this.loadData().then(data => {
+            this.socket.emit("join", data.event._id);
             this.setState({...data, loading: false});
         }).catch((error) => {
             this.setState({error, loading: false});
-        })
+        });
     };
 
+    loadData = () => {
+        return registrationEventApi.getSubjectListForRegistration()
+    };
+
+    componentWillUnmount() {
+        this.socket && this.socket.disconnect();
+    }
+
     onRegister = (lesson) => {
-        let {schedule, pickedSubject} = this.state;
-        let pickedSchoolSchedule = pickedSubject.lessons.reduce((total, cur) => total.concat(cur.map(each => each._id)),[]);
+
+        let {schedule, pickedSubject, subjectList} = this.state;
+        if(!schedule){
+            return this.toggleRegister(lesson)
+        }
+        let subject = subjectList.find(each => each._id === pickedSubject);
+        let pickedSchoolSchedule = subject.lessons.reduce((total, cur) => total.concat(cur.map(each => each._id)),[]);
         let currentList = schedule.list.map(each => each._id);
         let match = null;
         if (currentList.find(each => !!pickedSchoolSchedule.includes(each)) || !schedule.list.find(each => !!lesson.find(item => {
@@ -75,8 +107,12 @@ export default class RegistrationRoute extends React.Component {
     toggleRegister = (lesson) => {
         let {info} = userInfo.getState();
         let {currentYear, currentSemester} = appConfigCache.syncGet();
-        return scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, lesson).then(() => {
-            return this.board.loadData();
+        return scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, ({socketID: this.socket.id, lesson, eventID: this.state.event._id})).then(() => {
+            return Promise.all([this.board.loadData(), this.loadData().then(data => {
+                this.setState({...data, loading: false});
+            }).catch((error) => {
+                this.setState({error, loading: false});
+            })]);
         });
     };
 
@@ -110,7 +146,8 @@ export default class RegistrationRoute extends React.Component {
 
     render() {
         let {subjectList, error, loading, delayEvent, pickedSubject} = this.state;
-
+        let subject = subjectList.find(each => each._id === pickedSubject);
+        console.log(subject)
         const api = async () => {
             let {info} = userInfo.getState();
             let {currentYear, currentSemester} = appConfigCache.syncGet();
@@ -173,11 +210,11 @@ export default class RegistrationRoute extends React.Component {
                                                 {subjectList.map(each => {
                                                     return (
                                                         <div
-                                                            className={classnames("registration-subject", {active: pickedSubject && (pickedSubject._id === each._id)})}
+                                                            className={classnames("registration-subject", {active: pickedSubject && (pickedSubject === each._id)})}
                                                             key={each._id}
                                                             onClick={() => {
-                                                                let isToggle = pickedSubject && each._id === pickedSubject._id;
-                                                                this.setState({pickedSubject: isToggle ? null : each}, () => {
+                                                                let isToggle = pickedSubject && each._id === pickedSubject;
+                                                                this.setState({pickedSubject: isToggle ? null : each._id}, () => {
                                                                    if(!isToggle){
                                                                        const yOffset = -100;
                                                                        const element = document.querySelector(".registration-details");
@@ -196,7 +233,7 @@ export default class RegistrationRoute extends React.Component {
                                             {pickedSubject && (
                                                 <RegistrationDetails
                                                     schedule={this.state.schedule}
-                                                    subject={pickedSubject}
+                                                    subject={subject}
                                                     onRegister={this.onRegister}
                                                     onUnregister={this.toggleRegister}
                                                 />
