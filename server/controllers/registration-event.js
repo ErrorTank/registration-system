@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {authorization, createAuthToken} = require("../authorization/auth");
 const {transformData} = require("../utils/school-schedule");
-const {createRegistrationEvent, getAll, getRegisterEventById, deleteRegisterEvent, updateRegisterEvent, getSubjectsForRegistration} = require("../db/db-controllers/registration-event")
+const {createRegistrationEvent, getAll, getRegisterEventById, deleteRegisterEvent, updateRegisterEvent, getSubjectsForRegistration, getSubjectInfo} = require("../db/db-controllers/registration-event")
 const {getPublicKey, getPrivateKey} = require("../authorization/keys/keys");
 
 const authMiddleware = authorization(getPublicKey(), {expiresIn: "1 day", algorithm: ["RS256"]});
@@ -47,6 +47,13 @@ module.exports = () => {
     router.put("/registration-event/:rID", authMiddleware ,(req, res, next) => {
 
         return updateRegisterEvent(req.params.rID, req.body).then((data) => {
+            return res.status(200).json(data);
+        }).catch(err => next(err));
+
+    });
+    router.post("/registration-event/semester/:semester/year/:year/subject-info", authMiddleware ,(req, res, next) => {
+
+        return getSubjectInfo(req.params, req.body).then((data) => {
             return res.status(200).json(data);
         }).catch(err => next(err));
 

@@ -7,5 +7,6 @@ export const scheduleApi = {
     },
     toggleRegisterLesson(studentID, year, semester, data){
         return authenApi.put(`/schedule/student/${studentID}/semester/${semester}/year/${year}/toggle-register`, data)
-    }
+    },
+
 };

@@ -30,17 +30,24 @@ export default class RegistrationRoute extends React.Component {
             schedule: null
         };
         this.socket = null;
-        this.socket = io( document.location.origin + "/subject-registered");
+        this.socket = io(document.location.origin + "/subject-registered");
         this.socket.on('connect', () => {
 
-            this.socket.on("update-subject-list", ({eventID, socketID}) => {
-                if(this.state.event && this.state.event._id === eventID && this.socket.id !== socketID){
-                    console.log(this.socket.id);
-                    this.loadData().then(data => {
-                        this.setState({...data, loading: false});
-                    }).catch((error) => {
-                        this.setState({error, loading: false});
-                    });
+            this.socket.on("update-subject-list", ({eventID, socketID, subject}) => {
+                if (this.state.event && this.state.event._id === eventID && this.socket.id !== socketID) {
+                    console.log(subject);
+                    if(this.state.subjectList && this.state.subjectList.find(each => each._id === subject._id)){
+                        let {currentYear, currentSemester} = appConfigCache.syncGet();
+                        registrationEventApi.getSubjectInfo(subject.lessons, `${currentYear.from}-${currentYear.to}`, currentSemester)
+                            .then((lessons) => {
+                                this.setState({loading: false});
+                                this.updateSubjectLessons(subject, lessons);
+                            }).catch((error) => {
+                            this.setState({error, loading: false});
+                        });
+
+                    }
+
                 }
             })
 
@@ -64,15 +71,15 @@ export default class RegistrationRoute extends React.Component {
     onRegister = (lesson) => {
 
         let {schedule, pickedSubject, subjectList} = this.state;
-        if(!schedule){
+        if (!schedule) {
             return this.toggleRegister(lesson)
         }
         let subject = subjectList.find(each => each._id === pickedSubject);
-        let pickedSchoolSchedule = subject.lessons.reduce((total, cur) => total.concat(cur.map(each => each._id)),[]);
+        let pickedSchoolSchedule = subject.lessons.reduce((total, cur) => total.concat(cur.map(each => each._id)), []);
         let currentList = schedule.list.map(each => each._id);
         let match = null;
         if (currentList.find(each => !!pickedSchoolSchedule.includes(each)) || !schedule.list.find(each => !!lesson.find(item => {
-            if(item.dayOfWeek === each.dayOfWeek && !(item.from.name > each.to.name || item.to.name < each.from.name)){
+            if (item.dayOfWeek === each.dayOfWeek && !(item.from.name > each.to.name || item.to.name < each.from.name)) {
                 match = {
                     newItem: item,
                     existed: each
@@ -104,17 +111,39 @@ export default class RegistrationRoute extends React.Component {
 
     };
 
+    updateSubjectLessons = (sub, lessons) => {
+        let {subjectList} = this.state;
+
+        for (let i = 0; i < subjectList.length; i++) {
+            let subject = subjectList[i];
+            if(subject._id === sub._id){
+                subjectList[i].lessons = lessons;
+                return this.setState({subjectList});
+            }
+
+
+        }
+    };
+
     toggleRegister = (lesson) => {
         let {info} = userInfo.getState();
         let {currentYear, currentSemester} = appConfigCache.syncGet();
-        return scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, ({socketID: this.socket.id, lesson, eventID: this.state.event._id})).then(() => {
-            return Promise.all([this.board.loadData(), this.loadData().then(data => {
-                this.setState({...data, loading: false});
+        let subject = this.state.subjectList.find(each => each.lessons.find(les => les.find(item => item._id === lesson[0]._id)));
+        return scheduleApi.toggleRegisterLesson(info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, ({
+            socketID: this.socket.id,
+            lesson,
+            eventID: this.state.event._id,
+            subject
+        })).then(() => {
+
+            return Promise.all([this.board.loadData(), registrationEventApi.getSubjectInfo(subject.lessons, `${currentYear.from}-${currentYear.to}`, currentSemester).then(lessons => {
+                this.updateSubjectLessons(subject, lessons);
+                this.setState({loading: false});
             }).catch((error) => {
                 this.setState({error, loading: false});
             })]);
         }).catch(err => {
-            if(err.message === "full"){
+            if (err.message === "full") {
                 return appModal.alert({
                     text: (
                         <Alert
@@ -235,12 +264,12 @@ export default class RegistrationRoute extends React.Component {
                                                             onClick={() => {
                                                                 let isToggle = pickedSubject && each._id === pickedSubject;
                                                                 this.setState({pickedSubject: isToggle ? null : each._id}, () => {
-                                                                   if(!isToggle){
-                                                                       const yOffset = -100;
-                                                                       const element = document.querySelector(".registration-details");
-                                                                       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                                                       window.scrollTo({top: y, behavior: 'smooth'});
-                                                                   }
+                                                                    if (!isToggle) {
+                                                                        const yOffset = -100;
+                                                                        const element = document.querySelector(".registration-details");
+                                                                        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                                                        window.scrollTo({top: y, behavior: 'smooth'});
+                                                                    }
                                                                 })
                                                             }}
 

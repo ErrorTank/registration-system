@@ -40,7 +40,11 @@ class LessonDisplay extends Component {
                 className={classnames("lesson-tooltip", {"is-registered": isInScheduleList})}
             >
                 <div className={classnames("each-lesson", {full: isFull})}
-                     onClick={() => this.toggleRegister(lesson)}
+                     onClick={() => {
+                         if(!this.state.loading){
+                             return this.toggleRegister(lesson)
+                         }
+                     }}
                 >
                     {this.state.loading && (
                         <LoadingInline

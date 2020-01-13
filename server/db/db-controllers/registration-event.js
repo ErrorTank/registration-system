@@ -524,6 +524,38 @@ const getSubjectsForRegistration = ({info, _id}) => {
 
 };
 
+const getSubjectInfo = ({semester, year}, lessons) => {
+    let [from, to] = year.split("-");
+    return Schedule.aggregate([
+        {
+            $match: {
+                $and: [
+                    {"year.from": Number(from)},
+                    {"year.to": Number(to)},
+                    {semester: Number(semester)}
+                ]
+            }
+        },
+        {$lookup: {from: 'schoolscheduleitems', localField: 'list', foreignField: '_id', as: "list"}},
+        // {
+        //     $addFields: {
+        //         'list': {
+        //             $arrayElemAt: ["$list", 0]
+        //         },
+        //
+        //     }
+        // },
+
+    ]).then(schedules => {
+        console.log(schedules)
+        return lessons.map(lesson => {
+            return lesson.map(e => {
+                return {...e, count: schedules.filter(sc => sc.list.find(item => item._id.toString() === e._id.toString())).length}
+            })
+        })
+    })
+};
+
 module.exports = {
     createRegistrationEvent,
     getAll,
@@ -531,5 +563,6 @@ module.exports = {
     updateRegisterEvent,
     deleteRegisterEvent,
     getActiveRegistrationEvent,
-    getSubjectsForRegistration
+    getSubjectsForRegistration,
+    getSubjectInfo
 };
