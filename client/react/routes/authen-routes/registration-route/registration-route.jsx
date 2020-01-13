@@ -16,6 +16,7 @@ import pick from "lodash/pick"
 import isEqual from "lodash/isEqual"
 import {appModal} from "../../../common/modal/modals";
 import io from "socket.io-client";
+import {SchoolCharge} from "../../../common/school-charge/school-charge";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
@@ -292,6 +293,11 @@ export default class RegistrationRoute extends React.Component {
                                     )}
 
                                 </div>
+                                <SchoolCharge
+                                    schoolYear={userInfo.getState().info.schoolYear}
+                                    schedule={this.state.schedule}
+                                    label={"Học phí tạm tính"}
+                                />
                                 <div className="small-title">Thời khóa biểu tạm thời</div>
                                 <ApiScheduleBoard
                                     ref={board => this.board = board}
@@ -306,6 +312,7 @@ export default class RegistrationRoute extends React.Component {
                                     showSuggestion
                                     error={boardErr}
                                 />
+
 
                             </div>
 

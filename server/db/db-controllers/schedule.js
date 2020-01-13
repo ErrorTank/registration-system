@@ -21,7 +21,11 @@ const getStudentSchedule = ({studentID, semester, year}) => {
         populate: [
             {
                 path: 'class',
-                model: 'Class'
+                model: 'Class',
+                populate: {
+                    "path": "subject",
+                    "model": "Subject"
+                }
             },
             {
                 path: 'from',

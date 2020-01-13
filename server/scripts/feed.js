@@ -31,6 +31,7 @@ module.exports =  (appDb) => {
     // User.deleteMany({role: {$ne: "admin"}}).then(() => console.log("cac"));
     // Shift.deleteMany({}).then(() => console.log("cac"));
     // Division.deleteMany({}).then(() => console.log("cac"));
+    // Subject.updateMany({}, {coefficient: 4}).then(() => console.log("cac"));
     // const shifts = [
     //     {
     //         name: 1,
