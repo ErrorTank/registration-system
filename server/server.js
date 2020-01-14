@@ -13,7 +13,7 @@ const {createNamespaceIO} = require("./config/socket/socket-io");
 
 initDatabase()
     .then((db) => {
-        serviceManager.init();
+
         return {
             db
         }
@@ -21,6 +21,7 @@ initDatabase()
     .then(({db}) => {
     let server = http.createServer(app);
     const namespacesIO = createNamespaceIO(server, {db});
+    serviceManager.init({namespacesIO});
     app.use("/", createRoutes(db, namespacesIO));
     app.use(createErrorHandlersMiddleware);
     const port = process.env.PORT || 2000;

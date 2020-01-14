@@ -94,11 +94,11 @@ const getRegisterEventById = (rID) => {
 };
 const updateRegisterEvent = (rID, {data, oldEvents}) => {
     const registrationCountdownService = require("../../utils/background-service/common/registration-countdown-service");
-    console.log(registrationCountdownService)
+
     return AppConfig.find({}).lean().then(config => {
         let currentDate = new Date().getTime();
         // let isDataActive = isActive(data, currentDate, config[0]);
-        console.log(registrationCountdownService)
+
         let existed = registrationCountdownService.getExistedEventsByIds(oldEvents.map(each => each._id.toString()));
         if (existed.length) {
             for (let event of existed) {
@@ -134,7 +134,6 @@ const updateRegisterEvent = (rID, {data, oldEvents}) => {
 };
 const deleteRegisterEvent = (rID, {events}) => {
     const registrationCountdownService = require("../../utils/background-service/common/registration-countdown-service");
-    console.log(registrationCountdownService)
     let existed = registrationCountdownService.getExistedEventsByIds(events.map(each => each._id.toString()));
     if (existed.length) {
         for (let event of existed) {
@@ -496,7 +495,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                 // },
 
                             ]).then(schedules => {
-                                console.log(schedules)
+
                                 return {
                                     event,
                                     subjectList: subjectList.map((each) => {
@@ -547,7 +546,7 @@ const getSubjectInfo = ({semester, year}, lessons) => {
         // },
 
     ]).then(schedules => {
-        console.log(schedules)
+
         return lessons.map(lesson => {
             return lesson.map(e => {
                 return {...e, count: schedules.filter(sc => sc.list.find(item => item._id.toString() === e._id.toString())).length}

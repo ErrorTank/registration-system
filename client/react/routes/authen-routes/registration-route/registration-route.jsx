@@ -17,11 +17,12 @@ import isEqual from "lodash/isEqual"
 import {appModal} from "../../../common/modal/modals";
 import io from "socket.io-client";
 import {SchoolCharge} from "../../../common/school-charge/school-charge";
+import {getStudentGroup} from "../../../../common/utils/common";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
+        this.init = {
             event: null,
             subjectList: [],
             error: null,
@@ -30,14 +31,46 @@ export default class RegistrationRoute extends React.Component {
             pickedSubject: null,
             schedule: null
         };
+        this.state = {...this.init};
         this.socket = null;
         this.socket = io(document.location.origin + "/subject-registered");
         this.socket.on('connect', () => {
+            this.socket.on("start-event", ({eventID, year, semester, studentGroup}) => {
+                console.log("cac")
+                let {info} = userInfo.getState();
+                let {currentYear, currentSemester, latestSchoolYear} = appConfigCache.syncGet();
+                if (currentSemester === Number(semester) && Number(year.from) === currentYear.from && Number(year.to) === currentYear.to && studentGroup === getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear)) {
+                    this.setState({loading: true});
+                    this.loadData().then(data => {
+                        if(!data.delayEvent){
+                            this.socket.emit("join", data.event._id);
+                            this.board.loadData();
+                        }
 
+                        this.setState({...this.init, ...data, loading: false});
+                    }).catch((error) => {
+                        this.setState({...this.init, error, loading: false});
+                    });
+                }
+            });
+            this.socket.on("stop-event", ({eventID, year, semester, studentGroup}) => {
+                //TODO stop evnet
+                if (this.state.event && this.state.event._id === eventID) {
+                    this.socket.emit("unsubscribe", data.event._id);
+                    this.board.resetData();
+                    this.setState({loading: true});
+                    this.loadData().then(data => {
+                        this.setState({...this.init, ...data, loading: false});
+                    }).catch((error) => {
+                        this.setState({...this.init, error, loading: false} );
+                    });
+
+                }
+            });
             this.socket.on("update-subject-list", ({eventID, socketID, subject}) => {
                 if (this.state.event && this.state.event._id === eventID && this.socket.id !== socketID) {
                     console.log(subject);
-                    if(this.state.subjectList && this.state.subjectList.find(each => each._id === subject._id)){
+                    if (this.state.subjectList && this.state.subjectList.find(each => each._id === subject._id)) {
                         let {currentYear, currentSemester} = appConfigCache.syncGet();
                         registrationEventApi.getSubjectInfo(subject.lessons, `${currentYear.from}-${currentYear.to}`, currentSemester)
                             .then((lessons) => {
@@ -54,7 +87,10 @@ export default class RegistrationRoute extends React.Component {
 
         });
         this.loadData().then(data => {
-            this.socket.emit("join", data.event._id);
+            if(!data.delayEvent){
+                this.socket.emit("join", data.event._id);
+            }
+
             this.setState({...data, loading: false});
         }).catch((error) => {
             this.setState({error, loading: false});
@@ -117,7 +153,7 @@ export default class RegistrationRoute extends React.Component {
 
         for (let i = 0; i < subjectList.length; i++) {
             let subject = subjectList[i];
-            if(subject._id === sub._id){
+            if (subject._id === sub._id) {
                 subjectList[i].lessons = lessons;
                 return this.setState({subjectList});
             }
@@ -197,7 +233,7 @@ export default class RegistrationRoute extends React.Component {
     render() {
         let {subjectList, error, loading, delayEvent, pickedSubject} = this.state;
         let subject = subjectList.find(each => each._id === pickedSubject);
-        console.log(subject)
+        console.log(error)
         const api = async () => {
             let {info} = userInfo.getState();
             let {currentYear, currentSemester} = appConfigCache.syncGet();

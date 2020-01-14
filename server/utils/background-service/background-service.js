@@ -1,18 +1,18 @@
 
 
-const createBackgroundService = ({func, type = "sync", delay = 1000}) => {
+const createBackgroundService = ({func, type = "sync", delay = 1000}, context) => {
     let interval = null;
     let results = [];
     let isRun = false;
     return {
-        run: (...args) => {
+        run: () => {
             if(!isRun){
                 interval = setInterval(async () => {
                     let result = null;
                     if(type === "async"){
-                        result = await func(...args);
+                        result = await func(context);
                     }else{
-                        result = func(...args);
+                        result = func(context);
                     }
                     results.push({
                         time: new Date().getTime(),

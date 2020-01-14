@@ -21,6 +21,8 @@ export class ApiScheduleBoard extends React.Component{
         this.setState({loading: true});
     };
 
+    resetData = () => this.setState({list: null})
+
     loadData = (changes = {}) => {
         let options = {
             filter: changes.filter === undefined ? this.props.filter : changes.filter,

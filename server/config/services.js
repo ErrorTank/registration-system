@@ -4,9 +4,9 @@ const createBackgroundService = require("../utils/background-service/background-
 const createBgServiceManager = () => {
     let allServices = [];
     return {
-        init: () => {
+        init: (context) => {
             for(let serviceConfig of services){
-                let service = createBackgroundService(serviceConfig);
+                let service = createBackgroundService(serviceConfig, context);
                 service.run();
                 allServices.push({
                     name: serviceConfig.name,

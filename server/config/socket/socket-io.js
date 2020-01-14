@@ -21,8 +21,12 @@ const configIO = (nspIO, context) => {
             nspIO.onDisconnect(socket, context);
         });
         socket.on('join', function(room) {
-            console.log("room " +room)
+            console.log("join room " +room)
             socket.join(room);
+        });
+        socket.on('unsubscribe', function(room) {
+            console.log("leave room " +room)
+            socket.leave(room);
         });
         require(nspIO.handlers)(socket, nspIO.io, context);
     });

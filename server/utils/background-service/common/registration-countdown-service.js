@@ -1,5 +1,6 @@
 const {getActiveRegistrationEvent} = require("../../../db/db-controllers/registration-event");
 const isEqual = require("lodash/isEqual");
+const pick = require("lodash/pick");
 const createCustomTimeout = require("../../custom-timeout");
 
 const createRegistrationCountdownService = () => {
@@ -19,10 +20,10 @@ const createRegistrationCountdownService = () => {
         getConfig: () => ({
             delay: 5000,
             name: "track-registration-event",
-            func: (...args) => {
+            func: ({namespacesIO}) => {
                 getActiveRegistrationEvent().then(data => {
                     // console.log(data);
-                    let activeEvents = data.map(each => ({parentID: each._id, event: each.activeChildEvent, difference: each.difference}));
+                    let activeEvents = data.map(each => ({parentID: each._id, year: each.year, semester: each.semester, studentGroup: each.studentGroup, event: each.activeChildEvent, difference: each.difference}));
                     existed = existed.filter(each => {
                         return each.terminator.isClear() === false;
                     });
@@ -34,11 +35,15 @@ const createRegistrationCountdownService = () => {
                         // console.log("Event existed ID: ", eventInExisted ? eventInExisted.event._id : null)
 
                         if (!eventInExisted) {
+                            console.log(e)
+                            namespacesIO.registrationTracker.emit("start-event", e);
                             let newItem = {
+
                                 event: {...e.event},
                                 terminator: createCustomTimeout(() => {
                                     console.log("hehehe")
                                     console.log(e);
+                                    namespacesIO.registrationTracker.to(e.parentID).emit("stop-event", e);
                                     newItem.terminator.clear();
                                 }, e.difference)
                             };
