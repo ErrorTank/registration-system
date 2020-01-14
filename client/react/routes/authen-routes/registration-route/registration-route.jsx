@@ -35,7 +35,7 @@ export default class RegistrationRoute extends React.Component {
         this.socket = null;
         this.socket = io(document.location.origin + "/subject-registered");
         this.socket.on('connect', () => {
-            this.socket.on("start-event", ({eventID, year, semester, studentGroup}) => {
+            this.socket.on("start-event", ({parentID, year, semester, studentGroup}) => {
                 console.log("cac")
                 let {info} = userInfo.getState();
                 let {currentYear, currentSemester, latestSchoolYear} = appConfigCache.syncGet();
@@ -53,10 +53,12 @@ export default class RegistrationRoute extends React.Component {
                     });
                 }
             });
-            this.socket.on("stop-event", ({eventID, year, semester, studentGroup}) => {
+            this.socket.on("stop-event", ({parentID, year, semester, studentGroup}) => {
                 //TODO stop evnet
-                if (this.state.event && this.state.event._id === eventID) {
-                    this.socket.emit("unsubscribe", data.event._id);
+                console.log("zzz")
+                console.log(parentID)
+                if (this.state.event && this.state.event._id === parentID) {
+                    this.socket.emit("unsubscribe", parentID);
                     this.board.resetData();
                     this.setState({loading: true});
                     this.loadData().then(data => {

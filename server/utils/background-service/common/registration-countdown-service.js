@@ -42,8 +42,10 @@ const createRegistrationCountdownService = () => {
                                 event: {...e.event},
                                 terminator: createCustomTimeout(() => {
                                     console.log("hehehe")
-                                    console.log(e);
-                                    namespacesIO.registrationTracker.to(e.parentID).emit("stop-event", e);
+
+                                    let returnEvent = {...e};
+                                    console.log(returnEvent)
+                                    namespacesIO.registrationTracker.to(returnEvent.parentID).emit("stop-event", returnEvent);
                                     newItem.terminator.clear();
                                 }, e.difference)
                             };
