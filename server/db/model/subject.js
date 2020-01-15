@@ -21,7 +21,7 @@ const subjectSchema = new Schema({
     coefficient: {
         type: Number,
         required: true,
-        default: 1
+        default: 3
     },
     subjectsRequired: {
         type: [

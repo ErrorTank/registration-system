@@ -14,6 +14,10 @@ const studentInfoSchema = new Schema({
         required: true,
         enum: ["a1", "a2", "b1", "b2", "c1", "c2", "d1", "d2", "e1", "e2", "g1", "g2"]
     },
+    active: {
+      type: Boolean,
+      default: true
+    },
     schoolYear: {
         type: Number,
         required: true

@@ -27,12 +27,14 @@ const importData = ({result}) => {
             return new User({
                 ...owner,
                 email: `sv${owner.identityID}@gmail.com`,  role: "sv",dob: new Date().getTime(), password: "test", username: owner.identityID, phone: owner.identityID
-            }).save().then(data => data.toObject()).then(data => new StudentInfo({
+            }).save()
+                .then(data => data.toObject())
+                .then(data => new StudentInfo({
                 user: ObjectId(data._id),
                 englishLevel: "a1",
                 schoolYear: 29,
                 speciality: ObjectId(speciality._id)
-            }).save().then(() => data));
+            }).save().then((data) => data));
         })
         .then(u => {
             return Result.findOne({"owner": ObjectId(u._id), "speciality": ObjectId(speciality._id)})

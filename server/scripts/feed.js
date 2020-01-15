@@ -18,6 +18,9 @@ module.exports =  (appDb) => {
     // SchoolScheduleItems.updateMany({studentGroup: 1}, {studentGroup: 2}).then(() => {
     //     console.log("cac")
     // })
+    // StudentInfo.updateMany({}, {active: true}).then(() => {
+    //     console.log("cac")
+    // })
     // Class.deleteMany({}).then(() => console.log("cac"));
     // Classroom.deleteMany({}).then(() => console.log("cac"));
     // DptInsInfo.deleteMany({}).then(() => console.log("cac"));

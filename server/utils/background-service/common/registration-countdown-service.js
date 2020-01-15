@@ -35,6 +35,7 @@ const createRegistrationCountdownService = () => {
                         // console.log("Event existed ID: ", eventInExisted ? eventInExisted.event._id : null)
 
                         if (!eventInExisted) {
+                            console.log("hoho")
                             console.log(e)
                             namespacesIO.registrationTracker.emit("start-event", e);
                             let newItem = {

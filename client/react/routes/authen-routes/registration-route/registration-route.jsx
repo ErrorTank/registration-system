@@ -35,11 +35,11 @@ export default class RegistrationRoute extends React.Component {
         this.socket = null;
         this.socket = io(document.location.origin + "/subject-registered");
         this.socket.on('connect', () => {
-            this.socket.on("start-event", ({parentID, year, semester, studentGroup}) => {
-                console.log("cac")
+            this.socket.on("start-event", ({parentID, year, semester, studentGroup, appliedStudents}) => {
+
                 let {info} = userInfo.getState();
                 let {currentYear, currentSemester, latestSchoolYear} = appConfigCache.syncGet();
-                if (currentSemester === Number(semester) && Number(year.from) === currentYear.from && Number(year.to) === currentYear.to && studentGroup === getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear)) {
+                if (currentSemester === Number(semester) && Number(year.from) === currentYear.from && Number(year.to) === currentYear.to && studentGroup === getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear) && appliedStudents.find(each => each.toString() === info._id.toString())) {
                     this.setState({loading: true});
                     this.loadData().then(data => {
                         if(!data.delayEvent){
@@ -53,11 +53,12 @@ export default class RegistrationRoute extends React.Component {
                     });
                 }
             });
-            this.socket.on("stop-event", ({parentID, year, semester, studentGroup}) => {
+            this.socket.on("stop-event", ({parentID, year, semester, studentGroup, appliedStudents}) => {
                 //TODO stop evnet
                 console.log("zzz")
+                let {info} = userInfo.getState();
                 console.log(parentID)
-                if (this.state.event && this.state.event._id === parentID) {
+                if (this.state.event && this.state.event._id === parentID  && appliedStudents.find(each => each.toString() === info._id.toString())) {
                     this.socket.emit("unsubscribe", parentID);
                     this.board.resetData();
                     this.setState({loading: true});

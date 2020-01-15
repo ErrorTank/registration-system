@@ -2,6 +2,7 @@ const appDb = require("../../config/db").getDbs().appDb;
 const RegistrationEvent = require("../model/registration-event")(appDb);
 const AppConfig = require("../model/app-config")(appDb);
 const SchoolScheduleItems = require("../model/school-schedule-items")(appDb);
+const StudentInfo = require("../model/student-info")(appDb);
 const Result = require("../model/result")(appDb);
 const Schedule = require("../model/schedule")(appDb);
 const EducateProgram = require("../model/educate-program")(appDb);
@@ -25,10 +26,134 @@ const createRegistrationEvent = (data) => {
         if (re) {
             return Promise.reject(new ApplicationError("existed"));
         }
-        return new RegistrationEvent({
-            ...data
-        }).save();
-    });
+        return Promise.all([
+            Result.aggregate([
+                {
+                    $unwind: "$results"
+                },
+                {
+                    $lookup: {
+                        from: 'subjects',
+                        localField: 'results.subject',
+                        foreignField: '_id',
+                        as: "results.subject'"
+                    }
+                },
+                // {
+                //     $addFields: {
+                //
+                //         'results.subject': {
+                //             $arrayElemAt: ["$results.subject", 0]
+                //         },
+                //
+                //     }
+                // },
+                {
+                   $group: {
+                       _id: "$_id",
+                       owner: {
+                           $first: "$owner"
+                       },
+                       speciality: {
+                           $first: "$speciality"
+                       },
+                       results: {
+                           $push: "$results"
+                       },
+
+                   }
+                },
+                {
+                    $lookup: {
+                        from: 'studentinfos',
+                        localField: 'owner',
+                        foreignField: '_id',
+                        as: "owner"
+                    }
+                },
+                {
+                    $addFields: {
+                        'owner': {
+                            $arrayElemAt: ["$owner", 0]
+                        },
+
+
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'owner.user',
+                        foreignField: '_id',
+                        as: "owner.user"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'specialities',
+                        localField: 'owner.speciality',
+                        foreignField: '_id',
+                        as: "owner.speciality"
+                    }
+                },
+                {
+                    $addFields: {
+                        'owner.user': {
+                            $arrayElemAt: ["$owner.user", 0]
+                        },
+                        'owner.speciality': {
+                            $arrayElemAt: ["$owner.speciality", 0]
+                        },
+
+                    }
+                },
+                {
+                    $match: {
+                        "owner.active": true,
+                    }
+                },
+            ]),
+            AppConfig.find({}).lean()
+        ])
+
+    })
+        .then(([results, configs]) => {
+
+            // console.log(results)
+            let config = configs[0];
+            let {latestSchoolYear} = config;
+            let sortStudents = results
+                .filter(each => {
+                    return each.speciality.toString() === each.owner.speciality._id.toString()
+                })
+                .map(each => ({...each, owner: {...each.owner, studentGroup: getStudentGroup(each.owner.schoolYear, each.owner.speciality.department, latestSchoolYear) }}))
+                .filter(each => Number(each.owner.studentGroup) === Number(data.studentGroup))
+                .sort((a,b) => calculateTotalCredits(b.results) - calculateTotalCredits(a.results));
+            console.log(sortStudents.length)
+            if(sortStudents.length === 0){
+                return new RegistrationEvent({
+                    ...data
+                }).save();
+            }
+            if(sortStudents.length < data.childEvents.length){
+                return new RegistrationEvent({
+                    ...data,
+                    childEvents: data.childEvents.map((each, i) => ({...each, appliedStudents: sortStudents.slice(i, 1).map(r => r.owner._id)}))
+                }).save();
+            }
+            let roundThreshHold = Math.round(sortStudents.length / data.childEvents.length);
+
+            return new RegistrationEvent({
+                ...data,
+                childEvents: data.childEvents.map((each, i) => {
+                    console.log(i * roundThreshHold)
+                    console.log(i === data.childEvents.length - 1 ? sortStudents.length - (i * roundThreshHold) : roundThreshHold)
+                    return ({...each, appliedStudents: sortStudents.slice(i * roundThreshHold, (i * roundThreshHold) + (i === data.childEvents.length - 1 ? sortStudents.length - (i * roundThreshHold) : roundThreshHold)).map(r => r.owner._id)})
+                })
+            }).save();
+
+        })
+        ;
 };
 
 const getAll = ({year, studentGroup, semester}) => {
@@ -207,7 +332,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
             "year.from": Number(currentYear.from),
             "year.to": Number(currentYear.to),
         }).lean().then(event => {
-            console.log(event)
+
             if (!event) {
                 return Promise.reject(new ApplicationError("Bạn chưa thuộc đối tượng được đăng ký học kì này!"));
             }
@@ -221,6 +346,9 @@ const getSubjectsForRegistration = ({info, _id}) => {
                 // console.log(toDate)
                 // console.log(differenceFrom)
                 // console.log(differenceTo)
+                if(!e.appliedStudents.find(each => each.toString() === info._id.toString())){
+                    continue;
+                }
                 if (fromDate - currentDate > 0 && fromDate - currentDate <= Number(e.delay)) {
                     return {delayEvent: {...event, activeChildEvent: e}};
                 }
@@ -233,12 +361,11 @@ const getSubjectsForRegistration = ({info, _id}) => {
                             }).populate("subjects"),
                             Result.findOne({
                                 speciality: ObjectId(info.speciality._id),
-                                owner: ObjectId(_id)
+                                owner: ObjectId(info._id)
                             }).populate("results.subject")
                         ]
                     ).then(([program, result]) => {
                         let subjects = program.subjects;
-
                         let passedSubjects = result.results.filter(each => each.grade > -1);
                         let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
 

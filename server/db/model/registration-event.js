@@ -27,6 +27,15 @@ const registrationEventSchema = new Schema({
                 to: {
                     type: Date,
                     required: true
+                },
+                appliedStudents: {
+                    type: [
+                        {
+                            type: ObjectId,
+                            ref: "StudentInfo"
+                        }
+                    ],
+                    default: []
                 }
             }
         ],

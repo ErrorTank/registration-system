@@ -16,6 +16,6 @@ export const resultApi = {
 
             speciality: speciality ? speciality._id : null
         };
-        return authenApi.get(`/result/student/${userInfo.getState()._id}${urlUtils.buildParams(params)}`)
+        return authenApi.get(`/result/student/${userInfo.getState().info._id}${urlUtils.buildParams(params)}`)
     }
 };

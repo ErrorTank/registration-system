@@ -7,6 +7,6 @@ export const specialityApi = {
         return authenApi.get("/specialities");
     },
     getStudentSpecs(){
-        return authenApi.get(`/specialities/student/${userInfo.getState()._id}`)
+        return authenApi.get(`/specialities/student/${userInfo.getState().info._id}`)
     }
 };
