@@ -74,8 +74,34 @@ const toggleRegisterLesson = ({studentID, semester, year}, {lesson}) => {
             "year.from": Number(from),
             "year.to": Number(to),
             semester: Number(semester)
-        }).lean()
+        }).populate({
+            path: 'list',
+            populate: [
+                {
+                    path: 'class',
+                    model: 'Class',
+                    populate: {
+                        "path": "subject",
+                        "model": "Subject"
+                    }
+                },
+                {
+                    path: 'from',
+                    model: 'Shift'
+                },
+                {
+                    path: 'to',
+                    model: 'Shift'
+                }, {
+                    path: 'classRoom',
+                    model: 'ClassRoom'
+                },
+            ]
+
+        })
             .then(schedule => {
+                // let totalCredits = Object.values(schedule.list.reduce((result, cur) => ({...result, [cur.class.subject._id] : cur.class.subject.credits}),{})).reduce((total, cur) => total + cur,0);
+                // if(totalCredits )
                 console.log(schedule)
                 if (!schedule) {
                     return new Schedule({
