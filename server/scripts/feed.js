@@ -15,6 +15,7 @@ module.exports =  (appDb) => {
     const StudentInfo = require("../db/model/student-info")(appDb);
     const Subject = require("../db/model/subject")(appDb);
     const User = require("../db/model/user")(appDb);
+    const SubjectLesson = require("../db/model/subject-lesson")(appDb);
     // SchoolScheduleItems.updateMany({studentGroup: 1}, {studentGroup: 2}).then(() => {
     //     console.log("cac")
     // })

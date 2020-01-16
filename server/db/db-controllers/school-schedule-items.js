@@ -2,7 +2,7 @@ const appDb = require("../../config/db").getDbs().appDb;
 const Subject = require("../model/subject")(appDb);
 const ClassRoom = require("../model/class-room")(appDb);
 const DptInsInfo = require("../model/dpt-ins-info")(appDb);
-const Speciality = require("../model/speciality")(appDb);
+const SubjectLesson = require("../model/subject-lesson")(appDb);
 const EducateProgram = require("../model/educate-program")(appDb);
 const User = require("../model/user")(appDb);
 const Class = require("../model/class")(appDb);
@@ -14,6 +14,7 @@ const {ApplicationError} = require("../../utils/error/error-types");
 const omit = require("lodash/omit");
 const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
+const {transformSubjectLesson} = require("../../utils/registration-event");
 
 const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
     let pipeline = [];
@@ -141,6 +142,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     subjects: Object.values(subjectMapping)
                 }).save()
             ]).then(([dptInfo, newClasses, newEduProgram]) => {
+
                 const classMapping = newClasses.reduce((result, current) => {
                     result[current.name] = ObjectId(current._id);
                     return result;
@@ -154,7 +156,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     return result;
                 }, {});
                 // console.log(classMapping)
-                return SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
+                return Promise.all([SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
                     // console.log(classMapping[each.class.name])
                     return omit({...each,
                         class: classMapping[each.class.name],
@@ -165,7 +167,17 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                         to:  shifts.find(e => e.name === each.to)._id,
                         instructor: userMapping[each.instructor.identityID]
                     }, ["subjectID", "shift"])
-                }));
+                })), SubjectLesson.insertMany(subjects.map(each => {
+                    let lessons = transformSubjectLesson({
+                        lessons: newClasses.filter(cl => cl.subject.toString() === each._id.toString())
+                    }).lessons.map(le => {
+                        return le.map(cl => ObjectId(cl._id))
+                    });
+                    return {
+                        subject: ObjectId(each._id),
+                        lessons
+                    }
+                }))]);
 
             })
         })
