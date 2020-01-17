@@ -142,7 +142,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     subjects: Object.values(subjectMapping)
                 }).save()
             ]).then(([dptInfo, newClasses, newEduProgram]) => {
-
+                newClasses = newClasses.map(each => each.toObject());
                 const classMapping = newClasses.reduce((result, current) => {
                     result[current.name] = ObjectId(current._id);
                     return result;
@@ -156,6 +156,17 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     return result;
                 }, {});
                 // console.log(classMapping)
+                let subLessons = subjects.map(each => {
+                    let lessons = transformSubjectLesson({
+                        lessons: newClasses.filter(cl => cl.subject.toString() === each._id.toString())
+                    }).lessons.map(le => {
+                        return le.map(cl => ObjectId(cl._id))
+                    });
+                    return {
+                        subject: ObjectId(each._id),
+                        lessons
+                    }
+                });
                 return Promise.all([SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
                     // console.log(classMapping[each.class.name])
                     return omit({...each,
@@ -167,17 +178,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                         to:  shifts.find(e => e.name === each.to)._id,
                         instructor: userMapping[each.instructor.identityID]
                     }, ["subjectID", "shift"])
-                })), SubjectLesson.insertMany(subjects.map(each => {
-                    let lessons = transformSubjectLesson({
-                        lessons: newClasses.filter(cl => cl.subject.toString() === each._id.toString())
-                    }).lessons.map(le => {
-                        return le.map(cl => ObjectId(cl._id))
-                    });
-                    return {
-                        subject: ObjectId(each._id),
-                        lessons
-                    }
-                }))]);
+                })), SubjectLesson.insertMany()]);
 
             })
         })
