@@ -13,6 +13,7 @@ const classSchema = new Schema({
         ref: "Subject",
         required: true
     },
+    unique: String,
     capacity: {
         min: {
             type: Number,

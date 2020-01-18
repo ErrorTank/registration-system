@@ -2,6 +2,7 @@ const appDb = require("../../config/db").getDbs().appDb;
 const RegistrationEvent = require("../model/registration-event")(appDb);
 const AppConfig = require("../model/app-config")(appDb);
 const SchoolScheduleItems = require("../model/school-schedule-items")(appDb);
+const SubjectLesson = require("../model/subject-lesson")(appDb);
 const StudentInfo = require("../model/student-info")(appDb);
 const Result = require("../model/result")(appDb);
 const Schedule = require("../model/schedule")(appDb);
@@ -119,7 +120,6 @@ const createRegistrationEvent = (data) => {
     })
         .then(([results, configs]) => {
 
-            // console.log(results)
             let config = configs[0];
             let {latestSchoolYear} = config;
             let sortStudents = results
@@ -127,9 +127,13 @@ const createRegistrationEvent = (data) => {
                     return each.speciality.toString() === each.owner.speciality._id.toString()
                 })
                 .map(each => ({...each, owner: {...each.owner, studentGroup: getStudentGroup(each.owner.schoolYear, each.owner.speciality.department, latestSchoolYear) }}))
-                .filter(each => Number(each.owner.studentGroup) === Number(data.studentGroup))
+                .filter(each => {
+                    console.log(each.owner.studentGroup)
+                    console.log(Number(each.owner.studentGroup) === Number(data.studentGroup))
+                    return Number(each.owner.studentGroup) === Number(data.studentGroup)
+                })
                 .sort((a,b) => calculateTotalCredits(b.results) - calculateTotalCredits(a.results));
-            console.log(sortStudents.length)
+            console.log("length "+sortStudents.length)
             if(sortStudents.length === 0){
                 return new RegistrationEvent({
                     ...data
@@ -346,12 +350,14 @@ const getSubjectsForRegistration = ({info, _id}) => {
                 // console.log(toDate)
                 // console.log(differenceFrom)
                 // console.log(differenceTo)
+                console.log("cac")
                 if(!e.appliedStudents.find(each => each.toString() === info._id.toString())){
                     continue;
                 }
                 if (fromDate - currentDate > 0 && fromDate - currentDate <= Number(e.delay)) {
                     return {delayEvent: {...event, activeChildEvent: e}};
                 }
+
                 if (getEventStatus(e, currentDate, config, event).value === 0) {
 
                     return Promise.all(
@@ -362,9 +368,10 @@ const getSubjectsForRegistration = ({info, _id}) => {
                             Result.findOne({
                                 speciality: ObjectId(info.speciality._id),
                                 owner: ObjectId(info._id)
-                            }).populate("results.subject")
+                            }).populate("results.subject"),
+                            SubjectLesson.find({}).lean()
                         ]
-                    ).then(([program, result]) => {
+                    ).then(([program, result, subjectLesson]) => {
                         let subjects = program.subjects;
                         let passedSubjects = result.results.filter(each => each.grade > -1);
                         let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
@@ -575,7 +582,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
 
                         ]).then(result => {
                             // return result
-
+                            // console.log(result)
                             let isGDTCPassed = passedSubjects.find(each => each.subject.subjectID === "PG100");
                             return {
                                 subjectList: result.filter(each => {
@@ -586,7 +593,27 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                         return false;
                                     }
                                     return true;
-                                }).map(transformSubjectLesson).map(each => {
+                                }).map(each => {
+                                    // if(!subjectLesson.find(sl => sl.subject === each._id )){
+                                    //     console.log(each._id)
+                                    // }
+
+                                    let subLes = subjectLesson
+                                        .find(sl => sl.subject.toString() === each._id.toString() ).lessons;
+                                    console.log(subLes )
+                                    // subLes
+                                    //     .map(l => l.map(cl => {
+                                    //         if(each.lessons.find(le => le._id.toString() === cl.toString())){
+                                    //
+                                    //             return true;
+                                    //         }
+                                    //         console.log(cl)
+                                    //         return false;
+                                    //     }))
+                                    return {...each, lessons: subLes
+                                            .map(l => l.map(cl => each.lessons.find(le => le._id.toString() === cl.toString())))
+                                    }
+                                }).map(each => {
                                     return {
                                         ...each,
                                         lessons: each.lessons.map(lesson => lesson.sort((a, b) => a.dayOfWeek - b.dayOfWeek))

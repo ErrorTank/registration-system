@@ -58,7 +58,7 @@ const transformData = ({schedule, eduProgram}) => {
             .filter(each => subjects.find(s => s.subjectID === each.subjectID) && each.insInfo)
             .map(each => ({year: transformUploadYear(year),semester: semester.value, studentGroup: studentGroup.value ,...transformSchoolScheduleItem(each)}))
         ;
-        let classes = schoolScheduleItems.map(each => each.class);
+        let classes = schoolScheduleItems.map(each => ({...each.class, unique: each.class.name + each.shift + each.classRoom.name + each.dayOfWeek}));
         let classRooms = uniqBy(schoolScheduleItems.map(each => each.classRoom), each => each.name);
         let instructors = uniqBy(schoolScheduleItems.map(each => each.instructor), each => each.identityID);
         resolve({subjects, eduProgram: newEduProgram, schoolScheduleItems, classes, classRooms, instructors});
