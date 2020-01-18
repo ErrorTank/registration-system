@@ -147,6 +147,7 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     result[current.name] = ObjectId(current._id);
                     return result;
                 }, {});
+
                 const classRoomMapping = classRooms.reduce((result, current) => {
                     result[current.name] = ObjectId(current._id);
                     return result;
@@ -156,18 +157,10 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                     return result;
                 }, {});
                 // console.log(classMapping)
-                let subLessons = subjects.map(each => {
-                    let lessons = transformSubjectLesson({
-                        lessons: newClasses.filter(cl => cl.subject.toString() === each._id.toString())
-                    }).lessons.map(le => {
-                        return le.map(cl => ObjectId(cl._id))
-                    });
-                    return {
-                        subject: ObjectId(each._id),
-                        lessons
-                    }
-                });
-                return Promise.all([SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
+                // console.log(subjects)
+
+
+                return SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
                     // console.log(classMapping[each.class.name])
                     return omit({...each,
                         class: classMapping[each.class.name],
@@ -178,7 +171,37 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                         to:  shifts.find(e => e.name === each.to)._id,
                         instructor: userMapping[each.instructor.identityID]
                     }, ["subjectID", "shift"])
-                })), SubjectLesson.insertMany()]);
+                })).then(items => {
+                    return Promise.all(items.map(each => each.populate({
+                        path: "class",
+                        populate: {
+                            path: "subject",
+                            model: "Subject"
+                        }
+                    }).execPopulate())).then(newItems => {
+                        console.log(newItems)
+                        let subLessons = subjects.map(each => {
+                            let classes =  newItems.filter(cl => cl.class.subject.toString() === each._id.toString());
+                            // if(classes.length === 0){
+                            //     console.log(each.name + " " + each.subjectID)
+                            // }
+
+                            let lessons = transformSubjectLesson({
+                                lessons: classes
+                            }).lessons.map(le => {
+                                return le.map(cl => ObjectId(cl._id))
+                            });
+                            return {
+                                subject: ObjectId(each._id),
+                                lessons
+                            }
+                        });
+                        SubjectLesson.insertMany(subLessons)
+                    });
+
+
+
+                });
 
             })
         })

@@ -15,6 +15,8 @@ module.exports =  (appDb) => {
     const StudentInfo = require("../db/model/student-info")(appDb);
     const Subject = require("../db/model/subject")(appDb);
     const User = require("../db/model/user")(appDb);
+    const mongoose = require("mongoose");
+    const ObjectId = mongoose.Types.ObjectId;
     const SubjectLesson = require("../db/model/subject-lesson")(appDb);
     // SchoolScheduleItems.updateMany({studentGroup: 1}, {studentGroup: 2}).then(() => {
     //     console.log("cac")
@@ -22,6 +24,7 @@ module.exports =  (appDb) => {
     // StudentInfo.updateMany({}, {active: true}).then(() => {
     //     console.log("cac")
     // })
+    // SubjectLesson.deleteMany({}).then(() => console.log("cac"));
     // Class.deleteMany({}).then(() => console.log("cac"));
     // Classroom.deleteMany({}).then(() => console.log("cac"));
     // DptInsInfo.deleteMany({}).then(() => console.log("cac"));
@@ -36,6 +39,22 @@ module.exports =  (appDb) => {
     // Shift.deleteMany({}).then(() => console.log("cac"));
     // Division.deleteMany({}).then(() => console.log("cac"));
     // Subject.updateMany({}, {coefficient: 4}).then(() => console.log("cac"));
+    // Subject.findOne({subjectID: "GE202"}).lean().then(data => {
+    //     console.log(data)
+    //     Class.find({subject: ObjectId(data._id)}).lean().then(ok => console.log(ok))
+    //     SubjectLesson.findOne({subject: ObjectId(data._id)}).lean().then(ok => console.log(ok))
+    // })
+    // SubjectLesson.find({}).populate([
+    //     {
+    //         path: "subject"
+    //     },
+    //     {
+    //         path: "lessons"
+    //     }
+    // ]).then((data) => {
+    //     console.log(data.map(each => each.lessons))
+    // })
+    // Class.find({subject: ObjectId("5e228bc1b3221d0b80e0db26")}).then(data => console.log(data))
     // const shifts = [
     //     {
     //         name: 1,

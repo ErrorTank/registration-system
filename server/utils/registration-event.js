@@ -70,6 +70,7 @@ const getStudentGroup = (schoolYear, department, latestSchoolYear) => {
 
 const transformSubjectLesson = subject => {
     let {lessons} = subject;
+
     let tracker = {};
     let testArr = lessons.map(each => {
         return {
