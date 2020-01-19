@@ -10,23 +10,29 @@ const createRegistrationCountdownService = () => {
             for(let i = 0; i < existed.length; i++){
 
                 if(existed[i].event._id.toString() === eventID.toString()){
+                    console.log("dit")
                     existed[i].terminator.clear();
                     break;
                 }
             }
 
         },
-        getExistedEventsByIds: ids => existed.filter(each => ids.includes(each.event._id.toString())),
+        getExistedEventsByIds: ids => {
+            console.log(existed)
+            return  existed.filter(each => ids.includes(each.event._id.toString()))
+        },
         getConfig: () => ({
             delay: 5000,
             name: "track-registration-event",
             func: ({namespacesIO}) => {
                 getActiveRegistrationEvent().then(data => {
-                    // console.log(data);
+                    console.log(existed);
                     let activeEvents = data.map(each => ({parentID: each._id, year: each.year, semester: each.semester, studentGroup: each.studentGroup, event: each.activeChildEvent, difference: each.difference}));
                     existed = existed.filter(each => {
                         return each.terminator.isClear() === false;
                     });
+
+
                     for (let e of activeEvents) {
                         let eventInExisted = existed.find(each => each.event._id.toString() === e.event._id.toString());
                         // console.log(new Date().getTime())
@@ -47,7 +53,7 @@ const createRegistrationCountdownService = () => {
                                     let returnEvent = {...e};
                                     console.log(returnEvent)
                                     namespacesIO.registrationTracker.to(returnEvent.parentID).emit("stop-event", returnEvent);
-                                    newItem.terminator.clear();
+
                                 }, e.difference)
                             };
                             existed.push(newItem)

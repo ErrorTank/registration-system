@@ -29,9 +29,9 @@ export default class RegistrationRoute extends React.Component {
             loading: true,
             delayEvent: null,
             pickedSubject: null,
-            schedule: null
+
         };
-        this.state = {...this.init};
+        this.state = {...this.init,   schedule: null};
         this.socket = null;
         this.socket = io(document.location.origin + "/subject-registered");
         this.socket.on('connect', () => {
@@ -39,7 +39,12 @@ export default class RegistrationRoute extends React.Component {
 
                 let {info} = userInfo.getState();
                 let {currentYear, currentSemester, latestSchoolYear} = appConfigCache.syncGet();
-                if (currentSemester === Number(semester) && Number(year.from) === currentYear.from && Number(year.to) === currentYear.to && studentGroup === getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear) && event.activeChildEvent.appliedStudents.find(each => each.toString() === info._id.toString())) {
+                console.log(currentSemester === Number(semester))
+                console.log(Number(year.from) === currentYear.from)
+                console.log(Number(year.to) === currentYear.to)
+                console.log(studentGroup === getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear))
+                console.log(event.appliedStudents.find(each => each.toString() === info._id.toString()))
+                if (currentSemester === Number(semester) && Number(year.from) === currentYear.from && Number(year.to) === currentYear.to && studentGroup === getStudentGroup(info.schoolYear, info.speciality.department, latestSchoolYear) && event.appliedStudents.find(each => each.toString() === info._id.toString())) {
                     this.setState({loading: true});
                     this.loadData().then(data => {
                         if(!data.delayEvent){
@@ -58,15 +63,16 @@ export default class RegistrationRoute extends React.Component {
                 console.log("zzz")
                 let {info} = userInfo.getState();
                 console.log(parentID)
-                if (this.state.event && this.state.event._id === parentID  && event.activeChildEvent.appliedStudents.find(each => each.toString() === info._id.toString())) {
+                if (this.state.event && this.state.event._id === parentID  && event.appliedStudents.find(each => each.toString() === info._id.toString())) {
                     this.socket.emit("unsubscribe", parentID);
-                    this.board.resetData();
                     this.setState({loading: true});
-                    this.loadData().then(data => {
-                        this.setState({...this.init, ...data, loading: false});
-                    }).catch((error) => {
-                        this.setState({...this.init, error, loading: false} );
-                    });
+                    setTimeout(() => {
+                        this.loadData().then(data => {
+                            this.setState({...this.init, ...data, loading: false});
+                        }).catch((error) => {
+                            this.setState({...this.init, error, loading: false} );
+                        });
+                    }, 2000)
 
                 }
             });

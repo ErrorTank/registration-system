@@ -4,6 +4,7 @@ const createCustomTimeout = (fn, delay) => {
 
   return {
     clear: () => {
+      fn();
       clearTimeout(timeout);
       isClear = true;
     },

@@ -199,6 +199,7 @@ const updateRegisterEvent = (rID, {data, oldEvents}) => {
         // let isDataActive = isActive(data, currentDate, config[0]);
 
         let existed = registrationCountdownService.getExistedEventsByIds(oldEvents.map(each => each._id.toString()));
+        console.log(existed)
         if (existed.length) {
             for (let event of existed) {
                 registrationCountdownService.terminate(event.event._id)
