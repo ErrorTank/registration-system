@@ -96,7 +96,6 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
         pipeline.push({
             $match: {
                 $or : [
-                    {"_id": ObjectId(keyword)},
                     {"class.subject.name": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
                     {"class.subject.subjectID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
                     {"instructor.user.identityID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
