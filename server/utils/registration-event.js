@@ -3,6 +3,7 @@
 const omit = require("lodash/omit");
 const moment = require("moment");
 moment.locale("vi");
+const {calculateTotalCredits} = require("../utils/result");
 
 
 const isActive = (event, currentDate, {currentSemester, currentYear}) => {
@@ -105,10 +106,45 @@ const transformSubjectLesson = subject => {
     return {...subject, lessons: [...Object.values(tracker)]}
 };
 
+const createRegistrationEventData = (data, results, config) => {
+    let {latestSchoolYear} = config;
+    let sortStudents = results
+        .filter(each => {
+            return each.speciality.toString() === each.owner.speciality._id.toString()
+        })
+        .map(each => ({...each, owner: {...each.owner, studentGroup: getStudentGroup(each.owner.schoolYear, each.owner.speciality.department, latestSchoolYear) }}))
+        .filter(each => {
+            console.log(each.owner.studentGroup)
+            console.log(Number(each.owner.studentGroup) === Number(data.studentGroup))
+            return Number(each.owner.studentGroup) === Number(data.studentGroup)
+        })
+        .sort((a,b) => calculateTotalCredits(b.results) - calculateTotalCredits(a.results));
+    console.log("length "+sortStudents.length)
+    if(sortStudents.length === 0){
+        return {...data}
+
+    }
+    if(sortStudents.length < data.childEvents.length){
+        return {
+            ...data,
+            childEvents: data.childEvents.map((each, i) => ({...each, appliedStudents: sortStudents.slice(i, 1).map(r => r.owner._id)}))
+        }
+    }
+    let roundThreshHold = Math.round(sortStudents.length / data.childEvents.length);
+
+    return {
+        ...data,
+        childEvents: data.childEvents.map((each, i) => {
+            return ({...each, appliedStudents: sortStudents.slice(i * roundThreshHold, (i * roundThreshHold) + (i === data.childEvents.length - 1 ? sortStudents.length - (i * roundThreshHold) : roundThreshHold)).map(r => r.owner._id)})
+        })
+    }
+};
+
 module.exports = {
     isActive,
     getEventStatus,
     startRegistrationEventCountdown,
     getStudentGroup,
-    transformSubjectLesson
+    transformSubjectLesson,
+    createRegistrationEventData
 };

@@ -15,7 +15,7 @@ const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
 const {isActive, getEventStatus, getStudentGroup} = require("../../utils/registration-event");
 const {calculateTotalCredits} = require("../../utils/result");
-const {transformSubjectLesson} = require("../../utils/registration-event");
+const {transformSubjectLesson, createRegistrationEventData} = require("../../utils/registration-event");
 
 const createRegistrationEvent = (data) => {
     return RegistrationEvent.findOne({
@@ -121,39 +121,9 @@ const createRegistrationEvent = (data) => {
         .then(([results, configs]) => {
 
             let config = configs[0];
-            let {latestSchoolYear} = config;
-            let sortStudents = results
-                .filter(each => {
-                    return each.speciality.toString() === each.owner.speciality._id.toString()
-                })
-                .map(each => ({...each, owner: {...each.owner, studentGroup: getStudentGroup(each.owner.schoolYear, each.owner.speciality.department, latestSchoolYear) }}))
-                .filter(each => {
-                    console.log(each.owner.studentGroup)
-                    console.log(Number(each.owner.studentGroup) === Number(data.studentGroup))
-                    return Number(each.owner.studentGroup) === Number(data.studentGroup)
-                })
-                .sort((a,b) => calculateTotalCredits(b.results) - calculateTotalCredits(a.results));
-            console.log("length "+sortStudents.length)
-            if(sortStudents.length === 0){
-                return new RegistrationEvent({
-                    ...data
-                }).save();
-            }
-            if(sortStudents.length < data.childEvents.length){
-                return new RegistrationEvent({
-                    ...data,
-                    childEvents: data.childEvents.map((each, i) => ({...each, appliedStudents: sortStudents.slice(i, 1).map(r => r.owner._id)}))
-                }).save();
-            }
-            let roundThreshHold = Math.round(sortStudents.length / data.childEvents.length);
-
+            let createData = createRegistrationEventData(data, results, config);
             return new RegistrationEvent({
-                ...data,
-                childEvents: data.childEvents.map((each, i) => {
-                    console.log(i * roundThreshHold)
-                    console.log(i === data.childEvents.length - 1 ? sortStudents.length - (i * roundThreshHold) : roundThreshHold)
-                    return ({...each, appliedStudents: sortStudents.slice(i * roundThreshHold, (i * roundThreshHold) + (i === data.childEvents.length - 1 ? sortStudents.length - (i * roundThreshHold) : roundThreshHold)).map(r => r.owner._id)})
-                })
+                ...createData
             }).save();
 
         })
@@ -247,17 +217,110 @@ const updateRegisterEvent = (rID, {data, oldEvents}) => {
             if (re) {
                 return Promise.reject(new ApplicationError("existed"));
             }
-            return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...data}}, {new: true}).lean().then(data => {
+            return Promise.all([
+                Result.aggregate([
+                    {
+                        $unwind: "$results"
+                    },
+                    {
+                        $lookup: {
+                            from: 'subjects',
+                            localField: 'results.subject',
+                            foreignField: '_id',
+                            as: "results.subject'"
+                        }
+                    },
+                    // {
+                    //     $addFields: {
+                    //
+                    //         'results.subject': {
+                    //             $arrayElemAt: ["$results.subject", 0]
+                    //         },
+                    //
+                    //     }
+                    // },
+                    {
+                        $group: {
+                            _id: "$_id",
+                            owner: {
+                                $first: "$owner"
+                            },
+                            speciality: {
+                                $first: "$speciality"
+                            },
+                            results: {
+                                $push: "$results"
+                            },
 
-                return {
-                    ...data,
-                    isActive: isActive(data, currentDate, config[0]),
-                    childEvents: data.childEvents.map(each => ({
-                        ...each,
-                        status: getEventStatus(each, currentDate, config[0], data)
-                    }))
-                }
-            });
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'studentinfos',
+                            localField: 'owner',
+                            foreignField: '_id',
+                            as: "owner"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            'owner': {
+                                $arrayElemAt: ["$owner", 0]
+                            },
+
+
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'users',
+                            localField: 'owner.user',
+                            foreignField: '_id',
+                            as: "owner.user"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'specialities',
+                            localField: 'owner.speciality',
+                            foreignField: '_id',
+                            as: "owner.speciality"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            'owner.user': {
+                                $arrayElemAt: ["$owner.user", 0]
+                            },
+                            'owner.speciality': {
+                                $arrayElemAt: ["$owner.speciality", 0]
+                            },
+
+                        }
+                    },
+                    {
+                        $match: {
+                            "owner.active": true,
+                        }
+                    },
+                ]),
+
+            ]).then(([results]) => {
+                let updatedData = createRegistrationEventData(data, results, config[0]);
+                return RegistrationEvent.findOneAndUpdate({_id: ObjectId(rID)}, {$set: {...updatedData}}, {new: true}).lean().then(data => {
+
+                    return {
+                        ...data,
+                        isActive: isActive(data, currentDate, config[0]),
+                        childEvents: data.childEvents.map(each => ({
+                            ...each,
+                            status: getEventStatus(each, currentDate, config[0], data)
+                        }))
+                    }
+                });
+            })
+
+
         })
     })
 };
@@ -600,7 +663,6 @@ const getSubjectsForRegistration = ({info, _id}) => {
 
                                     let subLes = subjectLesson
                                         .find(sl => sl.subject.toString() === each._id.toString() ).lessons;
-                                    console.log(subLes )
                                     // subLes
                                     //     .map(l => l.map(cl => {
                                     //         if(each.lessons.find(le => le._id.toString() === cl.toString())){
