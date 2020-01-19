@@ -230,18 +230,33 @@ export class RegistrationEventForm extends KComponent {
                                 className={classnames("child-event", {error: childEventsError && childEventsError.includes(each.id)})}
                                 key={each.id}>
                                 {(this.props.isEdit && each.status) && (
-                                    <div className="child-status">
-                                    <span className="label">
-                                        Trạng thái:
-                                    </span>
-                                        <span className="value">
-                                            <Badge
-                                                className={"common-badge"}
-                                                content={each.status.message}
-                                                style={this.getBadgeStyle(each.status.value)}
-                                            />
-                                    </span>
-                                    </div>
+                                    <>
+                                        <div className="child-status">
+                                            <span className="label">
+                                                Trạng thái:
+                                            </span>
+                                                <span className="value">
+                                                    <Badge
+                                                        className={"common-badge"}
+                                                        content={each.status.message}
+                                                        style={this.getBadgeStyle(each.status.value)}
+                                                    />
+                                            </span>
+                                        </div>
+                                        <div className="child-status">
+                                            <span className="label">
+                                                SV tham gia:
+                                            </span>
+                                            <span className="value">
+
+                                                    <Badge
+                                                        className={"common-badge"}
+                                                        content={each.appliedStudents.length + " sinh viên"}
+                                                        style={"info"}
+                                                    />
+                                            </span>
+                                        </div>
+                                    </>
                                 )}
                                 <div className="child-action">
                                     {(i === childEvents.length - 1 && childEvents.length < 3) && (
