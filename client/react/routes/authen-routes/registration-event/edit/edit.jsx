@@ -13,6 +13,7 @@ import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
 import isEqual from "lodash/isEqual";
 import uniqid from "uniqid";
 import {appModal} from "../../../../common/modal/modals";
+import {StatisticPanel} from "../../../../common/statistic-panel/statistic-panel";
 
 class RegistrationEventEditRoute extends React.Component {
     constructor(props) {
@@ -129,6 +130,21 @@ class RegistrationEventEditRoute extends React.Component {
                     title={"Cập nhật đợt đăng ký học"}
                 >
                     <div className="registration-event-new-route">
+                        <StatisticPanel
+                            statistics={[
+                                {
+                                    label: "Sinh viên tham gia",
+                                    value: this.state.draft.childEvents ? this.state.draft.childEvents.reduce((total, cur) => total + cur.appliedStudents.length ,0) : 0,
+                                    icon: <i class="fad fa-users"></i>,
+                                    style: "info"
+                                }, {
+                                    label: "Đợt nhỏ",
+                                    value: this.state.draft.childEvents ? this.state.draft.childEvents.length : 0,
+                                    icon: <i className="fab fa-elementor"></i>,
+                                    style: "danger"
+                                }
+                            ]}
+                        />
                         <div className="common-route-wrapper">
                             {this.state.fetching && (
                                 <LoadingInline

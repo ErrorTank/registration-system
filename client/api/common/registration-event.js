@@ -30,5 +30,8 @@ export const registrationEventApi = {
     },
     getSubjectInfo(subjectID, year, semester){
         return authenApi.post(`/registration-event/semester/${semester}/year/${year}/subject-info`, subjectID)
+    },
+    getEventOverview(){
+        return authenApi.get(`/registration-event/overview`)
     }
 };
