@@ -7,17 +7,31 @@ import omit from "lodash/omit"
 import {registrationEventApi} from "../../../../../api/common/registration-event";
 import {parseYear} from "../../../../../common/utils/common";
 import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
-
+import {StatisticPanel} from "../../../../common/statistic-panel/statistic-panel";
+import isEqual from "lodash/isEqual"
+import pick from "lodash/pick"
 
 class RegistrationEventNewRoute extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
-            error: null
+            error: null,
+            loadOverview: true,
+            config: {},
+            overview: null
         };
 
 
+    };
+
+    handleFormChange = (formData) => {
+        this.state.error && this.setState({error: ""});
+        let data = pick(formData, ["studentGroup"]);
+        if(!isEqual(this.state.config, data)){
+            this.setState({loadOverview: true, config: data});
+            registrationEventApi.getEventOverview(data).then(overview => this.setState({overview, loadOverview: false}))
+        }
     };
 
 
@@ -54,14 +68,22 @@ class RegistrationEventNewRoute extends React.Component {
                     title={"Tạo đợt đăng ký học"}
                 >
                     <div className="registration-event-new-route">
+                        <StatisticPanel
+                            statistics={[
+                                {
+                                    label: "Sinh viên tham gia",
+                                    value: this.state.overview ? this.state.overview.studentsCount : 0,
+                                    icon: <i class="fad fa-users"></i>,
+                                    style: "info"
+                                },
+                            ]}
+                        />
                         <div className="common-route-wrapper">
 
                             <div className="route-body">
 
                                 <RegistrationEventForm
-                                    onFormChange={(formData) => {
-                                        this.state.error && this.setState({error: ""});
-                                    }}
+                                    onFormChange={this.handleFormChange}
                                     serverError={this.state.error}
                                     renderActions={(form, childEventsError) => {
                                         const canCreate = !form.getInvalidPaths().length && !this.state.error && !this.state.loading && !childEventsError;

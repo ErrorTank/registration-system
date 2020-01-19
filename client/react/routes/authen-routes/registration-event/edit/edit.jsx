@@ -129,7 +129,7 @@ class RegistrationEventEditRoute extends React.Component {
                 <AuthenLayoutTitle
                     title={"Cập nhật đợt đăng ký học"}
                 >
-                    <div className="registration-event-new-route">
+                    <div className="registration-event-edit-route">
                         <StatisticPanel
                             statistics={[
                                 {
@@ -145,13 +145,6 @@ class RegistrationEventEditRoute extends React.Component {
                                 }
                             ]}
                         />
-                        <div className="common-route-wrapper">
-                            {this.state.fetching && (
-                                <LoadingInline
-                                    className="edit-form-loading"
-                                />
-                            )}
-                        </div>
                         <div className="common-route-wrapper">
                             {this.state.fetching && (
                                 <LoadingInline

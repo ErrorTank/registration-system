@@ -70,6 +70,7 @@ export class RegistrationEventForm extends KComponent {
             initData: getInitData()
         });
 
+        props.onFormChange(getInitData());
         this.onUnmount(this.form.on("change", (state) => {
             this.forceUpdate();
             this.props.onFormChange(state);

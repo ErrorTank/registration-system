@@ -771,6 +771,100 @@ const getSubjectInfo = ({semester, year}, lessons) => {
     })
 };
 
+const getEventOverview = ({ studentGroup}) => {
+    return Promise.all([Result.aggregate([
+        {
+            $unwind: "$results"
+        },
+        {
+            $lookup: {
+                from: 'subjects',
+                localField: 'results.subject',
+                foreignField: '_id',
+                as: "results.subject'"
+            }
+        },
+        {
+            $group: {
+                _id: "$_id",
+                owner: {
+                    $first: "$owner"
+                },
+                speciality: {
+                    $first: "$speciality"
+                },
+                results: {
+                    $push: "$results"
+                },
+
+            }
+        },
+        {
+            $lookup: {
+                from: 'studentinfos',
+                localField: 'owner',
+                foreignField: '_id',
+                as: "owner"
+            }
+        },
+        {
+            $addFields: {
+                'owner': {
+                    $arrayElemAt: ["$owner", 0]
+                },
+
+
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'owner.user',
+                foreignField: '_id',
+                as: "owner.user"
+            }
+        },
+        {
+            $lookup: {
+                from: 'specialities',
+                localField: 'owner.speciality',
+                foreignField: '_id',
+                as: "owner.speciality"
+            }
+        },
+        {
+            $addFields: {
+                'owner.user': {
+                    $arrayElemAt: ["$owner.user", 0]
+                },
+                'owner.speciality': {
+                    $arrayElemAt: ["$owner.speciality", 0]
+                },
+
+            }
+        },
+        {
+            $match: {
+                "owner.active": true,
+            }
+        },
+    ]), AppConfig.find({}).lean()]).then(([results, config]) => {
+        console.log(studentGroup)
+        console.log(results)
+        let {latestSchoolYear} = config[0];
+        return {
+            studentsCount: results
+                .filter(each => {
+                    return each.speciality.toString() === each.owner.speciality._id.toString()
+                })
+                .map(each => ({...each, owner: {...each.owner, studentGroup: getStudentGroup(each.owner.schoolYear, each.owner.speciality.department, latestSchoolYear) }}))
+                .filter(each => {
+                    return Number(each.owner.studentGroup) === Number(studentGroup)
+                }).length
+        }
+    })
+};
+
 module.exports = {
     createRegistrationEvent,
     getAll,
@@ -779,5 +873,6 @@ module.exports = {
     deleteRegisterEvent,
     getActiveRegistrationEvent,
     getSubjectsForRegistration,
-    getSubjectInfo
+    getSubjectInfo,
+    getEventOverview
 };
