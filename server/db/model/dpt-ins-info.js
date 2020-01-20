@@ -14,7 +14,10 @@ const dptInsInfoSchema = new Schema({
         ref: "Division",
         // required: true
     },
-
+    canEditSchedule: {
+        type: Boolean,
+        default: false
+    }
 });
 
 

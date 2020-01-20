@@ -25,6 +25,7 @@ module.exports =  (appDb) => {
     //     console.log("cac")
     // })
 
+
     // SubjectLesson.deleteMany({}).then(() => console.log("cac"));
     // Class.deleteMany({}).then(() => console.log("cac"));
     // Classroom.deleteMany({}).then(() => console.log("cac"));
