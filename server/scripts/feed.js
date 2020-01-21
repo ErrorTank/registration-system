@@ -29,7 +29,6 @@ module.exports =  (appDb) => {
     // SubjectLesson.deleteMany({}).then(() => console.log("cac"));
     // Class.deleteMany({}).then(() => console.log("cac"));
     // Classroom.deleteMany({}).then(() => console.log("cac"));
-    // DptInsInfo.deleteMany({}).then(() => console.log("cac"));
     // EducateProgram.deleteMany({}).then(() => console.log("cac"));
     // RegistrationEvent.deleteMany({}).then(() => console.log("cac"));
     // Result.deleteMany({}).then(() => console.log("cac"));
@@ -38,6 +37,7 @@ module.exports =  (appDb) => {
     // StudentInfo.deleteMany({}).then(() => console.log("cac"));
     // Subject.deleteMany({}).then(() => console.log("cac"));
     // User.deleteMany({role: {$ne: "admin"}}).then(() => console.log("cac"));
+    // DptInsInfo.deleteMany({}).then(() => console.log("cac"));
     // Shift.deleteMany({}).then(() => console.log("cac"));
     // Division.deleteMany({}).then(() => console.log("cac"));
     // Subject.updateMany({}, {coefficient: 4}).then(() => console.log("cac"));
@@ -133,20 +133,25 @@ module.exports =  (appDb) => {
     //     console.log("dsadasdsa")
     // });
     //
+    // User.findOne({identityID: "CTI014"}).lean().then(data => {
+    //     DptInsInfo.findOne({user: ObjectId(data._id)}).lean().then(info => console.log(info))
+    // })
+    // DptInsInfo.findOneAndUpdate({_id: ObjectId("5e22c27e0809a232645888aa")}, {canEditSchedule: true}).then(() => console.log("cac"))
     // new User({
-    //     username: "admin",
+    //     username: "cti014",
     //     password: "123123qwe",
-    //     role: "admin",
-    //     name: "Kappa",
+    //     role: "gv",
+    //     name: "Tran Thi Hue",
     //     dob: new Date().getTime(),
-    //     phone: "3123",
-    //     email: "haha@gmail.com",
-    //     identityID: "dasdsa"
+    //     phone: "31232",
+    //     email: "hue@gmail.com",
+    //     identityID: "cti014"
     // }).save().then(data => {
-    //     new CommonUserInfo({
+    //     new DptInsInfo({
     //
     //         user: data.toObject()._id,
-    //
+    //         division: ObjectId("5e06ca2db3f575100c71c4ad"),
+    //         canEditSchedule: true
     //     }).save()
     // });
     // new User({

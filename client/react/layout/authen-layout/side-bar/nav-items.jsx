@@ -7,6 +7,8 @@ import FormatListNumberedRtlIcon from '@material-ui/icons/FormatListNumberedRtl'
 import CreateIcon from '@material-ui/icons/Create';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import PeopleIcon from '@material-ui/icons/People';
+import {userInfo} from "../../../../common/states/common";
 
 export const navItems = [
     {
@@ -37,6 +39,17 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["gv"]
+    },{
+        label: "Quản lý sinh viên",
+        url: "/giao-vien/quan-ly-sinh-vien",
+        icon: <PeopleIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["gv"],
+        condition: () => {
+            let {info} = userInfo.getState();
+            return info ? info.canEditSchedule : false;
+        }
     },{
         label: "Import dữ liệu",
         url: "/manage/import",
