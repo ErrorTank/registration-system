@@ -10,7 +10,6 @@ const createRegistrationCountdownService = () => {
             for(let i = 0; i < existed.length; i++){
 
                 if(existed[i].event._id.toString() === eventID.toString()){
-                    console.log("dit")
                     existed[i].terminator.clear();
                     break;
                 }
@@ -18,7 +17,6 @@ const createRegistrationCountdownService = () => {
 
         },
         getExistedEventsByIds: ids => {
-            console.log(existed)
             return  existed.filter(each => ids.includes(each.event._id.toString()))
         },
         getConfig: () => ({
