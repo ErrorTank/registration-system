@@ -106,18 +106,13 @@ class App extends React.Component {
                                                     component={props => <InsDashboard  {...authenProps} {...props}/>}
                                                     roles={["gv"]}
                                                 />
-                                                <RoleFilterRoute
-                                                    {...props}
-                                                    exact
-                                                    path={props.match.path}
-                                                    component={props => <InsDashboard  {...authenProps} {...props}/>}
-                                                    roles={["gv"]}
-                                                />
+
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
                                                     path={props.match.path + "/lich-giang-day"}
-                                                    component={props => <InsScheduleRoute  {...authenProps} {...props}/>}
+                                                    component={props =>
+                                                        <InsScheduleRoute  {...authenProps} {...props}/>}
                                                     roles={["gv"]}
                                                 />
                                             </CustomSwitch>
@@ -134,7 +129,17 @@ class App extends React.Component {
                                                     component={props => <Dashboard  {...authenProps} {...props}/>}
                                                     roles={["sv"]}
                                                 />
-
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={"/ep-cung"}
+                                                    component={props => <ForceRegisterRoute  {...authenProps} {...props}/>}
+                                                    roles={["gv", "pdt"]}
+                                                    condition={() => {
+                                                        let {info} = userInfo.getState();
+                                                        return info ? info.role === "gv" ? info.canEditSchedule : true : false;
+                                                    }}
+                                                />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
@@ -162,7 +167,8 @@ class App extends React.Component {
                                                     {...props}
                                                     exact
                                                     path={"/dang-ky-hoc"}
-                                                    component={props => <RegistrationRoute  {...authenProps} {...props}/>}
+                                                    component={props =>
+                                                        <RegistrationRoute  {...authenProps} {...props}/>}
                                                     roles={["sv"]}
                                                 />
                                             </CustomSwitch>

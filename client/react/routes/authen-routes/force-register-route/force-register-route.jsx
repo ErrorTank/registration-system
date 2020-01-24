@@ -3,6 +3,7 @@ import {PageTitle} from "../../../common/page-title/page-title";
 import {KComponent} from "../../../common/k-component";
 import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
 import {commonApi} from "../../../../api/common/common-api";
+import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 
 export default class ForceRegisterRoute extends KComponent {
     constructor(props) {
@@ -21,7 +22,7 @@ export default class ForceRegisterRoute extends KComponent {
 
 
     render() {
-        let {students, loadStudents} = this.state;
+        let {students, loadStudents, pickedStudents} = this.state;
         return (
             <PageTitle
                 title={"Ép cứng"}
@@ -31,7 +32,21 @@ export default class ForceRegisterRoute extends KComponent {
                 >
                     <div className="force-register-route">
                         <div className="common-route-wrapper">
-
+                            {loadStudents && (
+                                <LoadingInline/>
+                            )}
+                            <div className="force-step">
+                                <div className="step-title">
+                                    <span className="strong">Bước 1:</span>Chọn sinh viên ép cứng
+                                </div>
+                            </div>
+                            {!!pickedStudents.length && (
+                                <div className="force-step">
+                                    <div className="step-title">
+                                        <span className="strong">Bước 2:</span>Ép cứng
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </AuthenLayoutTitle>

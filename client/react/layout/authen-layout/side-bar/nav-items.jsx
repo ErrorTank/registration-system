@@ -40,17 +40,6 @@ export const navItems = [
         />,
         roles: ["gv"]
     },{
-        label: "Ép cứng",
-        url: "/giao-vien/ep-cung",
-        icon: <PeopleIcon
-            fontSize={"inherit"}
-        />,
-        roles: ["gv"],
-        condition: () => {
-            let {info} = userInfo.getState();
-            return info ? info.canEditSchedule : false;
-        }
-    },{
         label: "Import dữ liệu",
         url: "/manage/import",
         icon: <PublishIcon fontSize={"inherit"}/>,
@@ -85,6 +74,17 @@ export const navItems = [
         />,
         roles: ["sv", "gv"],
         // disabled: true
+    },{
+        label: "Ép cứng",
+        url: "/ep-cung",
+        icon: <PeopleIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["gv", "pdt"],
+        condition: () => {
+            let {info} = userInfo.getState();
+            return info ? info.role === "gv" ? info.canEditSchedule : true : false;
+        }
     },{
         label: "Quản lý đợt đăng ký",
         url: ["/manage/registration-events", "/manage/registration-event/new", /\/manage\/registration-event\/(\w+)\/edit/gi],

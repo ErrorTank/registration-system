@@ -20,6 +20,9 @@ const structures = {
                     url: "/bang-diem",
                     label: <span className="label">Bảng điểm</span>
                 }, {
+                    url: "/ep-cung",
+                    label: <span className="label">Ép cứng</span>
+                }, {
                     url: "/chuong-trinh-dao-tao",
                     label: <span className="label">CT đào tạo</span>
                 }, {
