@@ -22,7 +22,7 @@ export default class ForceRegisterRoute extends KComponent {
     };
 
     filterStudents = (list, keyword) => {
-        return list.filter(each => each);
+        return list.filter(each => each.identityID.toLowerCase().includes(keyword.trim().toLowerCase()) || each.name.toLowerCase().includes(keyword.trim().toLowerCase()));
     };
 
     render() {
