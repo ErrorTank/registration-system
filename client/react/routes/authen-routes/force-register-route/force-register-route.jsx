@@ -4,6 +4,7 @@ import {KComponent} from "../../../common/k-component";
 import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-title";
 import {commonApi} from "../../../../api/common/common-api";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
+import {MultipleSelect} from "../../../common/multiple-select/multiple-select";
 
 export default class ForceRegisterRoute extends KComponent {
     constructor(props) {
@@ -20,6 +21,9 @@ export default class ForceRegisterRoute extends KComponent {
         commonApi.getBriefStudents().then(students => this.setState({students, loadStudents: false}))
     };
 
+    filterStudents = (list, keyword) => {
+        return list.filter(each => each);
+    };
 
     render() {
         let {students, loadStudents, pickedStudents} = this.state;
@@ -39,11 +43,29 @@ export default class ForceRegisterRoute extends KComponent {
                                 <div className="step-title">
                                     <span className="strong">Bước 1:</span>Chọn sinh viên ép cứng
                                 </div>
+                                <div className="step-body">
+                                    <MultipleSelect
+                                        values={pickedStudents}
+                                        list={students}
+                                        displayTagAs={(tag, index) => index}
+                                        displayAs={(item, index) => index}
+                                        filterFunc={this.filterStudents}
+                                        onChange={pickedStudents => this.setState({pickedStudents})}
+                                        listKey={(item) => item._id}
+                                        tagKey={item => item._id}
+                                        emptyNotify={() => "Không tìm thấy sinh viên nào"}
+                                        isPicked={item => pickedStudents.find(each => each._id === item._id)}
+                                        deleteFilterFunc={(item1, item2) => item1._id !== item2._id}
+                                    />
+                                </div>
                             </div>
                             {!!pickedStudents.length && (
                                 <div className="force-step">
                                     <div className="step-title">
                                         <span className="strong">Bước 2:</span>Ép cứng
+                                    </div>
+                                    <div className="step-body">
+
                                     </div>
                                 </div>
                             )}
