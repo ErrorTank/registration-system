@@ -17,6 +17,9 @@ const structures = {
             ),
             childrens: [
                 {
+                    url: "/tkb",
+                    label: <span className="label">Thời khóa biểu</span>
+                }, {
                     url: "/bang-diem",
                     label: <span className="label">Bảng điểm</span>
                 }, {

@@ -26,6 +26,7 @@ const InsScheduleRoute = lazy(delayLoad(() => import("./authen-routes/ins-schedu
 const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/ins-dashboard")));
 const ForceRegisterRoute = lazy(delayLoad(() => import("./authen-routes/force-register-route/force-register-route")));
 const RegistrationRoute = lazy(delayLoad(() => import("./authen-routes/registration-route/registration-route")));
+const ScheduleRoute = lazy(delayLoad(() => import("./authen-routes/schedule-route/schedule-route")));
 
 class App extends React.Component {
     constructor(props) {
@@ -139,6 +140,14 @@ class App extends React.Component {
                                                         let {info} = userInfo.getState();
                                                         return info ? info.role === "gv" ? info.canEditSchedule : true : false;
                                                     }}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={"/tkb"}
+                                                    component={props => <ScheduleRoute  {...authenProps} {...props}/>}
+                                                    roles={["sv"]}
+
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}

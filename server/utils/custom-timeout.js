@@ -1,6 +1,11 @@
 const createCustomTimeout = (fn, delay) => {
   let isClear = false;
-  let timeout = setTimeout(fn, delay);
+  let timeout = setTimeout(() => {
+    fn();
+    clearTimeout(timeout);
+    isClear = true;
+
+  }, delay);
 
   return {
     clear: () => {
@@ -8,7 +13,9 @@ const createCustomTimeout = (fn, delay) => {
       clearTimeout(timeout);
       isClear = true;
     },
-    isClear: () => isClear
+    isClear: () => {
+      return isClear;
+    }
   }
 };
 module.exports  = createCustomTimeout;

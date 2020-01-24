@@ -8,6 +8,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import PeopleIcon from '@material-ui/icons/People';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import {userInfo} from "../../../../common/states/common";
 
 export const navItems = [
@@ -25,21 +26,21 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["admin", "pdt"]
-    },{
+    }, {
         label: "Trang chủ giảng viên",
         url: "/giao-vien",
         icon: <HomeIcon
             fontSize={"inherit"}
         />,
         roles: ["gv"]
-    },{
+    }, {
         label: "Lịch giảng dạy",
         url: "/giao-vien/lich-giang-day",
         icon: <AccessTimeIcon
             fontSize={"inherit"}
         />,
         roles: ["gv"]
-    },{
+    }, {
         label: "Import dữ liệu",
         url: "/manage/import",
         icon: <PublishIcon fontSize={"inherit"}/>,
@@ -59,6 +60,13 @@ export const navItems = [
         />,
         roles: ["sv"]
     }, {
+        label: "Thời khóa biểu",
+        url: "/tkb",
+        icon: <AssignmentTurnedInIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["sv"]
+    }, {
         label: "TKB toàn trường",
         url: "/tkb-toan-truong",
         icon: <FormatListNumberedRtlIcon
@@ -74,7 +82,7 @@ export const navItems = [
         />,
         roles: ["sv", "gv"],
         // disabled: true
-    },{
+    }, {
         label: "Ép cứng",
         url: "/ep-cung",
         icon: <PeopleIcon
@@ -85,7 +93,7 @@ export const navItems = [
             let {info} = userInfo.getState();
             return info ? info.role === "gv" ? info.canEditSchedule : true : false;
         }
-    },{
+    }, {
         label: "Quản lý đợt đăng ký",
         url: ["/manage/registration-events", "/manage/registration-event/new", /\/manage\/registration-event\/(\w+)\/edit/gi],
         icon: <CreateIcon

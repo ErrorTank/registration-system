@@ -9,14 +9,20 @@ const omit = require("lodash/omit");
 const pick = require("lodash/pick");
 
 
-const getStudentSchedule = ({studentID, semester, year}) => {
+const getStudentSchedule = ({studentID, semester, year}, {active}) => {
     let [from, to] = year.split("-");
-    return Schedule.findOne({
+    let filter = {
         owner: ObjectId(studentID),
         "year.from": from,
         "year.to": to,
-        semester
-    }).populate({
+        semester,
+    };
+    console.log("active: ")
+    console.log(active)
+    if(active === "true"){
+        filter.active = true;
+    }
+    return Schedule.findOne(filter).populate({
         path: 'list',
         populate: [
             {
