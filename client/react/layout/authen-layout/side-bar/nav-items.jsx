@@ -40,8 +40,8 @@ export const navItems = [
         />,
         roles: ["gv"]
     },{
-        label: "Quản lý sinh viên",
-        url: "/giao-vien/quan-ly-sinh-vien",
+        label: "Ép cứng",
+        url: "/giao-vien/ep-cung",
         icon: <PeopleIcon
             fontSize={"inherit"}
         />,

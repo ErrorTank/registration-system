@@ -24,6 +24,7 @@ const EditRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/
 const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
 const InsScheduleRoute = lazy(delayLoad(() => import("./authen-routes/ins-schedule-route/ins-schedule-route")));
 const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/ins-dashboard")));
+const ForceRegisterRoute = lazy(delayLoad(() => import("./authen-routes/force-register-route/force-register-route")));
 const RegistrationRoute = lazy(delayLoad(() => import("./authen-routes/registration-route/registration-route")));
 
 class App extends React.Component {
@@ -98,6 +99,13 @@ class App extends React.Component {
                                         path={"/giao-vien"}
                                         render={props => (
                                             <CustomSwitch>
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path}
+                                                    component={props => <InsDashboard  {...authenProps} {...props}/>}
+                                                    roles={["gv"]}
+                                                />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
