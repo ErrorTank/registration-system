@@ -25,9 +25,12 @@ export class MultipleSelect extends Component {
 
         let {displayTagAs = (each, index) => "Item " + (index + 1), displayAs = () => "displayAs function is not defined yet!", values, list, filterFunc, listKey = (each, index) => index, tagKey = (each, index) => index, emptyNotify = () => "Không có kết quả tương ứng", isPicked = (each, index) => false} = this.props;
         let filterList = filterFunc(list, keyword);
+        console.log(keyword)
         return (
             <div className="multiple-select"
-                 onClick={() => this.input.focus()}
+                 onClick={() => {
+                     this.input.focus();
+                 }}
             >
                 <div className="tags-container">
                     {values.map((each, index) => (
@@ -41,12 +44,13 @@ export class MultipleSelect extends Component {
                             }}></i>
                         </div>
                     ))}
-                    <div className="content">{keyword}</div>
+                    <div className="content">{keyword}<i></i></div>
                     <input className="rest-input"
                            ref={input => this.input = input}
                            onChange={e => this.setState({keyword: e.target.value})}
                            onFocus={() => this.setState({isFocus: true})}
                            onBlur={() => this.setState({isFocus: false})}
+                           value={keyword}
                     />
                 </div>
                 {isFocus && (

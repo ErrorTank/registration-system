@@ -17,15 +17,26 @@
     }
     .content{
       color inverse
-      display inline-block
-      max-width 100%
+      display inline
+      word-break break-word
       white-space pre-wrap
+      i{
+        position: absolute;
+        width: 1px;
+        height: 80%;
+        background-color: gray;
+        left: 5px;
+        top: 10%;
+        animation-name: blink;
+        animation-duration: 800ms;
+        animation-iteration-count: infinite;
+        opacity: 1;
+      }
+
     }
+
     .rest-input{
-      border none
       outline none
-      display inline-block
-      width 1px
 
     }
   }
@@ -60,4 +71,8 @@
       }
     }
   }
+}
+@keyframes blink {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
