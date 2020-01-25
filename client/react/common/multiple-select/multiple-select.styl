@@ -1,0 +1,63 @@
+.multiple-select{
+
+  position relative
+  .empty-notify{
+    padding 6px 15px
+    font-size 1.4rem
+    color commonText
+  }
+  .tags-container{
+    padding 6px 15px
+    border 1px solid lightgray
+    border-radius 4px
+    cursor text
+    font-size 1.4rem
+    .tag{
+      margin-right 10px
+    }
+    .content{
+      color inverse
+      display inline-block
+      max-width 100%
+      white-space pre-wrap
+    }
+    .rest-input{
+      border none
+      outline none
+      display inline-block
+      width 1px
+
+    }
+  }
+  .search-result{
+    position absolute
+    z-index 2
+    background-color white
+    top calc(100% + 10px)
+    left 0
+    width 100%
+    border-radius 4px
+    box-shadow 0px 0px 15px 1px rgba(69, 65, 78, 0.2)
+    color inverse
+    .result-item{
+      font-size 1.4rem
+      padding 6px 15px
+      cursor pointer
+      &:hover{
+        background-color darken(white, 5%)
+      }
+    }
+    .result-summary{
+      padding 6px 15px
+      margin-bottom 3px
+      font-size 1.4rem
+
+      .value{
+        color info
+        font-weight 500
+        margin-right 5px
+        font-size 1.5rem
+      }
+    }
+  }
+}

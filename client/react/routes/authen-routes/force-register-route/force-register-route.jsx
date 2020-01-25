@@ -44,19 +44,21 @@ export default class ForceRegisterRoute extends KComponent {
                                     <span className="strong">Bước 1:</span>Chọn sinh viên ép cứng
                                 </div>
                                 <div className="step-body">
-                                    <MultipleSelect
-                                        values={pickedStudents}
-                                        list={students}
-                                        displayTagAs={(tag, index) => index}
-                                        displayAs={(item, index) => index}
-                                        filterFunc={this.filterStudents}
-                                        onChange={pickedStudents => this.setState({pickedStudents})}
-                                        listKey={(item) => item._id}
-                                        tagKey={item => item._id}
-                                        emptyNotify={() => "Không tìm thấy sinh viên nào"}
-                                        isPicked={item => pickedStudents.find(each => each._id === item._id)}
-                                        deleteFilterFunc={(item1, item2) => item1._id !== item2._id}
-                                    />
+                                    <div className="select-wrapper">
+                                        <MultipleSelect
+                                            values={pickedStudents}
+                                            list={students}
+                                            displayTagAs={(tag, index) => index}
+                                            displayAs={(item, index) => item.name + ` (${item.identityID})`}
+                                            filterFunc={this.filterStudents}
+                                            onChange={pickedStudents => this.setState({pickedStudents})}
+                                            listKey={(item) => item._id}
+                                            tagKey={item => item._id}
+                                            emptyNotify={() => "Không tìm thấy sinh viên nào"}
+                                            isPicked={item => pickedStudents.find(each => each._id === item._id)}
+                                            deleteFilterFunc={(item1, item2) => item1._id !== item2._id}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             {!!pickedStudents.length && (
