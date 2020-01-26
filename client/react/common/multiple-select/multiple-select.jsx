@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import classnames from "classnames"
+import {ClickOutside} from "../click-outside/click-outside";
+import ContentEditable from 'react-contenteditable'
 
 export class MultipleSelect extends Component {
     constructor(props) {
@@ -8,6 +11,7 @@ export class MultipleSelect extends Component {
             keyword: "",
             isFocus: false
         }
+        this.input = React.createRef();
     }
 
     handleDeleteItem = item => {
@@ -15,8 +19,11 @@ export class MultipleSelect extends Component {
         onChange(values.filter(each => deleteFilterFunc(each, item)));
     };
 
+
     handleAddItem = item => {
         let {onChange, values} = this.props;
+        console.log(item)
+        console.log(values)
         onChange(values.concat(item))
     };
 
@@ -27,56 +34,71 @@ export class MultipleSelect extends Component {
         let filterList = filterFunc(list, keyword);
         console.log(keyword)
         return (
-            <div className="multiple-select"
-                 onClick={() => {
-                     this.input.focus();
-                 }}
+            <ClickOutside
+                onClickOut={() => {
+                    this.state.isFocus && this.setState({isFocus: false})
+                }}
             >
-                <div className="tags-container">
-                    {values.map((each, index) => (
-                        <div className={classnames("tag")}
-                             key={tagKey(each, index)}
-                        >
-                            {displayTagAs(each, index)}
-                            <i className="fal fa-times" onClick={(e) => {
-                                e.stopPropagation();
-                                this.handleDeleteItem(each, index);
-                            }}></i>
-                        </div>
-                    ))}
-                    <div className="content">{keyword}<i></i></div>
-                    <input className="rest-input"
-                           ref={input => this.input = input}
-                           onChange={e => this.setState({keyword: e.target.value})}
-                           onFocus={() => this.setState({isFocus: true})}
-                           onBlur={() => this.setState({isFocus: false})}
-                           value={keyword}
-                    />
-                </div>
-                {isFocus && (
-                    <div className="search-result">
-                        <div className="result-summary">
-                            <span className="value">{filterList.length}</span><span>Kết quả</span>
-                        </div>
-                        {filterList.length ? filterList.map((each, index) => (
-                            <div className={classnames("result-item", {picked: isPicked(each, index)})}
-                                 key={listKey(each, index)}
-                                 onClick={(e) => {
-                                     e.stopPropagation();
-                                     if (!isPicked(each)) {
-                                         this.handleAddItem(each, index);
-                                     }
-
-                                 }}
+                <div className="multiple-select"
+                     onClick={() => {
+                         this.input.current.focus();
+                     }}
+                >
+                    <div className="tags-container">
+                        {values.map((each, index) => (
+                            <span className={classnames("tag")}
+                                  key={tagKey(each, index)}
                             >
-                                {displayAs(each, index)}
-                            </div>
-                        )) : <div className="empty-notify">
-                            {emptyNotify()}
-                        </div>}
+                                {displayTagAs(each, index)}
+                                <i className="fal fa-times" onClick={(e) => {
+                                    e.stopPropagation();
+                                    this.handleDeleteItem(each, index);
+                                }}></i>
+                            </span>
+                        ))}
+                        <ContentEditable
+                            className="rest-input"
+                            contentEditable={true}
+                            innerRef={this.input}
+                            html={keyword}
+                            onKeyDown={(e) => {
+                                if (this.state.keyword === "" && e.keyCode === 8) {
+                                    this.props.onChange(this.props.values.filter((each, i) => i !== this.props.values.length - 1));
+                                }
+                            }}
+                            onChange={(e) => {
+                                this.setState({keyword: e.target.value});
+                            }}
+                            onFocus={() => this.setState({isFocus: true})}
+                        />
                     </div>
-                )}
-            </div>
+                    {isFocus && (
+                        <div className="search-result">
+                            <div className="result-summary">
+                                <span className="value">{filterList.length}</span><span>Kết quả</span>
+                            </div>
+                            {filterList.length ? filterList.map((each, index) => (
+                                <div className={classnames("result-item", {picked: isPicked(each, index)})}
+                                     key={listKey(each, index)}
+                                     onClick={(e) => {
+                                         e.stopPropagation();
+                                         console.log(!isPicked(each))
+                                         if (!isPicked(each)) {
+                                             this.handleAddItem(each, index);
+                                         }
+
+                                     }}
+                                >
+                                    {displayAs(each, index)}
+                                </div>
+                            )) : <div className="empty-notify">
+                                {emptyNotify()}
+                            </div>}
+                        </div>
+                    )}
+                </div>
+            </ClickOutside>
+
         );
     }
 }

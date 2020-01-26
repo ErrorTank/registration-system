@@ -18,8 +18,10 @@ export default class ForceRegisterRoute extends KComponent {
         };
 
         this.state = {...this.initData};
-        commonApi.getBriefStudents().then(students => this.setState({students, loadStudents: false}))
+        commonApi.getBriefStudents().then(students => this.setState({students, loadStudents: false}));
+
     };
+
 
     filterStudents = (list, keyword) => {
         return list.filter(each => each.identityID.toLowerCase().includes(keyword.trim().toLowerCase()) || each.name.toLowerCase().includes(keyword.trim().toLowerCase()));
@@ -48,7 +50,7 @@ export default class ForceRegisterRoute extends KComponent {
                                         <MultipleSelect
                                             values={pickedStudents}
                                             list={students}
-                                            displayTagAs={(tag, index) => index}
+                                            displayTagAs={(tag, index) => tag.identityID}
                                             displayAs={(item, index) => item.name + ` (${item.identityID})`}
                                             filterFunc={this.filterStudents}
                                             onChange={pickedStudents => this.setState({pickedStudents})}
