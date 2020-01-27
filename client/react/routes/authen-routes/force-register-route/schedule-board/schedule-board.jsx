@@ -15,6 +15,8 @@ export class ScheduleBoard extends Component {
         super(props);
         this.state = {
             list: [],
+            pickedStudent: props.pickedStudents[0],
+            pickedStudents: props.pickedStudents
         }
     }
 
@@ -26,9 +28,13 @@ export class ScheduleBoard extends Component {
 
     }, 1500);
 
+
     componentWillReceiveProps(nextProps) {
-        if(!isEqual(nextProps.pickedStudent, this.props.pickedStudent)){
-            this.setState({pickedStudent: nextProps.pickedStudents[0]}, () => {
+        if (!isEqual(nextProps.pickedStudents, this.props.pickedStudents)) {
+            this.setState({
+                pickedStudent: nextProps.pickedStudents[0],
+                pickedStudents: nextProps.pickedStudents
+            }, () => {
                 this.board.loadData();
             });
 
@@ -50,12 +56,12 @@ export class ScheduleBoard extends Component {
 
 
     render() {
-        let {pickedStudent} = this.state;
+        let {pickedStudent, pickedStudents} = this.state;
         const {currentYear, currentSemester} = appConfigCache.syncGet();
         const api = async () => {
             let {currentYear, currentSemester} = appConfigCache.syncGet();
             let {year, semester} = {
-                year:  years.find(each => each.value === mergeYear(currentYear)),
+                year: years.find(each => each.value === mergeYear(currentYear)),
                 semester: semesters.find(each => each.value === currentSemester)
             };
             return scheduleApi.getStudentSchedule(pickedStudent._id, year.value, semester.value, true).then(schedule => {

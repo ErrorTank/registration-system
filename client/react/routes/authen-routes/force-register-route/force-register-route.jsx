@@ -16,7 +16,6 @@ export default class ForceRegisterRoute extends KComponent {
             pickedStudents: [],
             students: [],
             loadStudents: true,
-            pickedStudent: null
         };
 
         this.state = {...this.initData};
@@ -31,11 +30,11 @@ export default class ForceRegisterRoute extends KComponent {
 
 
     handleChangeStudents = pickedStudents => {
-        this.setState({pickedStudents, pickedStudent: pickedStudents[0]});
+        this.setState({pickedStudents});
     };
 
     render() {
-        let {students, loadStudents, pickedStudents, pickedStudent} = this.state;
+        let {students, loadStudents, pickedStudents,} = this.state;
         return (
             <PageTitle
                 title={"Ép cứng"}
@@ -77,7 +76,7 @@ export default class ForceRegisterRoute extends KComponent {
                                     </div>
                                     <div className="step-body">
                                         <ScheduleBoard
-                                            pickedStudent={pickedStudent}
+                                            pickedStudents={pickedStudents}
                                         />
                                     </div>
                                 </div>
