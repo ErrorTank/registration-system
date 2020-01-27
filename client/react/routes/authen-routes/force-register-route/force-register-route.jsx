@@ -72,7 +72,7 @@ export default class ForceRegisterRoute extends KComponent {
                             {!!pickedStudents.length && (
                                 <div className="force-step">
                                     <div className="step-title">
-                                        <span className="strong">Bước 2:</span>Ép cứng cho {pickedStudents.length} sinh viên
+                                        <span className="strong">Bước 2:</span>Ép cứng cho <span className="hi-light">{pickedStudents.length} </span>sinh viên
                                     </div>
                                     <div className="step-body">
                                         <ScheduleBoard

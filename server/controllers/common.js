@@ -21,11 +21,11 @@ module.exports = () => {
     router.get("/student/brief", authMiddleware ,(req, res, next) => {
 
         return StudentInfo.find({active: true}).populate("user").then((data) => {
-            return res.status(200).json(data.map(each => pick(each, ["_id", "user"])).map(each => ({
+            return res.status(200).json(data.map(each => pick(each, ["_id", "user", "schoolYear"])).map(each => ({
                 _id: each._id,
                 name: each.user.name,
                 identityID: each.user.identityID,
-                schoolYear: each.schedule
+                schoolYear: each.schoolYear
             })));
         }).catch(err => next(err));
 

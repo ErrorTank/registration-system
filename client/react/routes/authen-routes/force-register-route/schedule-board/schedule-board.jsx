@@ -9,6 +9,7 @@ import {years} from "../../../../../const/years";
 import {mergeYear} from "../../../../../common/utils/common";
 import debounce from "lodash/debounce";
 import isEqual from "lodash/isEqual"
+import {Select} from "../../../../common/select/select";
 
 export class ScheduleBoard extends Component {
     constructor(props) {
@@ -24,19 +25,19 @@ export class ScheduleBoard extends Component {
 
     };
 
-    refreshScheduleBoard = debounce(() => {
-
+    refreshScheduleBoard = debounce((data) => {
+        this.setState({
+            pickedStudent: data.pickedStudents[0],
+            pickedStudents: data.pickedStudents
+        }, () => {
+            this.board.loadData();
+        });
     }, 1500);
 
 
     componentWillReceiveProps(nextProps) {
         if (!isEqual(nextProps.pickedStudents, this.props.pickedStudents)) {
-            this.setState({
-                pickedStudent: nextProps.pickedStudents[0],
-                pickedStudents: nextProps.pickedStudents
-            }, () => {
-                this.board.loadData();
-            });
+            this.refreshScheduleBoard(nextProps);
 
         }
     }
@@ -69,9 +70,24 @@ export class ScheduleBoard extends Component {
                 return schedule || {list: []};
             })
         };
+        console.log(pickedStudent)
         return (
-            <div className="schedule-board">
-                <div className="content-wrapper">
+            <div className="force-schedule-board">
+                <div className="student-select">
+                    <span className="label">Sinh viên đang chọn</span>
+                    <Select
+                        options={pickedStudents}
+                        value={pickedStudent}
+                        displayAs={(each) => each.name + ` (${each.identityID})`}
+                        getValue={each => each._id}
+                        onChange={e => {
+                            this.setState({pickedStudent: pickedStudents.find(each => each._id === e.target.value)}, () => {
+                                this.board.loadData();
+                            });
+                        }}
+                    />
+                </div>
+                <div className="content-wrapper-hehe">
 
                     <SchoolCharge
                         schoolYear={pickedStudent.schoolYear}
@@ -87,7 +103,7 @@ export class ScheduleBoard extends Component {
                         className={"ins-schedule-board"}
                         api={api}
                         displayItem={this.displayInsScheduleItem}
-                        emptyNotify={"Sinh viên chưa đăng ký lớp học phần nào"}
+                        // emptyNotify={"Sinh viên chưa đăng ký lớp học phần nào"}
                         onClickItem={this.onClickScheduleItem}
                         getDayOfWeek={item => item.dayOfWeek}
                         getShiftStart={item => item.from.name}
