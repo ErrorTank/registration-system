@@ -5,6 +5,7 @@ import {AuthenLayoutTitle} from "../../../layout/authen-layout/authen-layout-tit
 import {commonApi} from "../../../../api/common/common-api";
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
 import {MultipleSelect} from "../../../common/multiple-select/multiple-select";
+import {ScheduleBoard} from "./schedule-board/schedule-board";
 
 export default class ForceRegisterRoute extends KComponent {
     constructor(props) {
@@ -14,7 +15,8 @@ export default class ForceRegisterRoute extends KComponent {
         this.initData = {
             pickedStudents: [],
             students: [],
-            loadStudents: true
+            loadStudents: true,
+            pickedStudent: null
         };
 
         this.state = {...this.initData};
@@ -27,8 +29,13 @@ export default class ForceRegisterRoute extends KComponent {
         return list.filter(each => each.identityID.toLowerCase().includes(keyword.trim().toLowerCase()) || each.name.toLowerCase().includes(keyword.trim().toLowerCase()));
     };
 
+
+    handleChangeStudents = pickedStudents => {
+        this.setState({pickedStudents, pickedStudent: pickedStudents[0]});
+    };
+
     render() {
-        let {students, loadStudents, pickedStudents} = this.state;
+        let {students, loadStudents, pickedStudents, pickedStudent} = this.state;
         return (
             <PageTitle
                 title={"Ép cứng"}
@@ -53,7 +60,7 @@ export default class ForceRegisterRoute extends KComponent {
                                             displayTagAs={(tag, index) => tag.identityID}
                                             displayAs={(item, index) => item.name + ` (${item.identityID})`}
                                             filterFunc={this.filterStudents}
-                                            onChange={pickedStudents => this.setState({pickedStudents})}
+                                            onChange={this.handleChangeStudents}
                                             listKey={(item) => item._id}
                                             tagKey={item => item._id}
                                             emptyNotify={() => "Không tìm thấy sinh viên nào"}
@@ -66,10 +73,12 @@ export default class ForceRegisterRoute extends KComponent {
                             {!!pickedStudents.length && (
                                 <div className="force-step">
                                     <div className="step-title">
-                                        <span className="strong">Bước 2:</span>Ép cứng
+                                        <span className="strong">Bước 2:</span>Ép cứng cho {pickedStudents.length} sinh viên
                                     </div>
                                     <div className="step-body">
-
+                                        <ScheduleBoard
+                                            pickedStudent={pickedStudent}
+                                        />
                                     </div>
                                 </div>
                             )}

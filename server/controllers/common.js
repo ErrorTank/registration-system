@@ -24,7 +24,8 @@ module.exports = () => {
             return res.status(200).json(data.map(each => pick(each, ["_id", "user"])).map(each => ({
                 _id: each._id,
                 name: each.user.name,
-                identityID: each.user.identityID
+                identityID: each.user.identityID,
+                schoolYear: each.schedule
             })));
         }).catch(err => next(err));
 
