@@ -12,8 +12,11 @@ module.exports = (db, namespacesIO) => {
     router.put("/schedule/student/:studentID/semester/:semester/year/:year/toggle-register", authMiddleware ,(req, res, next) => {
 
         return toggleRegisterLesson(req.params, req.body).then((data) => {
-            console.log("to room ", req.body.eventID)
-            namespacesIO.registrationTracker.to(req.body.eventID).emit("update-subject-list", {eventID: req.body.eventID, socketID: req.body.socketID, subject: req.body.subject});
+            if(req.body.socketID){
+                console.log("to room ", req.body.eventID)
+                namespacesIO.registrationTracker.to(req.body.eventID).emit("update-subject-list", {eventID: req.body.eventID, socketID: req.body.socketID, subject: req.body.subject});
+            }
+
             return res.status(200).json(data);
         }).catch(err => next(err));
 

@@ -16,16 +16,19 @@ import {SubjectRegisterableList} from "../../registration-route/subject-register
 import {registrationEventApi} from "../../../../../api/common/registration-event";
 import {appModal} from "../../../../common/modal/modals";
 import {Alert} from "../../../../common/alert/alert";
+import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
 
 export class ScheduleBoard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: true,
             list: [],
             pickedStudent: props.pickedStudents[0],
             pickedStudents: props.pickedStudents,
             pickedSubject: null,
-            schedule: null
+            schedule: null,
+            subjectList: []
         };
         this.loadData().then(data => {
             this.setState({...data, loading: false});
@@ -52,7 +55,7 @@ export class ScheduleBoard extends Component {
     toggleRegister = (lesson) => {
         let {currentYear, currentSemester} = appConfigCache.syncGet();
         let subject = this.state.subjectList.find(each => each.lessons.find(les => les.find(item => item._id === lesson[0]._id)));
-        return scheduleApi.toggleRegisterLesson(this.state.pickedStudent.info._id, `${currentYear.from}-${currentYear.to}`, currentSemester).then(() => {
+        return scheduleApi.toggleRegisterLesson(this.state.pickedStudent.info._id, `${currentYear.from}-${currentYear.to}`, currentSemester, {lesson}).then(() => {
 
             return Promise.all([this.board.loadData(), registrationEventApi.getSubjectInfo(subject.lessons, `${currentYear.from}-${currentYear.to}`, currentSemester).then(lessons => {
                 this.updateSubjectLessons(subject, lessons);
@@ -176,7 +179,7 @@ export class ScheduleBoard extends Component {
 
 
     render() {
-        let {pickedStudent, pickedStudents, pickedSubject, subjectList} = this.state;
+        let {pickedStudent, pickedStudents, pickedSubject, subjectList, loading} = this.state;
         let subject = subjectList.find(each => each._id === pickedSubject);
         const {currentYear, currentSemester} = appConfigCache.syncGet();
         const api = async () => {
@@ -208,21 +211,27 @@ export class ScheduleBoard extends Component {
                 </div>
                 <div className="content-wrapper-hehe">
                     <div className="subject-list">
-                        <>
-                            <div className="small-title">Danh sách môn đăng ký</div>
-                            <SubjectRegisterableList
-                                pickedSubject={pickedSubject}
-                                subjectList={subjectList}
-                                schedule={this.state.schedule}
-                                subject={subject}
-                                onRegister={this.onRegister}
-                                toggleRegister={this.toggleRegister}
-                            />
+                        {loading ? (
+                            <LoadingInline/>
+                        ) : (
+                            <>
+                                <div className="small-title">Danh sách môn đăng ký</div>
+                                <SubjectRegisterableList
+                                    pickedSubject={pickedSubject}
+                                    subjectList={subjectList}
+                                    schedule={this.state.schedule}
+                                    subject={subject}
+                                    onRegister={this.onRegister}
+                                    toggleRegister={this.toggleRegister}
+                                />
 
-                        </>
+                            </>
+                        )}
+
                     </div>
+
                     <SchoolCharge
-                        schoolYear={pickedStudent.schoolYear}
+                        schoolYear={pickedStudent.info.schoolYear}
                         schedule={this.state.schedule}
                         label={"Học phí kì này"}
                     />

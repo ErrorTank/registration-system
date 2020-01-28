@@ -922,7 +922,7 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
                 SubjectLesson.find({}).lean()
             ]
         ).then(([program, result, subjectLesson]) => {
-            let subjects = program.subjects;
+            let subjects = program.subjects.filter(each => (each.division ? each.division.toString() : "") === forcer.info.division._id.toString());
             let passedSubjects = result.results.filter(each => each.grade > -1);
             let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
 
@@ -1201,7 +1201,6 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
                 ]).then(schedules => {
 
                     return {
-                        event,
                         subjectList: subjectList.map((each) => {
                             let {lessons} = each;
                             return {
