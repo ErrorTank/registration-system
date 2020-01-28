@@ -20,14 +20,7 @@ export class SubjectRegisterableList extends React.Component{
                                 key={each._id}
                                 onClick={() => {
                                     let isToggle = pickedSubject && each._id === pickedSubject;
-                                    this.setState({pickedSubject: isToggle ? null : each._id}, () => {
-                                        if (!isToggle) {
-                                            const yOffset = -100;
-                                            const element = document.querySelector(".registration-details");
-                                            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                            window.scrollTo({top: y, behavior: 'smooth'});
-                                        }
-                                    })
+                                    this.props.onChange(isToggle ? null : each._id)
                                 }}
 
                             >

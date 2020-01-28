@@ -23,11 +23,12 @@ export class ScheduleBoard extends Component {
         super(props);
         this.state = {
             loading: true,
-            list: [],
+
             pickedStudent: props.pickedStudents[0],
             pickedStudents: props.pickedStudents,
             pickedSubject: null,
             schedule: null,
+            list: [],
             subjectList: []
         };
         this.loadData().then(data => {
@@ -135,16 +136,23 @@ export class ScheduleBoard extends Component {
 
     onClickScheduleItem = (item, utils) => {
         let {setLoading} = utils;
-        setLoading();
-        for (let subject of this.state.subjectList) {
-            let {lessons} = subject;
-            let lesson = lessons.find(each => {
-                return !!each.find(child => child._id === item._id)
-            });
-            if (lesson) {
-                return this.toggleRegister(lesson)
+
+        let {info} = userInfo.getState();
+        // console.log(info.division)
+        // console.log( item)
+        if(info.division && item.class.subject.division === info.division._id){
+            setLoading();
+            for (let subject of this.state.subjectList) {
+                let {lessons} = subject;
+                let lesson = lessons.find(each => {
+                    return !!each.find(child => child._id === item._id)
+                });
+                if (lesson) {
+                    return this.toggleRegister(lesson)
+                }
             }
         }
+
     };
 
     refreshScheduleBoard = debounce((data) => {
@@ -182,13 +190,14 @@ export class ScheduleBoard extends Component {
         let {pickedStudent, pickedStudents, pickedSubject, subjectList, loading} = this.state;
         let subject = subjectList.find(each => each._id === pickedSubject);
         const {currentYear, currentSemester} = appConfigCache.syncGet();
+        console.log(pickedStudent)
         const api = async () => {
             let {currentYear, currentSemester} = appConfigCache.syncGet();
             let {year, semester} = {
                 year: years.find(each => each.value === mergeYear(currentYear)),
                 semester: semesters.find(each => each.value === currentSemester)
             };
-            return scheduleApi.getStudentSchedule(pickedStudent.info._id, year.value, semester.value, true).then(schedule => {
+            return scheduleApi.getStudentSchedule(pickedStudent.info._id, year.value, semester.value).then(schedule => {
                 this.setState({schedule});
                 return schedule || {list: []};
             })
@@ -203,8 +212,10 @@ export class ScheduleBoard extends Component {
                         displayAs={(each) => each.name + ` (${each.identityID})`}
                         getValue={each => each._id}
                         onChange={e => {
-                            this.setState({pickedStudent: pickedStudents.find(each => each._id === e.target.value)}, () => {
+                            this.setState({pickedStudent: pickedStudents.find(each => each._id === e.target.value), loading: true,   pickedSubject: null}, () => {
+
                                 this.board.loadData();
+                                this.loadData().then(data =>  this.setState({...data, loading: false}))
                             });
                         }}
                     />
@@ -223,6 +234,7 @@ export class ScheduleBoard extends Component {
                                     subject={subject}
                                     onRegister={this.onRegister}
                                     toggleRegister={this.toggleRegister}
+                                    onChange={pickedSubject => this.setState({pickedSubject})}
                                 />
 
                             </>

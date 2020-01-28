@@ -922,7 +922,8 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
                 SubjectLesson.find({}).lean()
             ]
         ).then(([program, result, subjectLesson]) => {
-            let subjects = program.subjects.filter(each => (each.division ? each.division.toString() : "") === forcer.info.division._id.toString());
+
+            let subjects = forcer.role === "pdt" ? program.subjects : program.subjects.filter(each => (each.division ? each.division.toString() : "") === forcer.info.division._id.toString());
             let passedSubjects = result.results.filter(each => each.grade > -1);
             let passedSubjects2 = passedSubjects.filter(each => each.grade >= 5);
 
