@@ -40,6 +40,7 @@ const createRegistrationEvent = (data) => {
                         as: "results.subject'"
                     }
                 },
+
                 // {
                 //     $addFields: {
                 //
@@ -866,6 +867,21 @@ const getEventOverview = ({ studentGroup}) => {
     })
 };
 
+const activateSchedules = ({year, semester, appliedStudents}) => {
+    return Schedule.updateMany({
+        "year.from": year.from,
+        "year.to": year.to,
+        semester: Number(semester),
+        owner: {$in: appliedStudents.map(each => ObjectId(each))},
+        active: false
+    }, {
+        $set: {
+            active: true
+        }
+
+
+    }).then(data => console.log("dddddddddddddddmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"))
+};
 module.exports = {
     createRegistrationEvent,
     getAll,
@@ -875,5 +891,6 @@ module.exports = {
     getActiveRegistrationEvent,
     getSubjectsForRegistration,
     getSubjectInfo,
-    getEventOverview
+    getEventOverview,
+    activateSchedules
 };

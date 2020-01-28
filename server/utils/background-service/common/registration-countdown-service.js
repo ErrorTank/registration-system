@@ -1,4 +1,4 @@
-const {getActiveRegistrationEvent} = require("../../../db/db-controllers/registration-event");
+const {getActiveRegistrationEvent, activateSchedules} = require("../../../db/db-controllers/registration-event");
 const isEqual = require("lodash/isEqual");
 const pick = require("lodash/pick");
 const createCustomTimeout = require("../../custom-timeout");
@@ -10,7 +10,6 @@ const createRegistrationCountdownService = () => {
             for(let i = 0; i < existed.length; i++){
 
                 if(existed[i].event._id.toString() === eventID.toString()){
-                    console.log("dit")
                     existed[i].terminator.clear();
                     break;
                 }
@@ -18,7 +17,6 @@ const createRegistrationCountdownService = () => {
 
         },
         getExistedEventsByIds: ids => {
-            console.log(existed)
             return  existed.filter(each => ids.includes(each.event._id.toString()))
         },
         getConfig: () => ({
@@ -26,9 +24,13 @@ const createRegistrationCountdownService = () => {
             name: "track-registration-event",
             func: ({namespacesIO}) => {
                 getActiveRegistrationEvent().then(data => {
-                    console.log(existed);
+                    console.log(existed)
                     let activeEvents = data.map(each => ({parentID: each._id, year: each.year, semester: each.semester, studentGroup: each.studentGroup, event: each.activeChildEvent, difference: each.difference}));
+
+
+
                     existed = existed.filter(each => {
+
                         return each.terminator.isClear() === false;
                     });
 
@@ -53,6 +55,7 @@ const createRegistrationCountdownService = () => {
                                     let returnEvent = {...e};
                                     console.log(returnEvent)
                                     namespacesIO.registrationTracker.to(returnEvent.parentID).emit("stop-event", returnEvent);
+                                    activateSchedules({year: returnEvent.year, semester: returnEvent.semester, appliedStudents: returnEvent.event.appliedStudents});
 
                                 }, e.difference)
                             };

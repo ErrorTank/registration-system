@@ -17,7 +17,7 @@ export const RoleFilterRoute = ({component: Component, roles = null, type, ...re
 
         if (info && roles && roles.length) {
 
-            if (!roles.includes(info.role)) {
+            if (rest.condition ? !rest.condition() || !roles.includes(info.role) : !roles.includes(info.role)) {
 
                 return (
                     <Redirect
