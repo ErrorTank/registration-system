@@ -18,6 +18,7 @@ import {appModal} from "../../../common/modal/modals";
 import io from "socket.io-client";
 import {SchoolCharge} from "../../../common/school-charge/school-charge";
 import {getStudentGroup} from "../../../../common/utils/common";
+import {SubjectRegisterableList} from "./subject-registerable-list/subject-registerable-list";
 
 export default class RegistrationRoute extends React.Component {
     constructor(props) {
@@ -301,38 +302,15 @@ export default class RegistrationRoute extends React.Component {
                                     ) : (
                                         <>
                                             <div className="small-title">Danh sách môn đăng ký</div>
-                                            <div className="list-container">
-                                                {subjectList.map(each => {
-                                                    return (
-                                                        <div
-                                                            className={classnames("registration-subject", {active: pickedSubject && (pickedSubject === each._id)})}
-                                                            key={each._id}
-                                                            onClick={() => {
-                                                                let isToggle = pickedSubject && each._id === pickedSubject;
-                                                                this.setState({pickedSubject: isToggle ? null : each._id}, () => {
-                                                                    if (!isToggle) {
-                                                                        const yOffset = -100;
-                                                                        const element = document.querySelector(".registration-details");
-                                                                        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                                                                        window.scrollTo({top: y, behavior: 'smooth'});
-                                                                    }
-                                                                })
-                                                            }}
+                                            <SubjectRegisterableList
+                                                pickedSubject={pickedSubject}
+                                                subjectList={subjectList}
+                                                subject={subject}
+                                                schedule={this.state.schedule}
+                                                onRegister={this.onRegister}
+                                                toggleRegister={this.toggleRegister}
 
-                                                        >
-                                                            <div className="s-name">{each.name}</div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                            {pickedSubject && (
-                                                <RegistrationDetails
-                                                    schedule={this.state.schedule}
-                                                    subject={subject}
-                                                    onRegister={this.onRegister}
-                                                    onUnregister={this.toggleRegister}
-                                                />
-                                            )}
+                                            />
 
                                         </>
                                     )}
