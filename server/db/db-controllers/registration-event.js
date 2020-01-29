@@ -448,7 +448,8 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                         {"year.from": Number(currentYear.from)},
                                         {"year.to": Number(currentYear.to)},
                                         {semester: Number(currentSemester)},
-                                        {studentGroup}
+                                        {studentGroup},
+                                        {disabled: false}
                                     ],
                                 }
                             },
@@ -934,7 +935,8 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
                             {"year.from": Number(currentYear.from)},
                             {"year.to": Number(currentYear.to)},
                             {semester: Number(currentSemester)},
-                            {studentGroup}
+                            {studentGroup},
+                            {disabled: false}
                         ],
                     }
                 },

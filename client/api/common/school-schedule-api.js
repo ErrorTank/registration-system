@@ -12,12 +12,14 @@ export const schoolScheduleApi = {
     },
     getSchoolScheduleItems(config) {
         let {filter} = config;
-        let {keyword, year, studentGroup, semester} = filter || {};
+        let {keyword, year, studentGroup, semester, state, status} = filter || {};
         const params = {
             keyword: keyword || null,
             year: year.value === "" ? null : year.value,
             studentGroup: studentGroup.value === "" ? null : studentGroup.value,
             semester: semester.value === "" ? null : semester.value,
+            state: state.value === "" ? null : state.value,
+            status: status.value === "" ? null : status.value,
         };
         return authenApi.get(`/school-schedule/all${urlUtils.buildParams(params)}`)
     },

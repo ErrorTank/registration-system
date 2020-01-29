@@ -1,6 +1,8 @@
 const appDb = require("../../config/db").getDbs().appDb;
 const Subject = require("../model/subject")(appDb);
 const ClassRoom = require("../model/class-room")(appDb);
+const Schedule = require("../model/schedule")(appDb);
+const AppConfig = require("../model/app-config")(appDb);
 const DptInsInfo = require("../model/dpt-ins-info")(appDb);
 const SubjectLesson = require("../model/subject-lesson")(appDb);
 const EducateProgram = require("../model/educate-program")(appDb);
@@ -16,18 +18,18 @@ const pick = require("lodash/pick");
 const isNil = require("lodash/isNil");
 const {transformSubjectLesson} = require("../../utils/registration-event");
 
-const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
+const getSchoolScheduleItems = ({keyword, year, studentGroup, semester, state, status}) => {
     let pipeline = [];
-    if(year){
+    if (year) {
         let [from, to] = year.split("-");
         pipeline.push({
-           $match: {
-               "year.from": Number(from),
-               "year.to": Number(to)
-           }
+            $match: {
+                "year.from": Number(from),
+                "year.to": Number(to)
+            }
         });
     }
-    if(studentGroup){
+    if (studentGroup) {
         pipeline.push({
             $match: {
                 studentGroup: Number(studentGroup)
@@ -35,10 +37,18 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
 
         });
     }
-    if(semester){
+    if (semester) {
         pipeline.push({
             $match: {
                 semester: Number(semester)
+            }
+
+        });
+    }
+    if (status) {
+        pipeline.push({
+            $match: {
+                status: !!Number(status)
             }
 
         });
@@ -92,20 +102,45 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester}) => {
         },
     ]);
 
-    if(keyword){
+    if (keyword) {
         pipeline.push({
             $match: {
-                $or : [
-                    {"class.subject.name": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
-                    {"class.subject.subjectID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
-                    {"instructor.user.identityID": { $regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i") }},
+                $or: [
+                    {"class.subject.name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"class.subject.subjectID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"instructor.user.identityID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
                 ]
             }
 
         });
     }
     return SchoolScheduleItems.aggregate(pipeline).then(data => {
-        return data;
+        return AppConfig.find({}).lean()
+            .then(configs => {
+                let {currentSemester, currentYear} = configs[0];
+                return Schedule.find({
+                    "year.from": Number(currentYear.from),
+                    "year.to": Number(currentYear.to),
+                    semester: Number(currentSemester)
+                }).lean().then(schedules => {
+                    let returned = data.map(each => {
+                        return {
+                            ...each,
+                            state: schedules.filter(sc => sc.list.find(ssc => ssc.toString() === each._id.toString())).length
+                        }
+                    });
+                    if (state) {
+                        let matcher = {
+                            "0": (item) => item.state < Number(item.class.capacity.min),
+                            "1": (item) => item.state >= Number(item.class.capacity.min) && item.state < Number(item.class.capacity.max),
+                            "2": (item) => item.state >= Number(item.class.capacity.max),
+                        };
+
+                        return returned.filter(matcher[state]);
+                    }
+                    return returned;
+                })
+            });
     });
 };
 
@@ -117,12 +152,20 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
     // });
     return Promise.all([
         Subject.insertMany(subjects.map(each => {
-            if(!each.division)
+            if (!each.division)
                 return omit(each, "division");
             return {...each, division: ObjectId(each.division)}
         })),
         ClassRoom.insertMany(classRooms),
-        User.insertMany(instructors.map((each, i) => ({...each, email: `gv${i}@gmail.com`, phone: i, role: "gv",dob: new Date().getTime(), password: "test", username: each.identityID}))),
+        User.insertMany(instructors.map((each, i) => ({
+            ...each,
+            email: `gv${i}@gmail.com`,
+            phone: i,
+            role: "gv",
+            dob: new Date().getTime(),
+            password: "test",
+            username: each.identityID
+        }))),
         Shift.find({}).lean()
     ])
         .then(([subjects, classRooms, users, shifts]) => {
@@ -162,13 +205,14 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
 
                 return SchoolScheduleItems.insertMany(schoolScheduleItems.map((each) => {
                     console.log(classMapping[each.class.name + each.shift + each.classRoom.name + each.dayOfWeek])
-                    return omit({...each,
+                    return omit({
+                        ...each,
                         class: classMapping[each.class.name + each.shift + each.classRoom.name + each.dayOfWeek],
                         classRoom: classRoomMapping[each.classRoom.name],
                         from: shifts.find(e => {
                             return e.name === each.from
                         })._id,
-                        to:  shifts.find(e => e.name === each.to)._id,
+                        to: shifts.find(e => e.name === each.to)._id,
                         instructor: userMapping[each.instructor.identityID]
                     }, ["subjectID", "shift"])
                 })).then(items => {
@@ -178,11 +222,11 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
                         return result;
                     }, {});
                     let subLessons = subjects.map(each => {
-                        let classes =  newClasses.filter(cl => cl.subject.toString() === each._id.toString());
+                        let classes = newClasses.filter(cl => cl.subject.toString() === each._id.toString());
                         // if(each.subjectID === "FN334"){
                         //     console.log(classes.length)
                         // }
-                        if(classes.length !== 0){
+                        if (classes.length !== 0) {
                             console.log(each.name + " " + each.subjectID)
                         }
 
@@ -206,11 +250,13 @@ const importData = ({subjects, eduProgram, schoolScheduleItems, classes, classRo
 const getInstructorSchedule = (instructorID, {semester, year}) => {
     let [from, to] = year.split("-");
     return SchoolScheduleItems.aggregate([
-        {$match: {
+        {
+            $match: {
                 instructor: ObjectId(instructorID),
                 semester: Number(semester),
                 "year.from": Number(from),
-                "year.to": Number(to)
+                "year.to": Number(to),
+                disabled: false
             }
         },
         {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
@@ -248,12 +294,13 @@ const getInstructorSchedule = (instructorID, {semester, year}) => {
 
 const getShiftsOverview = () => {
     return Shift.aggregate([
-        {$match: {
+        {
+            $match: {
                 name: {
                     $lte: 10
                 }
             }
-        },{$sort: {name: 1}},
+        }, {$sort: {name: 1}},
     ])
 };
 

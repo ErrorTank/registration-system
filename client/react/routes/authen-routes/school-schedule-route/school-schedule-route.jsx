@@ -12,16 +12,18 @@ import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
 import {userInfo} from "../../../../common/states/common";
 import isNil from "lodash/isNil"
 import {getStudentGroup, mergeYear} from "../../../../common/utils/common";
+import {classStates} from "../../../../const/class-state";
+import {classStatus} from "../../../../const/class-status";
 
-export default class SchoolScheduleRoute extends React.Component{
-    constructor(props){
+export default class SchoolScheduleRoute extends React.Component {
+    constructor(props) {
         super(props);
         const {currentYear, currentSemester} = appConfigCache.syncGet();
         let info = userInfo.getState();
         let latestSchoolYear = appConfigCache.syncGet();
-        let studentGroup = info.role === "sv" ? getStudentGroup(info.info.schoolYear, info.info.speciality.department,latestSchoolYear ) : "";
+        let studentGroup = info.role === "sv" ? getStudentGroup(info.info.schoolYear, info.info.speciality.department, latestSchoolYear) : "";
 
-        this.state={
+        let initState = {
             loading: false,
             keyword: "",
             semester: semesters.find(each => each.value === currentSemester),
@@ -29,8 +31,16 @@ export default class SchoolScheduleRoute extends React.Component{
             year: years.find(each => each.value === mergeYear(currentYear))
         };
 
+        if (["pdt", "admin"].includes(info.role)) {
+            initState.state = classStates[0];
+            initState.status = classStatus[0];
+        }
+
+        this.state = {...initState};
+
 
     };
+
     columns = [
         {
             label: "STT",
@@ -56,23 +66,26 @@ export default class SchoolScheduleRoute extends React.Component{
             label: "Ca",
             cellDisplay: (s) => s.from.name + "-" + s.to.name
 
-        },{
+        }, {
             label: "Phòng học",
             cellDisplay: (s) => s.classRoom.name
 
-        },{
+        }, {
             label: "TC",
             cellDisplay: (s) => s.class.subject.credits
 
-        },{
+        }, {
             label: "Giáo viên",
             cellDisplay: (s) => s.instructor.user.name + `(${s.instructor.user.identityID})`
 
-        },
+        }
     ];
 
+    displayTooltipContent = (s) => {
+
+    };
+
     render() {
-        console.log(this.state)
         const api = (config) => schoolScheduleApi.getSchoolScheduleItems(config).then((data) => {
             this.setState({list: data});
             return {
@@ -80,11 +93,32 @@ export default class SchoolScheduleRoute extends React.Component{
                 total: null,
             };
         });
-        let {loading,
+        let {
+            loading,
             keyword,
             semester,
             studentGroup,
-            year} = this.state;
+            year,
+            state,
+            status
+        } = this.state;
+
+        let config = {
+            keyword,
+            semester,
+            studentGroup,
+            year,
+        };
+
+        let info = userInfo.getState();
+
+        let isManager = ["pdt", "admin"].includes(info.role);
+
+        if(isManager){
+            config.state = state;
+            config.status = status;
+        }
+
         return (
 
             <PageTitle
@@ -151,14 +185,11 @@ export default class SchoolScheduleRoute extends React.Component{
 
                                         </div>
                                         <CommonDataTable
+                                            showTooltip
+                                            tooltipContent={this.displayTooltipContent}
                                             className={"result-table"}
                                             api={api}
-                                            filter={{
-                                                keyword,
-                                                studentGroup,
-                                                semester,
-                                                year
-                                            }}
+                                            filter={config}
                                             columns={this.columns}
                                             rowTrackBy={(row, i) => row._id}
                                             emptyNotify={"Không có môn học nào"}

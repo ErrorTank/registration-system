@@ -4,6 +4,10 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 //TODO department -> division
 
 const schoolScheduleItemsSchema = new Schema({
+    disabled: {
+        type: Boolean,
+        default: false
+    },
     year: {
         from: {
             type: Number,
