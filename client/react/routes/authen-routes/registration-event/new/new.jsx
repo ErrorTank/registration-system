@@ -73,7 +73,7 @@ class RegistrationEventNewRoute extends React.Component {
                                 {
                                     label: "Sinh viên tham gia",
                                     value: this.state.overview ? this.state.overview.studentsCount : 0,
-                                    icon: <i class="fad fa-users"></i>,
+                                    icon: <i className="fad fa-users"></i>,
                                     style: "info"
                                 },
                             ]}

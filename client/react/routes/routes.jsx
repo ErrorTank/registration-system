@@ -163,7 +163,7 @@ class App extends React.Component {
                                                     path={"/tkb-toan-truong"}
                                                     component={props =>
                                                         <SchoolScheduleRoute  {...authenProps} {...props}/>}
-                                                    roles={["sv", "gv", "bm", "admin"]}
+                                                    roles={["sv", "gv", "bm", "admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}

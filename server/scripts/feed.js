@@ -138,20 +138,19 @@ module.exports =  (appDb) => {
     // })
     // DptInsInfo.findOneAndUpdate({_id: ObjectId("5e22c27e0809a232645888aa")}, {canEditSchedule: true}).then(() => console.log("cac"))
     // new User({
-    //     username: "cti014",
-    //     password: "123123qwe",
-    //     role: "gv",
-    //     name: "Tran Thi Hue",
+    //     username: "pdt01",
+    //     password: "test",
+    //     role: "pdt",
+    //     name: "Alo123",
     //     dob: new Date().getTime(),
-    //     phone: "31232",
-    //     email: "hue@gmail.com",
-    //     identityID: "cti014"
+    //     phone: "312312",
+    //     email: "alo@gmail.com",
+    //     identityID: "pdt001"
     // }).save().then(data => {
-    //     new DptInsInfo({
+    //     new CommonUserInfo({
     //
     //         user: data.toObject()._id,
-    //         division: ObjectId("5e06ca2db3f575100c71c4ad"),
-    //         canEditSchedule: true
+    //
     //     }).save()
     // });
     // new User({

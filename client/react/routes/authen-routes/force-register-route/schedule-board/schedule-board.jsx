@@ -138,9 +138,9 @@ export class ScheduleBoard extends Component {
         let {setLoading} = utils;
 
         let {info} = userInfo.getState();
-        // console.log(info.division)
-        // console.log( item)
-        if(info.division && item.class.subject.division === info.division._id){
+        console.log(info.division)
+        console.log( item)
+        if(info.division ? item.class.subject.division === info.division._id : userInfo.getState().role === "pdt"){
             setLoading();
             for (let subject of this.state.subjectList) {
                 let {lessons} = subject;

@@ -11,9 +11,9 @@ export class StatisticPanel extends React.Component{
         let {statistics} = this.props;
         return(
             <div className="statistic-panel">
-                {statistics.map(each => {
+                {statistics.map((each, i) => {
                     return (
-                        <div className={classnames("statistic-item", `style-${each.style}`)}>
+                        <div className={classnames("statistic-item", `style-${each.style}`)} key={i}>
                            <div className="item-main">
                                <div className="content">
                                    <p className="value">{each.value}</p>

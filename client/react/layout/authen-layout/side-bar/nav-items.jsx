@@ -72,7 +72,7 @@ export const navItems = [
         icon: <FormatListNumberedRtlIcon
             fontSize={"inherit"}
         />,
-        roles: ["bm", "sv", "gv", "admin"],
+        roles: ["bm", "sv", "gv", "admin", "pdt"],
         // disabled: true
     }, {
         label: "Chương trình đào tạo",
