@@ -444,8 +444,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
                         return SchoolScheduleItems.aggregate([
                             {
                                 $match: {
-                                    $and: [
-                                        {"year.from": Number(currentYear.from)},
+                                    $and: [{"year.from": Number(currentYear.from)},
                                         {"year.to": Number(currentYear.to)},
                                         {semester: Number(currentSemester)},
                                         {studentGroup},
