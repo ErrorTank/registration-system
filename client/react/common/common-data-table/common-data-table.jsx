@@ -7,6 +7,7 @@ import {customHistory} from "../../routes/routes";
 import {LoadingInline} from "../loading-inline/loading-inline";
 import {wait} from "../../../common/utils/common";
 import io from "socket.io-client";
+import {Tooltip} from "../tooltip/tooltip";
 
 export class CommonDataTable extends React.Component {
     constructor(props) {
@@ -20,16 +21,16 @@ export class CommonDataTable extends React.Component {
 
         };
 
-        if(props.realTimeConfig){
+        if (props.realTimeConfig) {
             let {uri, createHandlers} = props.realTimeConfig;
             const utils = {
-              setState: (state) => this.setState({...state})
+                setState: (state) => this.setState({...state})
             };
             this.socket = io(uri);
             let handlers = createHandlers(this.socket, utils);
             this.socket.on('connect', () => {
                 console.log(this.socket.id);
-                for(let h of handlers){
+                for (let h of handlers) {
                     this.socket.on(h.name, (data) => h.handler(data, {...this.state}))
                 }
 
@@ -92,7 +93,6 @@ export class CommonDataTable extends React.Component {
     }
 
 
-
     componentWillReceiveProps(nextProps, nextContext) {
         const {filter, maxItem} = this.props;
 
@@ -106,7 +106,7 @@ export class CommonDataTable extends React.Component {
         return maxItem;
     }
 
-    clickRow = (e, row) =>  {
+    clickRow = (e, row) => {
         let {rowLinkTo, onClickRow} = this.props;
         if (rowLinkTo) {
             customHistory.push(rowLinkTo(e, row));
@@ -144,15 +144,20 @@ export class CommonDataTable extends React.Component {
                                 onClick={(onClickRow == null && rowLinkTo == null) ? () => null : e => this.clickRow(e, row)}
                                 className={classnames({clickable: onClickRow != null || rowLinkTo != null}, rowClassName)}
                             >
-                                {columns.map(({cellClass, cellCheckbox = false, cellDisplay, show = () => true}, index) => {
-                                    return show({data: list}) ? (
-                                        <td key={index}
-                                            className={classnames(cellClass, {"checkbox-cell": cellCheckbox})}>
-                                            {cellDisplay ? cellDisplay(row, rIndex) : null}
-                                        </td>
-                                    ) : null;
-                                })}
+                                {columns.map(({cellClass, checkBoxCell = false, cellDisplay, show = () => true, condition = () => true}, index) => {
+                                return (show({data: list}) && condition()) ? (
+                                    <td key={index}
+                                        className={classnames(cellClass, {"checkbox-cell": checkBoxCell})}>
+
+                                        {cellDisplay ? cellDisplay(row, rIndex) : null}
+                                    </td>
+                                ) : null;
+                            })}
+
+
                             </tr>
+
+
                         )))}
                         </tbody>
                     </table>
@@ -186,17 +191,19 @@ export class CommonDataTable extends React.Component {
 
     renderHeaderCell = (column, index) => {
         let {list} = this.state;
-        let {label, sortable = false, sortKey, cellClass, customHeader = null, show = () => true} = column;
+        let {label, sortable = false, sortKey, cellClass, customHeader = null, show = () => true, checkBoxCell = false, condition = () => true} = column;
         if (!show({list})) {
             return null;
         }
         let renderHeader = () => customHeader ? customHeader(list) : label;
         if (!sortable) {
-            return (
-                <th className={cellClass} key={index}>
-                    {renderHeader()}
-                </th>
-            );
+            if (condition())
+                return (
+                    <th className={classnames(cellClass, {"checkbox-cell": checkBoxCell})} key={index}>
+                        {renderHeader()}
+                    </th>
+                );
+            return null;
         }
 
         if (!sortKey) {

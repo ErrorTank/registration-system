@@ -14,6 +14,7 @@ import isNil from "lodash/isNil"
 import {getStudentGroup, mergeYear} from "../../../../common/utils/common";
 import {classStates} from "../../../../const/class-state";
 import {classStatus} from "../../../../const/class-status";
+import {Checkbox} from "../../../common/checkbox/checkbox";
 
 export default class SchoolScheduleRoute extends React.Component {
     constructor(props) {
@@ -34,6 +35,10 @@ export default class SchoolScheduleRoute extends React.Component {
         if (["pdt", "admin"].includes(info.role)) {
             initState.state = classStates[0];
             initState.status = classStatus[0];
+            initState.checkBoxStatus = {
+                all: false,
+                checked: []
+            };
         }
 
         this.state = {...initState};
@@ -42,6 +47,35 @@ export default class SchoolScheduleRoute extends React.Component {
     };
 
     columns = [
+        {
+            condition: () => ["pdt", "admin"].includes(userInfo.getState().role) && this.state.list && this.state.list.length,
+            checkBoxCell: true,
+            customHeader: () => (
+                <Checkbox
+                    value={this.state.checkBoxStatus.all}
+                    onChange={value => this.setState({
+                        checkBoxStatus: {
+                            all: value,
+                            checked: value ? this.state.list.map(each => each._id.toString()) : []
+                        }
+                    })}
+                />
+            ),
+            cellDisplay: (s, i) => {
+                let {checked} = this.state.checkBoxStatus;
+                return (
+                    <Checkbox
+                        value={!!checked.find(each => each === s._id.toString())}
+                        onChange={value => this.setState({
+                            checkBoxStatus: {
+                                all: value ? this.state.checkBoxStatus.all : false,
+                                checked: value ? this.state.checkBoxStatus.checked.concat(s._id.toString()) : this.state.checkBoxStatus.checked.filter(each => each !== s._id.toString())
+                            }
+                        })}
+                    />
+                )
+            }
+        },
         {
             label: "STT",
             cellDisplay: (s, i) => i + 1,
@@ -82,7 +116,11 @@ export default class SchoolScheduleRoute extends React.Component {
     ];
 
     displayTooltipContent = (s) => {
+        return (
+            <div className="class-tooltip-content">
 
+            </div>
+        )
     };
 
     render() {
@@ -114,7 +152,7 @@ export default class SchoolScheduleRoute extends React.Component {
 
         let isManager = ["pdt", "admin"].includes(info.role);
 
-        if(isManager){
+        if (isManager) {
             config.state = state;
             config.status = status;
         }
@@ -218,16 +256,21 @@ export default class SchoolScheduleRoute extends React.Component {
                                             }
                                         </div>
                                         {isManager && (
-                                            <div className="custom-summary">
-                                                Tìm thấy <span>{this.state.list ? this.state.list.length : 0}</span> lớp học
-                                            </div>
+                                            <>
+                                                <div className="custom-summary">
+                                                    Tìm thấy <span>{this.state.list ? this.state.list.length : 0}</span> lớp học
+                                                </div>
+                                                <div className="checked-actions">
+                                                    <button className="btn disabled-class-btn" disabled={!this.state.checkBoxStatus.checked.length}>
+                                                        Hủy {this.state.checkBoxStatus.checked.length ? <span>{this.state.checkBoxStatus.checked.length}</span> : null} lớp
+                                                    </button>
+                                                </div>
+                                            </>
                                         )
 
                                         }
 
                                         <CommonDataTable
-                                            showTooltip
-                                            tooltipContent={this.displayTooltipContent}
                                             className={"result-table"}
                                             api={api}
                                             filter={config}

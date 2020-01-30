@@ -1,5 +1,22 @@
 
 .manage-list-route{
+  .checked-actions{
+    margin-bottom 15px
+    text-align right
+    button{
+      margin-left 10px
+      font-size  1.2rem !important
+      font-weight 500
+      padding 5px 15px !important
+      &.disabled-class-btn{
+        color white
+        background-color inverse
+        &:hover{
+          background-color darken(inverse, 10%)
+        }
+      }
+    }
+  }
   .custom-summary{
     font-weight 500
     font-size 1.5rem
