@@ -182,8 +182,49 @@ export default class SchoolScheduleRoute extends React.Component {
                                                 />
 
                                             </div>
+                                            {isManager && (
+                                                <>
+                                                    <div className="spec-select">
+                                                        <span className="label">Lg.Sinh viên</span>
+                                                        <Select
+                                                            options={classStates}
+                                                            value={state}
+                                                            displayAs={(each) => each.label}
+                                                            getValue={each => each.value}
+                                                            onChange={e => {
+                                                                let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                                this.setState({state: classStates.find(sp => sp.value === value)})
+                                                            }}
+                                                        />
 
+                                                    </div>
+                                                    <div className="spec-select">
+                                                        <span className="label">Trạng thái</span>
+                                                        <Select
+                                                            options={classStatus}
+                                                            value={status}
+                                                            displayAs={(each) => each.label}
+                                                            getValue={each => each.value}
+                                                            onChange={e => {
+                                                                let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                                this.setState({status: classStatus.find(sp => sp.value === value)})
+                                                            }}
+                                                        />
+
+                                                    </div>
+                                                </>
+                                            )
+
+                                            }
                                         </div>
+                                        {isManager && (
+                                            <div className="custom-summary">
+                                                Tìm thấy <span>{this.state.list ? this.state.list.length : 0}</span> lớp học
+                                            </div>
+                                        )
+
+                                        }
+
                                         <CommonDataTable
                                             showTooltip
                                             tooltipContent={this.displayTooltipContent}

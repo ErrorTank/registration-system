@@ -48,7 +48,7 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester, state, s
     if (status) {
         pipeline.push({
             $match: {
-                status: !!Number(status)
+                disabled: !!Number(status)
             }
 
         });
