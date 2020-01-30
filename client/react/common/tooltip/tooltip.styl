@@ -3,12 +3,23 @@
   display inline-block
   .tool-tip{
     position absolute
-    left 50%
-    transform translateX(-50%)
+
     z-index 1
     &.bottom{
       top 100%
+      left 50%
+      transform translateX(-50%)
 
+
+      .tooltip-content{
+        margin-top 0px
+
+      }
+    }
+    &.left{
+      top 50%
+      transform translateY(-50%)
+      right 100%
 
 
       .tooltip-content{

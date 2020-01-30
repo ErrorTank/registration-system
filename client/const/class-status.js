@@ -4,7 +4,7 @@ export const classStatus = [
         value: ""
     },
     {
-        label: "Chưa hủy",
+        label: "Bình thường",
         value: 0
     }, {
         label: "Đã hủy",

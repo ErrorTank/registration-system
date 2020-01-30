@@ -15,6 +15,9 @@ import {getStudentGroup, mergeYear} from "../../../../common/utils/common";
 import {classStates} from "../../../../const/class-state";
 import {classStatus} from "../../../../const/class-status";
 import {Checkbox} from "../../../common/checkbox/checkbox";
+import classnames from "classnames";
+import {Tooltip} from "../../../common/tooltip/tooltip";
+import {Badge} from "../../../common/badge/badge";
 
 export default class SchoolScheduleRoute extends React.Component {
     constructor(props) {
@@ -77,8 +80,14 @@ export default class SchoolScheduleRoute extends React.Component {
             }
         },
         {
+            condition: () => !["pdt", "admin"].includes(userInfo.getState().role),
             label: "STT",
-            cellDisplay: (s, i) => i + 1,
+            cellDisplay: (s, i) => (
+                <>
+
+                    {i + 1}
+                </>
+            ),
 
         }, {
             label: "Mã môn",
@@ -90,7 +99,8 @@ export default class SchoolScheduleRoute extends React.Component {
 
         }, {
             label: "Tên lớp",
-            cellDisplay: (s) => s.class.name,
+            cellDisplay: (s) => s.class.name
+            ,
 
         }, {
             label: "Thứ",
@@ -112,13 +122,53 @@ export default class SchoolScheduleRoute extends React.Component {
             label: "Giáo viên",
             cellDisplay: (s) => s.instructor.user.name + `(${s.instructor.user.identityID})`
 
+        }, {
+            condition: () => ["pdt", "admin"].includes(userInfo.getState().role) && this.state.list && this.state.list.length,
+            label: "",
+            cellDisplay: s => (
+                <div className="info">
+
+                    <Tooltip
+                        text={() => this.displayTooltipContent(s)}
+                        position={"left"}
+                        className={classnames("class-tooltip")}
+                    >
+                        <div className="tooltip-holder">
+                            <i className="fal fa-info-circle"></i>
+                        </div>
+                    </Tooltip>
+
+                </div>
+            )
         }
     ];
 
     displayTooltipContent = (s) => {
         return (
             <div className="class-tooltip-content">
+                <div className="ctc-panel">
+                    <div className="ctc-label">
+                        Số sinh viên
+                    </div>
 
+                    <div className={classnames("ctc-value", {"canDisabled": s.state < s.class.capacity.max, "full": s.state >= s.class.capacity.max})}>
+                        {s.state}/{s.class.capacity.max}
+                    </div>
+                </div>
+                <div className="separate"/>
+                <div className="ctc-panel">
+                    <div className="ctc-label">
+                        Trạng thái
+                    </div>
+
+                    <div className="ctc-value">
+                        <Badge
+                            className={"common-badge lesson-badge"}
+                            content={s.disabled ? "Đã hủy" : "Bình thường"}
+                            style={s.disabled ? "danger" : "success"}
+                        />
+                    </div>
+                </div>
             </div>
         )
     };
@@ -258,11 +308,15 @@ export default class SchoolScheduleRoute extends React.Component {
                                         {isManager && (
                                             <>
                                                 <div className="custom-summary">
-                                                    Tìm thấy <span>{this.state.list ? this.state.list.length : 0}</span> lớp học
+                                                    Tìm
+                                                    thấy <span>{this.state.list ? this.state.list.length : 0}</span> lớp
+                                                    học
                                                 </div>
                                                 <div className="checked-actions">
-                                                    <button className="btn disabled-class-btn" disabled={!this.state.checkBoxStatus.checked.length}>
-                                                        Hủy {this.state.checkBoxStatus.checked.length ? <span>{this.state.checkBoxStatus.checked.length}</span> : null} lớp
+                                                    <button className="btn disabled-class-btn"
+                                                            disabled={!this.state.checkBoxStatus.checked.length}>
+                                                        Hủy {this.state.checkBoxStatus.checked.length ?
+                                                        <span>{this.state.checkBoxStatus.checked.length}</span> : null} lớp
                                                     </button>
                                                 </div>
                                             </>
@@ -272,6 +326,8 @@ export default class SchoolScheduleRoute extends React.Component {
 
                                         <CommonDataTable
                                             className={"result-table"}
+                                            onMouseEnterRow={(s, i) => null}
+                                            onMouseLeaveRow={(s, i) => null}
                                             api={api}
                                             filter={config}
                                             columns={this.columns}

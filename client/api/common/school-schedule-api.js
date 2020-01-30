@@ -18,8 +18,8 @@ export const schoolScheduleApi = {
             year: year.value === "" ? null : year.value,
             studentGroup: studentGroup.value === "" ? null : studentGroup.value,
             semester: semester.value === "" ? null : semester.value,
-            state: state.value === "" ? null : state.value,
-            status: status.value === "" ? null : status.value,
+            state: state ? state.value === "" ? null : state.value : null,
+            status: status ? status.value === "" ? null : status.value : null,
         };
         return authenApi.get(`/school-schedule/all${urlUtils.buildParams(params)}`)
     },

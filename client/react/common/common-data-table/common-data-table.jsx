@@ -116,7 +116,7 @@ export class CommonDataTable extends React.Component {
     };
 
     render() {
-        let {columns, className, rowTrackBy = (row, i) => i, onClickRow, rowLinkTo, rowClassName, emptyNotify = "Empty table.", totalText} = this.props;
+        let {columns, className, rowTrackBy = (row, i) => i, onClickRow, rowLinkTo, rowClassName, emptyNotify = "Empty table.", totalText, onMouseEnterRow, onMouseLeaveRow} = this.props;
         let {list, page, total, loading} = this.state;
 
         return (
@@ -143,6 +143,16 @@ export class CommonDataTable extends React.Component {
                                 key={rowTrackBy(row, rIndex)}
                                 onClick={(onClickRow == null && rowLinkTo == null) ? () => null : e => this.clickRow(e, row)}
                                 className={classnames({clickable: onClickRow != null || rowLinkTo != null}, rowClassName)}
+                                onMouseEnter={() => {
+                                    if(onMouseEnterRow){
+                                        onMouseEnterRow(row, rIndex);
+                                    }
+                                }}
+                                onMouseLeave={() => {
+                                    if(onMouseLeaveRow){
+                                        onMouseLeaveRow(row, rIndex);
+                                    }
+                                }}
                             >
                                 {columns.map(({cellClass, checkBoxCell = false, cellDisplay, show = () => true, condition = () => true}, index) => {
                                 return (show({data: list}) && condition()) ? (
