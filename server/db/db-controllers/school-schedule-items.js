@@ -106,6 +106,7 @@ const getSchoolScheduleItems = ({keyword, year, studentGroup, semester, state, s
         pipeline.push({
             $match: {
                 $or: [
+                    {"class.name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
                     {"class.subject.name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
                     {"class.subject.subjectID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
                     {"instructor.user.identityID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
@@ -304,9 +305,101 @@ const getShiftsOverview = () => {
     ])
 };
 
+const getLessonsByItems = classes => {
+    let objectiveClasses = classes.map(each => ObjectId(each));
+    return SubjectLesson.aggregate([
+        {
+            $unwind: "$lessons"
+        },
+        {
+            $match: {
+                "lessons": {
+                    "$in": objectiveClasses
+                }
+            }
+        },
+        {$lookup: {from: 'schoolscheduleitems', localField: 'lessons', foreignField: '_id', as: "lessons"}},
+        {$lookup: {from: 'subjects', localField: 'subject', foreignField: '_id', as: "subject"}},
+        {
+            $addFields: {
+                'subject': {
+                    $arrayElemAt: ["$subject", 0]
+                },
+                "classIds": {
+                    "$reduce": {
+                        "input": "$lessons",
+                        "initialValue": [],
+                        "in": {"$concatArrays": ["$$value", ["$$this.class"]]}
+                    }
+                },
+                "fromIds": {
+                    "$reduce": {
+                        "input": "$lessons",
+                        "initialValue": [],
+                        "in": {"$concatArrays": ["$$value", ["$$this.from"]]}
+                    }
+                },
+                "toIds": {
+                    "$reduce": {
+                        "input": "$lessons",
+                        "initialValue": [],
+                        "in": {"$concatArrays": ["$$value", ["$$this.to"]]}
+                    }
+                },
+                "clRoomIds": {
+                    "$reduce": {
+                        "input": "$lessons",
+                        "initialValue": [],
+                        "in": {"$concatArrays": ["$$value", ["$$this.classRoom"]]}
+                    }
+                },
+            }
+        },
+        {$lookup: {from: 'shifts', localField: 'fromIds', foreignField: '_id', as: "fromInfo"}},
+        {$lookup: {from: 'shifts', localField: 'toIds', foreignField: '_id', as: "toInfo"}},
+        {$lookup: {from: 'classes', localField: 'classIds', foreignField: '_id', as: "classInfo"}},
+        {$lookup: {from: 'classrooms', localField: 'clRoomIds', foreignField: '_id', as: "classRoomInfo"}},
+        {
+            $addFields: {
+                "lessons": {
+                    "$map": {
+                        "input": "$lessons",
+                        "in": {
+                            "$mergeObjects": [
+                                "$$this",
+                                {
+                                    "from": {"$arrayElemAt":[
+                                            "$fromInfo",
+                                            {"$indexOfArray":["$fromIds","$$this.from"]}
+                                        ]},
+                                    "to": {"$arrayElemAt":[
+                                            "$toInfo",
+                                            {"$indexOfArray":["$toIds","$$this.to"]}
+                                        ]},
+                                    "class": {"$arrayElemAt":[
+                                            "$classInfo",
+                                            {"$indexOfArray":["$classIds","$$this.class"]}
+                                        ]},
+                                    "classRoom": {"$arrayElemAt":[
+                                            "$classRoomInfo",
+                                            {"$indexOfArray":["$clRoomIds","$$this.classRoom"]}
+                                        ]},
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {"$project":{"fromIds":0,"toIds":0,"classIds":0,"clRoomIds":0,"fromInfo":0,"toInfo":0,"classInfo":0,"classRoomInfo":0}}
+
+    ])
+};
+
 module.exports = {
     getSchoolScheduleItems,
     importData,
     getInstructorSchedule,
     getShiftsOverview,
+    getLessonsByItems
 };

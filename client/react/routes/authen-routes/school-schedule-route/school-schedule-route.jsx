@@ -18,6 +18,7 @@ import {Checkbox} from "../../../common/checkbox/checkbox";
 import classnames from "classnames";
 import {Tooltip} from "../../../common/tooltip/tooltip";
 import {Badge} from "../../../common/badge/badge";
+import {disabledClassModal} from "../../../common/modal/disabled-class-modal/disabled-class-modal";
 
 export default class SchoolScheduleRoute extends React.Component {
     constructor(props) {
@@ -142,6 +143,12 @@ export default class SchoolScheduleRoute extends React.Component {
             )
         }
     ];
+
+    handleDisabledClass = () => {
+        disabledClassModal.open({
+            classes: this.state.checkBoxStatus.checked
+        })
+    };
 
     displayTooltipContent = (s) => {
         return (
@@ -314,7 +321,9 @@ export default class SchoolScheduleRoute extends React.Component {
                                                 </div>
                                                 <div className="checked-actions">
                                                     <button className="btn disabled-class-btn"
-                                                            disabled={!this.state.checkBoxStatus.checked.length}>
+                                                            disabled={!this.state.checkBoxStatus.checked.length}
+                                                            onClick={this.handleDisabledClass}
+                                                    >
                                                         Hủy {this.state.checkBoxStatus.checked.length ?
                                                         <span>{this.state.checkBoxStatus.checked.length}</span> : null} lớp
                                                     </button>

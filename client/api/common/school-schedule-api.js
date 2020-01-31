@@ -23,6 +23,9 @@ export const schoolScheduleApi = {
         };
         return authenApi.get(`/school-schedule/all${urlUtils.buildParams(params)}`)
     },
+    getSubjectLessonsByScheduleItems(items){
+        return authenApi.post(`/school-schedule/lessons`, items)
+    },
     getInstructorSchedule(config){
         let info = userInfo.getState();
         let {filter} = config;
