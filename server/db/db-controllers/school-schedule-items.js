@@ -448,17 +448,17 @@ const disabledSchoolScheduleItems = (ids) => {
         "$set": {
             "disabled": true
         }
-    }, {new: true})], Schedule.updateMany({
+    }, {new: true}), Schedule.updateMany({
         list: {
             "$in": ids.map(each => ObjectId(each))
         }
-    },  {
+    }, {
         "$pull": {
             "list": {
                 "$in": ids.map(each => ObjectId(each))
             }
         }
-    }, {new: true}))
+    }, {new: true})])
 };
 
 module.exports = {

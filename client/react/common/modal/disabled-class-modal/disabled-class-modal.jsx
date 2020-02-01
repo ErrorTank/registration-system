@@ -57,7 +57,7 @@ class DisabledClassModal extends React.Component{
                             <LoadingInline/>
                         ) : isSuccess ? (
                             <div className="success-notify">
-
+                                <i className="fad fa-check-circle"></i><span>Hủy môn thành công!</span>
                             </div>
                         ) : (
                             <>

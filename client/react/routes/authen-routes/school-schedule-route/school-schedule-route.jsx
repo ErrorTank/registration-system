@@ -28,7 +28,7 @@ export default class SchoolScheduleRoute extends React.Component {
         let latestSchoolYear = appConfigCache.syncGet();
         let studentGroup = info.role === "sv" ? getStudentGroup(info.info.schoolYear, info.info.speciality.department, latestSchoolYear) : "";
 
-        let initState = {
+        this.initState = {
             loading: false,
             keyword: "",
             semester: semesters.find(each => each.value === currentSemester),
@@ -37,15 +37,15 @@ export default class SchoolScheduleRoute extends React.Component {
         };
 
         if (["pdt", "admin"].includes(info.role)) {
-            initState.state = classStates[0];
-            initState.status = classStatus[0];
-            initState.checkBoxStatus = {
+            this.initState.state = classStates[0];
+            this.initState.status = classStatus[0];
+            this.initState.checkBoxStatus = {
                 all: false,
                 checked: []
             };
         }
 
-        this.state = {...initState};
+        this.state = {...this.initState};
 
 
     };
@@ -147,6 +147,8 @@ export default class SchoolScheduleRoute extends React.Component {
     handleDisabledClass = () => {
         disabledClassModal.open({
             classes: this.state.checkBoxStatus.checked
+        }).then(() => {
+            this.setState({...this.initState});
         })
     };
 
