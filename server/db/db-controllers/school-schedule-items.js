@@ -368,22 +368,30 @@ const getLessonsByItems = classes => {
                             "$mergeObjects": [
                                 "$$this",
                                 {
-                                    "from": {"$arrayElemAt":[
+                                    "from": {
+                                        "$arrayElemAt": [
                                             "$fromInfo",
-                                            {"$indexOfArray":["$fromIds","$$this.from"]}
-                                        ]},
-                                    "to": {"$arrayElemAt":[
+                                            {"$indexOfArray": ["$fromIds", "$$this.from"]}
+                                        ]
+                                    },
+                                    "to": {
+                                        "$arrayElemAt": [
                                             "$toInfo",
-                                            {"$indexOfArray":["$toIds","$$this.to"]}
-                                        ]},
-                                    "class": {"$arrayElemAt":[
+                                            {"$indexOfArray": ["$toIds", "$$this.to"]}
+                                        ]
+                                    },
+                                    "class": {
+                                        "$arrayElemAt": [
                                             "$classInfo",
-                                            {"$indexOfArray":["$classIds","$$this.class"]}
-                                        ]},
-                                    "classRoom": {"$arrayElemAt":[
+                                            {"$indexOfArray": ["$classIds", "$$this.class"]}
+                                        ]
+                                    },
+                                    "classRoom": {
+                                        "$arrayElemAt": [
                                             "$classRoomInfo",
-                                            {"$indexOfArray":["$clRoomIds","$$this.classRoom"]}
-                                        ]},
+                                            {"$indexOfArray": ["$clRoomIds", "$$this.classRoom"]}
+                                        ]
+                                    },
                                 }
                             ]
                         }
@@ -391,9 +399,66 @@ const getLessonsByItems = classes => {
                 }
             }
         },
-        {"$project":{"fromIds":0,"toIds":0,"classIds":0,"clRoomIds":0,"fromInfo":0,"toInfo":0,"classInfo":0,"classRoomInfo":0}}
+        {
+            "$project": {
+                "fromIds": 0,
+                "toIds": 0,
+                "classIds": 0,
+                "clRoomIds": 0,
+                "fromInfo": 0,
+                "toInfo": 0,
+                "classInfo": 0,
+                "classRoomInfo": 0
+            }
+        }
 
-    ])
+    ]).then((data) => {
+        return AppConfig.find({}).lean()
+            .then(configs => {
+                let {currentSemester, currentYear} = configs[0];
+                return Schedule.find({
+                    "year.from": Number(currentYear.from),
+                    "year.to": Number(currentYear.to),
+                    semester: Number(currentSemester)
+                }).lean().then(schedules => {
+                    return data.map(each => {
+                        return {
+                            ...each,
+                            lessons: each.lessons.map(l => {
+                                return {
+                                    ...l,
+                                    state: schedules.filter(sc => sc.list.find(ssc => ssc.toString() === l._id.toString())).length
+                                }
+                            })
+
+                        }
+                    });
+                })
+            })
+
+    })
+};
+
+const disabledSchoolScheduleItems = (ids) => {
+    return Promise.all([SchoolScheduleItems.updateMany({
+        _id: {
+            "$in": ids.map(each => ObjectId(each))
+        }
+    }, {
+        "$set": {
+            "disabled": true
+        }
+    }, {new: true})], Schedule.updateMany({
+        list: {
+            "$in": ids.map(each => ObjectId(each))
+        }
+    },  {
+        "$pull": {
+            "list": {
+                "$in": ids.map(each => ObjectId(each))
+            }
+        }
+    }, {new: true}))
 };
 
 module.exports = {
@@ -401,5 +466,6 @@ module.exports = {
     importData,
     getInstructorSchedule,
     getShiftsOverview,
-    getLessonsByItems
+    getLessonsByItems,
+    disabledSchoolScheduleItems
 };

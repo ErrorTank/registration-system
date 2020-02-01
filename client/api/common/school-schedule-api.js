@@ -40,5 +40,8 @@ export const schoolScheduleApi = {
     },
     getShiftsOverview(){
         return authenApi.get(`/shift/overview`)
+    },
+    disabledSchoolScheduleItems(ids){
+        return authenApi.put(`/school-schedule/disable-items`, ids)
     }
 };
