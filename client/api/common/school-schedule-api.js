@@ -43,5 +43,6 @@ export const schoolScheduleApi = {
     },
     disabledSchoolScheduleItems(ids){
         return authenApi.put(`/school-schedule/disable-items`, ids)
-    }
+    },
+
 };

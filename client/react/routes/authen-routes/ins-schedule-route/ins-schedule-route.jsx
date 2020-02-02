@@ -9,6 +9,7 @@ import {schoolScheduleApi} from "../../../../api/common/school-schedule-api";
 import {ApiScheduleBoard} from "../../../common/api-schedule-board/api-schedule-board";
 import {Select} from "../../../common/select/select";
 import {userInfo} from "../../../../common/states/common";
+import {classStudentModal} from "../../../common/modal/class-student-modal/class-student-modal";
 
 export default class InsScheduleRoute extends React.Component {
     constructor(props) {
@@ -35,7 +36,9 @@ export default class InsScheduleRoute extends React.Component {
     };
 
     onClickScheduleItem = item => {
-
+        classStudentModal.open({
+            item
+        })
     };
 
     render() {
