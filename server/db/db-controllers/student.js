@@ -13,12 +13,18 @@ const getStudentsBySchoolScheduleItem = (itemID) => {
         list: ObjectId(itemID)
     }).populate({
         path: "owner",
-        populate: {
-            path: "user",
-            model: "User"
-        }
+        populate: [
+            {
+                path: "user",
+                model: "User"
+            },
+            {
+                path: "speciality",
+                model: "Speciality"
+            }
+        ]
     }).then(data => {
-        return data.map(each => pick(each, "owner"))
+        return data.map(each => ({...pick(each, "owner").owner.toObject()}))
     })
 };
 

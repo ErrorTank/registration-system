@@ -37,7 +37,9 @@ export default class InsScheduleRoute extends React.Component {
 
     onClickScheduleItem = item => {
         classStudentModal.open({
-            item
+            item,
+            semester: this.state.semester,
+            year: this.state.year
         })
     };
 
