@@ -23,10 +23,10 @@ export const schoolScheduleApi = {
         };
         return authenApi.get(`/school-schedule/all${urlUtils.buildParams(params)}`)
     },
-    getSubjectLessonsByScheduleItems(items){
+    getSubjectLessonsByScheduleItems(items) {
         return authenApi.post(`/school-schedule/lessons`, items)
     },
-    getInstructorSchedule(config){
+    getInstructorSchedule(config) {
         let info = userInfo.getState();
         let {filter} = config;
         let {year, semester} = filter || {};
@@ -38,11 +38,18 @@ export const schoolScheduleApi = {
         };
         return authenApi.get(`/school-schedule/instructor-schedule/${info.info._id}${urlUtils.buildParams(params)}`)
     },
-    getShiftsOverview(){
+    getShiftsOverview() {
         return authenApi.get(`/shift/overview`)
     },
-    disabledSchoolScheduleItems(ids){
+    disabledSchoolScheduleItems(ids) {
         return authenApi.put(`/school-schedule/disable-items`, ids)
     },
-
+    getSchoolScheduleItemsByDivision(divisionID, config) {
+        let {filter} = config;
+        let {keyword} = filter || {};
+        const params = {
+            keyword: keyword || null
+        };
+        return authenApi.get(`/school-schedule/division/${divisionID}${urlUtils.buildParams(params)}`);
+    }
 };

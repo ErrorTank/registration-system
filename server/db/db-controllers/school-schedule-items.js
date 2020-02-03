@@ -461,11 +461,82 @@ const disabledSchoolScheduleItems = (ids) => {
     }, {new: true})])
 };
 
+const getSchoolScheduleItemsByDivision = (divisionID, {keyword}) => {
+    let pipeline = [
+
+        {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
+        {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
+        {$lookup: {from: 'classes', localField: 'class', foreignField: '_id', as: "class"}},
+        {$lookup: {from: 'classrooms', localField: 'classRoom', foreignField: '_id', as: "classRoom"}},
+        {
+            $addFields: {
+                'from': {
+                    $arrayElemAt: ["$from", 0]
+                },
+                'to': {
+                    $arrayElemAt: ["$to", 0]
+                },
+                'class': {
+                    $arrayElemAt: ["$class", 0]
+                },
+                'classRoom': {
+                    $arrayElemAt: ["$classRoom", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'subjects', localField: 'class.subject', foreignField: '_id', as: "class.subject"}},
+        {
+            $addFields: {
+                'class.subject': {
+                    $arrayElemAt: ["$class.subject", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'dptinsinfos', localField: 'instructor', foreignField: '_id', as: "instructor"}},
+
+        {
+            $addFields: {
+                'instructor': {
+                    $arrayElemAt: ["$instructor", 0]
+                }
+            }
+        },
+        {$lookup: {from: 'users', localField: 'instructor.user', foreignField: '_id', as: "instructor.user"}},
+        {
+            $addFields: {
+                'instructor.user': {
+                    $arrayElemAt: ["$instructor.user", 0]
+                }
+            }
+        }, {
+            $match: {
+                "class.subject.division": ObjectId(divisionID)
+            }
+        }
+    ];
+
+    if (keyword) {
+        pipeline.push({
+            $match: {
+                $or: [
+                    {"class.name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"class.subject.name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"class.subject.subjectID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"instructor.user.identityID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                ]
+            }
+
+        });
+    }
+    return SchoolScheduleItems.aggregate(pipeline)
+};
+
 module.exports = {
     getSchoolScheduleItems,
     importData,
     getInstructorSchedule,
     getShiftsOverview,
     getLessonsByItems,
-    disabledSchoolScheduleItems
+    disabledSchoolScheduleItems,
+    getSchoolScheduleItemsByDivision
 };

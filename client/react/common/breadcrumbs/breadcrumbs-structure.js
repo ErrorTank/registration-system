@@ -25,6 +25,9 @@ const structures = {
                 }, {
                     url: "/ep-cung",
                     label: <span className="label">Ép cứng</span>
+                },{
+                    url: "/lop-bo-mon",
+                    label: <span className="label">Lớp bộ môn</span>
                 }, {
                     url: "/chuong-trinh-dao-tao",
                     label: <span className="label">CT đào tạo</span>

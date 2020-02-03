@@ -27,6 +27,7 @@ const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/
 const ForceRegisterRoute = lazy(delayLoad(() => import("./authen-routes/force-register-route/force-register-route")));
 const RegistrationRoute = lazy(delayLoad(() => import("./authen-routes/registration-route/registration-route")));
 const ScheduleRoute = lazy(delayLoad(() => import("./authen-routes/schedule-route/schedule-route")));
+const DivisionClassRoute = lazy(delayLoad(() => import("./authen-routes/division-class/division-class")));
 
 class App extends React.Component {
     constructor(props) {
@@ -137,8 +138,19 @@ class App extends React.Component {
                                                     component={props => <ForceRegisterRoute  {...authenProps} {...props}/>}
                                                     roles={["gv", "pdt"]}
                                                     condition={() => {
-                                                        let {info} = userInfo.getState();
-                                                        return info ? info.role === "gv" ? info.canEditSchedule : true : false;
+                                                        let info = userInfo.getState();
+                                                        return info ? info.role === "gv" ? info.info.canEditSchedule : true : false;
+                                                    }}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={"/lop-bo-mon"}
+                                                    component={props => <DivisionClassRoute  {...authenProps} {...props}/>}
+                                                    roles={["gv"]}
+                                                    condition={() => {
+                                                        let info = userInfo.getState();
+                                                        return info.role === "gv" && info.info.canEditSchedule;
                                                     }}
                                                 />
                                                 <RoleFilterRoute

@@ -9,6 +9,7 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import PeopleIcon from '@material-ui/icons/People';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import ClassIcon from '@material-ui/icons/Class';
 import {userInfo} from "../../../../common/states/common";
 
 export const navItems = [
@@ -90,8 +91,19 @@ export const navItems = [
         />,
         roles: ["gv", "pdt"],
         condition: () => {
-            let {info} = userInfo.getState();
-            return info ? info.role === "gv" ? info.canEditSchedule : true : false;
+            let info = userInfo.getState();
+            return info ? info.role === "gv" ? info.info.canEditSchedule : true : false;
+        }
+    },{
+        label: "Lớp bộ môn",
+        url: "/lop-bo-mon",
+        icon: <ClassIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["gv"],
+        condition: () => {
+            let info = userInfo.getState();
+            return info.role === "gv" && info.info.canEditSchedule;
         }
     }, {
         label: "Quản lý đợt đăng ký",
