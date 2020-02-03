@@ -26,9 +26,8 @@ class ClassStudentModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            students: [],
+            disabled: true,
         };
-
         this.title = document.title;
         document.title = `Danh sách sinh viên lớp ${props.item.class.name} ${props.semester.label} Năm học ${props.year.label}`
     };
@@ -58,15 +57,9 @@ class ClassStudentModal extends React.Component {
     ];
 
     render() {
-        let {students,} = this.state;
+        let {disabled,} = this.state;
         let {onClose, item} = this.props;
-        const api = () => studentApi.getStudentsBySchoolScheduleItem(item).then((students) => {
-            this.setState({students,});
-            return {
-                list: students,
-                total: null
-            };
-        });
+
         return (
             <div className={"class-student-modal common-modal"}>
                 <div className="modal-header">
@@ -78,19 +71,16 @@ class ClassStudentModal extends React.Component {
                     />
                 </div>
                 <div className="modal-body">
-                    <div className="summary">
-                        <span>{students.length}</span> sinh viên thuộc lớp <span>{item.class.name}</span>
-                    </div>
-                    <div className="table-container">
-                        <CommonDataTable
-                            className={"class-student-table"}
-                            api={api}
-                            ref={table => this.table = table}
-                            columns={this.columns}
-                            rowTrackBy={(row, i) => row._id}
-                            emptyNotify={"Không có sinh viên nào"}
-                        />
-                    </div>
+                    <ClassStudentInfo
+                        ref={sInfo => this.sInfo = sInfo}
+                        api={() => studentApi.getStudentsBySchoolScheduleItem(item).then((students) => {
+                            this.setState({disabled: !!!students.length});
+                            return {
+                                list: students,
+                                total: null
+                            };
+                        })}
+                    />
                 </div>
                 <div className="modal-footer">
                     <button type="button" className="btn btn-cancel" onClick={() => onClose()}>
@@ -100,15 +90,69 @@ class ClassStudentModal extends React.Component {
                         removeAfterPrint={true}
                         trigger={() =>
                             <button type="button" className="btn btn-confirm"
-                                    disabled={students.length === 0}
+                                    disabled={disabled}
                             >
                                 <i className="fal fa-print"></i>
                                 In danh sách
                             </button>
                         }
-                        content={() => this.table}
+                        content={() => this.sInfo.table}
                     />
 
+                </div>
+            </div>
+        );
+    }
+}
+export class ClassStudentInfo extends React.Component{
+    constructor(props){
+        super(props);
+        this.state={
+            students: []
+        };
+    };
+
+    columns = [
+        {
+            label: "STT",
+            cellDisplay: (s, i) => i + 1,
+
+        }, {
+            label: "Mã sinh viên",
+            cellDisplay: (s) => s.user.identityID,
+
+        }, {
+            label: "Họ và tên",
+            cellDisplay: (s) => s.user.name,
+
+        }, {
+            label: "Lớp",
+            cellDisplay: (s) => `${s.speciality.shortName}${s.schoolYear}${s.englishLevel}`,
+
+        },
+    ];
+
+    render(){
+        let {students,} = this.state;
+        let {api} = this.props;
+
+        return(
+            <div className="class-student-info">
+                <div className="summary">
+                    <span>Lớp gồm {students.length}</span> sinh viên
+                </div>
+                <div className="table-container">
+                    <CommonDataTable
+                        className={"class-student-table"}
+                        api={config => api(config).then(data => {
+                            this.setState({students: data.list});
+                            return data;
+                        })}
+                        ref={table => this.table = table}
+                        columns={this.columns}
+                        rowTrackBy={(row, i) => row._id}
+                        emptyNotify={"Không có sinh viên nào"}
+                    />
                 </div>
             </div>
         );

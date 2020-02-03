@@ -8,6 +8,7 @@ import {userInfo} from "../../../../common/states/common";
 import {Checkbox} from "../../../common/checkbox/checkbox";
 import {Tooltip} from "../../../common/tooltip/tooltip";
 import classnames from "classnames";
+import {schoolScheduleItemModal} from "../../../common/modal/school-schedule-item-modal/school-schedule-item-modal";
 
 export default class DivisionClassRoute extends React.Component {
     constructor(props) {
@@ -64,8 +65,11 @@ export default class DivisionClassRoute extends React.Component {
         }
     ];
 
-    handleClickRow = () => {
+    handleClickRow = (e, item) => {
 
+        schoolScheduleItemModal.open({
+            item
+        })
     };
 
     render() {

@@ -7,6 +7,8 @@ import {CommonDataTable} from "../../common-data-table/common-data-table";
 import {studentApi} from "../../../../api/common/student-api";
 import ReactToPrint from 'react-to-print';
 import {userInfo} from "../../../../common/states/common";
+import {ClassStudentInfo} from "../class-student-modal/class-student-modal";
+import {MultipleTabWidget} from "../../multiple-tab-widget/multiple-tab-widget";
 
 export const schoolScheduleItemModal = {
     open(config) {
@@ -22,92 +24,79 @@ export const schoolScheduleItemModal = {
     }
 };
 
+class ItemDetailInfo extends React.Component{
+    constructor(props){
+        super(props);
+        this.state={
+        };
+    };
+    render(){
+        return(
+            <div className="item-detail-info">
+            </div>
+        );
+    }
+}
+
+
 class SchoolScheduleItemModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            students: [],
+
         };
 
-        this.title = document.title;
-        document.title = `Danh sách sinh viên lớp ${props.item.class.name} ${props.semester.label} Năm học ${props.year.label}`
+
     };
 
-    componentWillUnmount() {
-        document.title = this.title;
-    }
-
-    columns = [
+    tabs = [
         {
-            label: "STT",
-            cellDisplay: (s, i) => i + 1,
-
-        }, {
-            label: "Mã sinh viên",
-            cellDisplay: (s) => s.user.identityID,
-
-        }, {
-            label: "Họ và tên",
-            cellDisplay: (s) => s.user.name,
-
-        }, {
-            label: "Lớp",
-            cellDisplay: (s) => `${s.speciality.shortName}${s.schoolYear}${s.englishLevel}`,
-
+            label: "Thông tin lớp",
+            render: () => {
+                return <ItemDetailInfo
+                    info={this.props.item}
+                />
+            }
+        },{
+            label: "Danh sách sinh viên",
+            render: () =>{
+                return <ClassStudentInfo
+                    api={() => studentApi.getStudentsBySchoolScheduleItem(this.props.item).then((students) => {
+                        return {
+                            list: students,
+                            total: null
+                        };
+                    })}
+                />
+            }
         },
     ];
 
+
+
     render() {
-        let {students,} = this.state;
+
         let {onClose, item} = this.props;
-        const api = () => studentApi.getStudentsBySchoolScheduleItem(item).then((students) => {
-            this.setState({students,});
-            return {
-                list: students,
-                total: null
-            };
-        });
+        console.log(item)
         return (
-            <div className={"class-student-modal common-modal"}>
+            <div className={"ssi-modal common-modal"}>
                 <div className="modal-header">
                     <div className="modal-title">
-                        Danh sách sinh viên
+                        {item.class.name}
                     </div>
                     <i className="fas fa-times close-modal"
                        onClick={() => onClose()}
                     />
                 </div>
                 <div className="modal-body">
-                    <div className="summary">
-                        <span>{students.length}</span> sinh viên thuộc lớp <span>{item.class.name}</span>
-                    </div>
-                    <div className="table-container">
-                        <CommonDataTable
-                            className={"class-student-table"}
-                            api={api}
-                            ref={table => this.table = table}
-                            columns={this.columns}
-                            rowTrackBy={(row, i) => row._id}
-                            emptyNotify={"Không có sinh viên nào"}
-                        />
-                    </div>
+                    <MultipleTabWidget
+                        tabs={this.tabs}
+                    />
                 </div>
                 <div className="modal-footer">
                     <button type="button" className="btn btn-cancel" onClick={() => onClose()}>
                         Đóng
                     </button>
-                    <ReactToPrint
-                        removeAfterPrint={true}
-                        trigger={() =>
-                            <button type="button" className="btn btn-confirm"
-                                    disabled={students.length === 0}
-                            >
-                                <i className="fal fa-print"></i>
-                                In danh sách
-                            </button>
-                        }
-                        content={() => this.table}
-                    />
 
                 </div>
             </div>
