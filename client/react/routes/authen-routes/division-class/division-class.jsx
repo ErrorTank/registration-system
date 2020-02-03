@@ -107,7 +107,7 @@ export default class DivisionClassRoute extends React.Component {
                                 <div className="custom-summary">
                                     Tìm
                                     thấy <span>{this.state.list ? this.state.list.length : 0}</span> lớp
-                                    học
+                                    học thuộc <span>{userInfo.getState().info.division.name}</span>
                                 </div>
                                 <CommonDataTable
                                     className={"result-table"}
