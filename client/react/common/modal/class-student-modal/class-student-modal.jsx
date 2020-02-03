@@ -64,7 +64,7 @@ class ClassStudentModal extends React.Component {
             <div className={"class-student-modal common-modal"}>
                 <div className="modal-header">
                     <div className="modal-title">
-                        Danh sách sinh viên
+                        Danh sách sinh viên lớp {item.class.name}
                     </div>
                     <i className="fas fa-times close-modal"
                        onClick={() => onClose()}
@@ -139,7 +139,7 @@ export class ClassStudentInfo extends React.Component{
         return(
             <div className="class-student-info">
                 <div className="summary">
-                    <span>Lớp gồm {students.length}</span> sinh viên
+                    Lớp gồm<span> {students.length} </span>sinh viên
                 </div>
                 <div className="table-container">
                     <CommonDataTable

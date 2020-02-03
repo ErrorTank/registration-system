@@ -82,7 +82,7 @@ class SchoolScheduleItemModal extends React.Component {
             <div className={"ssi-modal common-modal"}>
                 <div className="modal-header">
                     <div className="modal-title">
-                        {item.class.name}
+                        Lớp {item.class.name}
                     </div>
                     <i className="fas fa-times close-modal"
                        onClick={() => onClose()}
