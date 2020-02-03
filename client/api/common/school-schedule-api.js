@@ -46,9 +46,12 @@ export const schoolScheduleApi = {
     },
     getSchoolScheduleItemsByDivision(divisionID, config) {
         let {filter} = config;
-        let {keyword} = filter || {};
+        let {keyword, year, semester} = filter || {};
         const params = {
-            keyword: keyword || null
+            keyword: keyword || null,
+            year: year.value === "" ? null : year.value,
+
+            semester: semester.value === "" ? null : semester.value,
         };
         return authenApi.get(`/school-schedule/division/${divisionID}${urlUtils.buildParams(params)}`);
     }

@@ -461,8 +461,28 @@ const disabledSchoolScheduleItems = (ids) => {
     }, {new: true})])
 };
 
-const getSchoolScheduleItemsByDivision = (divisionID, {keyword}) => {
-    let pipeline = [
+const getSchoolScheduleItemsByDivision = (divisionID, {keyword, semester, year}) => {
+    let pipeline = [];
+    if (year) {
+        let [from, to] = year.split("-");
+        pipeline.push({
+            $match: {
+                "year.from": Number(from),
+                "year.to": Number(to)
+            }
+        });
+    }
+
+
+    if (semester) {
+        pipeline.push({
+            $match: {
+                semester: Number(semester)
+            }
+
+        });
+    }
+    pipeline = pipeline.concat([
 
         {$lookup: {from: 'shifts', localField: 'from', foreignField: '_id', as: "from"}},
         {$lookup: {from: 'shifts', localField: 'to', foreignField: '_id', as: "to"}},
@@ -513,7 +533,7 @@ const getSchoolScheduleItemsByDivision = (divisionID, {keyword}) => {
                 "class.subject.division": ObjectId(divisionID)
             }
         }
-    ];
+    ]);
 
     if (keyword) {
         pipeline.push({

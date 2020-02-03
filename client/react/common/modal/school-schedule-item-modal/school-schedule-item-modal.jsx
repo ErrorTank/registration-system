@@ -9,6 +9,7 @@ import ReactToPrint from 'react-to-print';
 import {userInfo} from "../../../../common/states/common";
 import {ClassStudentInfo} from "../class-student-modal/class-student-modal";
 import {MultipleTabWidget} from "../../multiple-tab-widget/multiple-tab-widget";
+import {Badge} from "../../badge/badge";
 
 export const schoolScheduleItemModal = {
     open(config) {
@@ -31,8 +32,53 @@ class ItemDetailInfo extends React.Component{
         };
     };
     render(){
+        let {info} = this.props;
         return(
             <div className="item-detail-info">
+                <div className="info">
+                    <span className="label">Thời gian</span>
+                    <span className="value">Kì {info.semester + 1} Năm học {info.year.from} - {info.year.to}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Mã môn</span>
+                    <span className="value">{info.class.subject.subjectID}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Tên môn</span>
+                    <span className="value">{info.class.subject.name}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Tên lớp</span>
+                    <span className="value">{info.class.name}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Ngày học</span>
+                    <span className="value">{info.dayOfWeek + 1}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Ca học</span>
+                    <span className="value">{info.from.name + "-" + info.to.name}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Phòng học</span>
+                    <span className="value">{info.classRoom.name}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Tín chỉ</span>
+                    <span className="value">{info.class.subject.credits}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Giáo viên dạy</span>
+                    <span className="value">{info.instructor.user.name + `(${info.instructor.user.identityID})`}</span>
+                </div>
+                <div className="info">
+                    <span className="label">Trạng thái</span>
+                    <span className="value"><Badge
+                        className={"common-badge lesson-badge"}
+                        content={info.disabled ? "Đã hủy" : "Bình thường"}
+                        style={info.disabled ? "danger" : "success"}
+                    /></span>
+                </div>
             </div>
         );
     }

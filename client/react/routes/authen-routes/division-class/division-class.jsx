@@ -9,14 +9,23 @@ import {Checkbox} from "../../../common/checkbox/checkbox";
 import {Tooltip} from "../../../common/tooltip/tooltip";
 import classnames from "classnames";
 import {schoolScheduleItemModal} from "../../../common/modal/school-schedule-item-modal/school-schedule-item-modal";
+import {Select} from "../../../common/select/select";
+import {years} from "../../../../const/years";
+import {semester as semesters} from "../../../../const/semester";
+import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
+import {mergeYear} from "../../../../common/utils/common";
 
 export default class DivisionClassRoute extends React.Component {
     constructor(props) {
         super(props);
+        const {currentYear, currentSemester} = appConfigCache.syncGet();
         this.state = {
             keyword: "",
+            semester: semesters.find(each => each.value === currentSemester),
+            year: years.find(each => each.value === mergeYear(currentYear)),
             list: []
         };
+
     };
 
     columns = [
@@ -73,7 +82,7 @@ export default class DivisionClassRoute extends React.Component {
     };
 
     render() {
-        let {keyword, list} = this.state;
+        let {keyword, list, semester, year} = this.state;
         const api = (config) => schoolScheduleApi.getSchoolScheduleItemsByDivision(userInfo.getState().info.division._id, config).then((data) => {
             this.setState({list: data});
             return {
@@ -92,15 +101,39 @@ export default class DivisionClassRoute extends React.Component {
                         <div className="common-route-wrapper">
                             <div className="schedule-items">
                                 <div className="table-actions">
-                                    <div className="spec-select">
-                                        <div className="spec-select search-schedules">
-                                            <SearchInput
-                                                placeholder={`Tìm theo tên môn, mã môn hoặc mã GV`}
-                                                onSearch={(keyword) => this.setState({keyword})}
-                                                value={keyword}
-                                            />
+                                    <div className="spec-select search-schedules">
+                                        <SearchInput
+                                            placeholder={`Tìm theo tên môn, mã môn hoặc mã GV`}
+                                            onSearch={(keyword) => this.setState({keyword})}
+                                            value={keyword}
+                                        />
 
-                                        </div>
+                                    </div>
+                                    <div className="spec-select">
+                                        <span className="label">Năm học</span>
+                                        <Select
+                                            options={years.filter(each => each.value !== "")}
+                                            value={year}
+                                            displayAs={(each) => each.label}
+                                            getValue={each => each.value}
+                                            onChange={e => {
+                                                this.setState({year: years.find(sp => sp.value === e.target.value)})
+                                            }}
+                                        />
+
+                                    </div>
+                                    <div className="spec-select">
+                                        <span className="label">Học kì</span>
+                                        <Select
+                                            options={semesters.filter(each => each.value !== "")}
+                                            value={semester}
+                                            displayAs={(each) => each.label}
+                                            getValue={each => each.value}
+                                            onChange={e => {
+                                                let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                this.setState({semester: semesters.find(sp => sp.value === value)})
+                                            }}
+                                        />
 
                                     </div>
                                 </div>
@@ -114,7 +147,9 @@ export default class DivisionClassRoute extends React.Component {
                                     className={"result-table"}
                                     api={api}
                                     filter={{
-                                        keyword
+                                        keyword,
+                                        semester,
+                                        year
                                     }}
                                     onClickRow={this.handleClickRow}
                                     columns={this.columns}
