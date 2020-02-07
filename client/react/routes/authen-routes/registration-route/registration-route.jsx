@@ -309,6 +309,7 @@ export default class RegistrationRoute extends React.Component {
                                                 schedule={this.state.schedule}
                                                 onRegister={this.onRegister}
                                                 toggleRegister={this.toggleRegister}
+                                                onChange={pickedSubject => this.setState({pickedSubject})}
 
                                             />
 

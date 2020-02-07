@@ -647,7 +647,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
 
                         ]).then(result => {
                             // return result
-                            // console.log(result)
+                            // console.log(result.filter(each => each.subjectID === "IM201"))
                             let isGDTCPassed = passedSubjects.find(each => each.subject.subjectID === "PG100");
                             return {
                                 subjectList: result.filter(each => {
@@ -674,6 +674,7 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                     //         console.log(cl)
                                     //         return false;
                                     //     }))
+
                                     return {
                                         ...each, lessons: subLes
                                             .map(l => l.map(cl => each.lessons.find(le => le._id.toString() === cl.toString())))
@@ -727,13 +728,25 @@ const getSubjectsForRegistration = ({info, _id}) => {
                                     subjectList: subjectList.map((each) => {
                                         let {lessons} = each;
                                         return {
-                                            ...each, lessons: lessons.map(lesson => {
+                                            ...each,
+                                            lessons: lessons.map(lesson => {
                                                 return lesson.map(e => {
-                                                    return {
+                                                    // console.log(e)
+                                                    return e ? {
                                                         ...e,
                                                         count: schedules.filter(sc => sc.list.find(item => item._id.toString() === e._id.toString())).length
-                                                    }
+                                                    } : null
                                                 })
+                                            }).filter(le => {
+
+                                                if(le.find(cl => {
+                                                    // console.log(cl.subject._id)
+                                                    return cl === null;
+                                                }) === null){
+                                                    console.log("aloha")
+                                                    return false;
+                                                }
+                                                return true;
                                             })
                                         }
                                     })
@@ -1163,7 +1176,10 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
                         //     }))
                         return {
                             ...each, lessons: subLes
-                                .map(l => l.map(cl => each.lessons.find(le => le._id.toString() === cl.toString())))
+                                .map(l => l.map(cl => each.lessons.find(le => {
+
+                                    return le._id.toString() === cl.toString();
+                                })))
                         }
                     }).map(each => {
                         return {
@@ -1208,12 +1224,22 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
                             return {
                                 ...each, lessons: lessons.map(lesson => {
                                     return lesson.map(e => {
-                                        return {
+                                        return e ?  {
                                             ...e,
                                             count: schedules.filter(sc => sc.list.find(item => item._id.toString() === e._id.toString())).length
-                                        }
+                                        } : null
                                     })
-                                })
+                                }).filter(le => {
+
+                                if(le.find(cl => {
+                                    // console.log(cl.subject._id)
+                                    return cl === null;
+                                }) === null){
+                                    console.log("aloha")
+                                    return false;
+                                }
+                                return true;
+                            })
                             }
                         })
                     }

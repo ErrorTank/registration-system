@@ -67,7 +67,7 @@ class DisabledClassModal extends React.Component{
                                         let isSame = each.lessons.filter(i => i.class.name === each.lessons[0].class.name).length === each.lessons.length;
                                         return (
                                             <div className="each-lesson" key={i}>
-
+                                                <span className="lesson-order">{i + 1}.</span>
                                                 {isSame ? (
                                                     <span className="lesson-class">
                                                         <span className="class-name">{each.lessons[0].class.name}</span>
