@@ -1252,6 +1252,41 @@ const getSubjectsForForceRegistration = ({student, forcer}) => {
 
 };
 
+const getRegistrationEventFullOverview = ({year, semester}) => {
+   let [from, to] = year.split("-");
+   return Schedule.find({
+       "year.from": Number(from),
+       "year.to": Number(to),
+       active: true,
+       semester: Number(semester)
+   }).populate({
+       path: "list",
+       populate: {
+           path: "class",
+           model: "Class",
+           populate: {
+               path: "subject",
+               model: "Subject"
+           }
+       }
+   }).then(schedules => {
+       console.log(schedules.length)
+       let newSchedules = schedules.map(each => {
+           // console.log(each)
+           return {
+               credits: each.list.reduce((total, cur) => total + cur.class.subject.credits, 0)
+           }
+       });
+        return {
+            registerQuantity: {
+                "gte-15": newSchedules.filter(each => each.credits >= 15),
+                "gte-12-and-lt-15": newSchedules.filter(each => each.credits >= 12 && each.credits < 15),
+                "gte-10-and-lt-12": newSchedules.filter(each => each.credits >= 10 && each.credits < 12),
+                "lt-10": newSchedules.filter(each => each.credits < 10),
+            }
+        }
+   })
+};
 
 module.exports = {
     createRegistrationEvent,
@@ -1264,5 +1299,6 @@ module.exports = {
     getSubjectInfo,
     getEventOverview,
     activateSchedules,
-    getSubjectsForForceRegistration
+    getSubjectsForForceRegistration,
+    getRegistrationEventFullOverview
 };

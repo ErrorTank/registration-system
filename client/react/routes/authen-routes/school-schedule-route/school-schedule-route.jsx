@@ -19,6 +19,7 @@ import classnames from "classnames";
 import {Tooltip} from "../../../common/tooltip/tooltip";
 import {Badge} from "../../../common/badge/badge";
 import {disabledClassModal} from "../../../common/modal/disabled-class-modal/disabled-class-modal";
+import {schoolScheduleItemModal} from "../../../common/modal/school-schedule-item-modal/school-schedule-item-modal";
 
 export default class SchoolScheduleRoute extends React.Component {
     constructor(props) {
@@ -182,6 +183,13 @@ export default class SchoolScheduleRoute extends React.Component {
         )
     };
 
+    handleClickRow = (e, item) => {
+
+        schoolScheduleItemModal.open({
+            item
+        })
+    };
+
     render() {
         const api = (config) => schoolScheduleApi.getSchoolScheduleItems(config).then((data) => {
             this.setState({list: data});
@@ -342,6 +350,7 @@ export default class SchoolScheduleRoute extends React.Component {
                                             api={api}
                                             filter={config}
                                             columns={this.columns}
+                                            onClickRow={this.handleClickRow}
                                             rowTrackBy={(row, i) => row._id}
                                             emptyNotify={"Không có môn học nào"}
                                         />

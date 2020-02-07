@@ -7,5 +7,6 @@ export const commonApi = {
     },
     getBriefStudents(){
         return authenApi.get("/student/brief")
-    }
+    },
+
 };

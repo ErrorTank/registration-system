@@ -41,5 +41,8 @@ export const registrationEventApi = {
 
         };
         return authenApi.get(`/registration-event/overview${urlUtils.buildParams(params)}`)
+    },
+    getRegistrationEventFullOverview({semester, year}){
+        return authenApi.get(`/registration-event/full-overview/semester/${semester}/year/${year.from}-${year.to}`)
     }
 };

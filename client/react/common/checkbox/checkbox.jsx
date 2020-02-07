@@ -9,11 +9,16 @@ export class Checkbox extends React.Component {
   render() {
     let {label, onChange, value, disabled, className = ""} = this.props;
     return (
-      <label className={`common-checkbox ${className}`}>
+      <label className={`common-checkbox ${className}`}
+             onClick={e => e.stopPropagation()}
+      >
         <input type="checkbox"
                disabled={disabled}
                checked={value}
-               onChange={() => onChange && onChange(!value)}
+               onChange={(e) => {
+                   e.stopPropagation();
+                   return onChange && onChange(!value)
+               }}
         />
         {label && label}
         <span className="check-mark"/>
