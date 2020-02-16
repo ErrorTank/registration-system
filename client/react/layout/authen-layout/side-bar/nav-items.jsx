@@ -10,6 +10,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import PeopleIcon from '@material-ui/icons/People';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import ClassIcon from '@material-ui/icons/Class';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import {userInfo} from "../../../../common/states/common";
 
 export const navItems = [
@@ -74,6 +75,14 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["bm", "sv", "gv", "admin", "pdt"],
+        // disabled: true
+    },{
+        label: "Danh sách tài khoản",
+        url: "/manage/accounts",
+        icon: <SupervisorAccountIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["admin"],
         // disabled: true
     }, {
         label: "Chương trình đào tạo",

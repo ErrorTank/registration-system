@@ -16,6 +16,7 @@ const structures = {
         </span>
             ),
             childrens: [
+
                 {
                     url: "/tkb",
                     label: <span className="label">Thời khóa biểu</span>
@@ -51,6 +52,20 @@ const structures = {
         </span>
             ),
             childrens: [
+                {
+                    url: "/manage/accounts",
+                    label: <span className="label">Danh sách tài khoản</span>,
+                    childrens: [
+                        {
+                            url: "/manage/account/new",
+                            label: <span className="label">Tạo mới</span>,
+                        }, {
+                            regex: /\/manage\/account\/(\w+)\/edit/gi,
+                            label: <span className="label">Cập nhật</span>,
+                        }
+
+                    ]
+                },
                 {
                     url: "/manage/import",
                     label: <span className="label">Import</span>

@@ -1,3 +1,5 @@
+import {userInfo} from "../../../client/common/states/common";
+
 const appDb = require("../../config/db").getDbs().appDb;
 const User = require("../model/user")(appDb);
 
@@ -87,9 +89,37 @@ const getAuthUserInfo = userID => {
         })
 };
 
+const getAllAccounts = (config) => {
+    let {keyword, accountType} = config;
+    let pipeline = [];
+    if (accountType) {
+        pipeline.push({
+            $match: {
+                role: accountType
+            }
+
+        });
+    }
+
+
+    if(keyword){
+        pipeline.push({
+            $match: {
+                $or: [
+                    {"identityID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"email": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"phone": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                ]
+            }
+        });
+    }
+    return pipeline.length ? User.aggregate(pipeline) : User.find({}).lean();
+};
+
 
 module.exports = {
     regularLogin,
     getAuthUserInfo,
-
+    getAllAccounts
 }

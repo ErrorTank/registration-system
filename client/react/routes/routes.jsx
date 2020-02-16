@@ -22,6 +22,7 @@ const SchoolScheduleRoute = lazy(delayLoad(() => import("./authen-routes/school-
 const NewRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/new/new")));
 const EditRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/edit/edit")));
 const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
+const AccountListRoute = lazy(delayLoad(() => import("./authen-routes/accounts/list/list")));
 const InsScheduleRoute = lazy(delayLoad(() => import("./authen-routes/ins-schedule-route/ins-schedule-route")));
 const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/ins-dashboard")));
 const ForceRegisterRoute = lazy(delayLoad(() => import("./authen-routes/force-register-route/force-register-route")));
@@ -85,6 +86,7 @@ class App extends React.Component {
                                                         <RegistrationEventsRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
+
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
@@ -92,7 +94,14 @@ class App extends React.Component {
                                                     component={props => <ImportRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
-
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/accounts"}
+                                                    component={props =>
+                                                        <AccountListRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin"]}
+                                                />
                                             </CustomSwitch>
 
                                         )}
