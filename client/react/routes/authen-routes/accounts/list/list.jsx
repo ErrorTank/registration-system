@@ -93,7 +93,7 @@ class AccountListRoute extends Component {
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
                                                     onChange={e => {
-                                                        let value = e.target.value === "" ? "" : Number(e.target.value);
+                                                        let value = e.target.value === "" ? "" : e.target.value;
                                                         this.setState({accountType: accountTypes.find(sp => sp.value === value)})
                                                     }}
                                                 />
