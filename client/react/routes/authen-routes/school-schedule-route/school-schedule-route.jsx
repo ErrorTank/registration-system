@@ -55,20 +55,20 @@ export default class SchoolScheduleRoute extends React.Component {
         {
             condition: () => ["pdt", "admin"].includes(userInfo.getState().role) && this.state.list && this.state.list.length,
             checkBoxCell: true,
-            customHeader: () => (
+            customHeader: () => this.state.list.find(each => !each.disabled) ?  (
                 <Checkbox
                     value={this.state.checkBoxStatus.all}
                     onChange={value => this.setState({
                         checkBoxStatus: {
                             all: value,
-                            checked: value ? this.state.list.map(each => each._id.toString()) : []
+                            checked: value ? this.state.list.filter(each => !each.disabled).map(each => each._id.toString()) : []
                         }
                     })}
                 />
-            ),
+            ) : null,
             cellDisplay: (s, i) => {
                 let {checked} = this.state.checkBoxStatus;
-                return (
+                return !s.disabled ? (
                     <Checkbox
                         value={!!checked.find(each => each === s._id.toString())}
                         onChange={value => this.setState({
@@ -78,7 +78,7 @@ export default class SchoolScheduleRoute extends React.Component {
                             }
                         })}
                     />
-                )
+                ) : null
             }
         },
         {
@@ -192,7 +192,7 @@ export default class SchoolScheduleRoute extends React.Component {
 
     render() {
         const api = (config) => schoolScheduleApi.getSchoolScheduleItems(config).then((data) => {
-            this.setState({list: data});
+            this.setState({...this.initState, list: data});
             return {
                 list: data,
                 total: null,

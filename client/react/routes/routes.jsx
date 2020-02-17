@@ -23,6 +23,7 @@ const NewRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/r
 const EditRegistrationEventRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/edit/edit")));
 const RegistrationEventsRoute = lazy(delayLoad(() => import("./authen-routes/registration-event/list/list")));
 const AccountListRoute = lazy(delayLoad(() => import("./authen-routes/accounts/list/list")));
+const AccountEditRoute = lazy(delayLoad(() => import("./authen-routes/accounts/edit/edit")));
 const InsScheduleRoute = lazy(delayLoad(() => import("./authen-routes/ins-schedule-route/ins-schedule-route")));
 const InsDashboard = lazy(delayLoad(() => import("./authen-routes/ins-dashboard/ins-dashboard")));
 const ForceRegisterRoute = lazy(delayLoad(() => import("./authen-routes/force-register-route/force-register-route")));
@@ -100,6 +101,14 @@ class App extends React.Component {
                                                     path={props.match.path + "/accounts"}
                                                     component={props =>
                                                         <AccountListRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/account/:accountID/edit"}
+                                                    component={props =>
+                                                        <AccountEditRoute  {...authenProps} {...props}/>}
                                                     roles={["admin"]}
                                                 />
                                             </CustomSwitch>

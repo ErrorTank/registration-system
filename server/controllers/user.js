@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {authorization, createAuthToken} = require("../authorization/auth");
-const {regularLogin, getAuthUserInfo, getAllAccounts} = require("../db/db-controllers/user");
+const {regularLogin, getAuthUserInfo, getAllAccounts, getUserDetails} = require("../db/db-controllers/user");
 const {getPublicKey, getPrivateKey} = require("../authorization/keys/keys");
 
 const authMiddleware = authorization(getPublicKey(), {expiresIn: "1 day", algorithm: ["RS256"]});
@@ -28,6 +28,11 @@ module.exports = () => {
         }).catch(err => next(err));
 
     });
+    router.get("/account/:accountID/details", authMiddleware ,(req, res, next) => {
+        return getUserDetails(req.params.accountID).then((data) => {
+            return res.status(200).json(data);
+        }).catch(err => next(err));
 
+    });
     return router;
 };

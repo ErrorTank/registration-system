@@ -55,10 +55,10 @@ class AccountListRoute extends Component {
         } = this.state;
         return (
             <PageTitle
-                title={"Danh sách tài khoản"}
+                title={"Danh sách người dùng"}
             >
                 <AuthenLayoutTitle
-                    title={"Danh sách tài khoản"}
+                    title={"Danh sách người dùng"}
                 >
                     <div className="registration-events manage-list-route">
                         <div className="common-route-wrapper">

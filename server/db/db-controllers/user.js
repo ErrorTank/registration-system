@@ -117,9 +117,40 @@ const getAllAccounts = (config) => {
     return pipeline.length ? User.aggregate(pipeline) : User.find({}).lean();
 };
 
+const getUserDetails = (accountID) => {
+    return User.findOne({_id: ObjectId(accountID)}).lean()
+        .then(user => {
+            let matcher = {
+                "pdt": () => {
+                    return CommonUserInfo.findOne({user: ObjectId(user._id)}).lean()
+
+                },
+                "admin": () => {
+                    return CommonUserInfo.findOne({user: ObjectId(user._id)}).lean()
+
+                },
+                "gv": () => {
+                    return DptInsInfo.findOne({user: ObjectId(user._id)})
+                        .populate("division")
+
+                },
+                "sv": () => {
+                    return StudentInfo.findOne({user: ObjectId(user._id)})
+                        .populate("speciality")
+
+                },
+            };
+            return matcher[user.role]().then(info => ({
+                ...user,
+                info
+            }))
+        })
+};
+
 
 module.exports = {
     regularLogin,
     getAuthUserInfo,
-    getAllAccounts
+    getAllAccounts,
+    getUserDetails
 }

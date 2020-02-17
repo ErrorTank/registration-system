@@ -20,5 +20,8 @@ export const userApi = {
             accountType: accountType.value === "" ? null : accountType.value,
         };
         return authenApi.get(`/account/all${urlUtils.buildParams(params)}`)
+    },
+    getUserDetails(accountID){
+        return authenApi.get(`/account/${accountID}/details`)
     }
 };
