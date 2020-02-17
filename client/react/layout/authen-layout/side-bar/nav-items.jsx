@@ -78,11 +78,12 @@ export const navItems = [
         // disabled: true
     },{
         label: "Danh sách người dùng",
-        url: "/manage/accounts",
+        url: ["/manage/accounts", "/manage/account/new", /\/manage\/account\/(\w+)\/edit/gi],
         icon: <SupervisorAccountIcon
             fontSize={"inherit"}
         />,
         roles: ["admin"],
+        defaultUrl: "/manage/accounts"
         // disabled: true
     }, {
         label: "Chương trình đào tạo",
