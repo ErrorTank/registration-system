@@ -96,7 +96,8 @@ class AccountEditRoute extends KComponent {
             render: () => {
 
                 return this.detailFormComponent[this.state.draft.role]()
-            }
+            },
+            isDisabled: () => !this.infoForm
         },
     ];
 
@@ -105,8 +106,11 @@ class AccountEditRoute extends KComponent {
         if(!fetching){
             console.log(this.accountBasicForm.getData())
             console.log(this.accountBasicForm.getInvalidPaths())
-            console.log(this.infoForm.getData())
-            console.log(this.infoForm.getInvalidPaths())
+            if(this.infoForm){
+                console.log(this.infoForm.getData())
+                console.log(this.infoForm.getInvalidPaths())
+            }
+
         }
         let disabledTabs = [];
         if(!this.infoForm){
@@ -126,7 +130,6 @@ class AccountEditRoute extends KComponent {
                             ) : (
                                 <MultipleTabWidget
                                     tabs={this.tabs}
-                                    disabledTabs={disabledTabs}
                                 />
                             )}
                         </div>
