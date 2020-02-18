@@ -3,6 +3,7 @@ const router = express.Router();
 const {authorization, createAuthToken} = require("../authorization/auth");
 const appDb = require("../config/db").getDbs().appDb;
 const AppConfig = require("../db/model/app-config")(appDb);
+const Division = require("../db/model/division")(appDb);
 const StudentInfo = require("../db/model/student-info")(appDb);
 const {getAvaiableSpecs} = require("../db/db-controllers/result");
 const {getPublicKey, getPrivateKey} = require("../authorization/keys/keys");
@@ -39,7 +40,15 @@ module.exports = () => {
         }).catch(err => next(err));
 
     });
+    router.get("/division/all", authMiddleware, (req, res, next) => {
 
+        return Division.find({}).lean().then((data) => {
+
+            return res.status(200).json(data);
+        }).catch(err => next(err));
+
+
+    });
 
     return router;
 };

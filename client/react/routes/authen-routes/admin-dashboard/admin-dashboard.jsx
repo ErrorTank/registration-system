@@ -88,7 +88,7 @@ export default class AdminDashboard extends React.Component {
                                 <div className="overview-panel">
                                     <div className="small-panel">
                                         <div className="label">
-                                            Kì Học Hiện Hại
+                                            Kì Học Hiện Tại
                                         </div>
                                         <div className="value">
                                             {currentSemester + 1}

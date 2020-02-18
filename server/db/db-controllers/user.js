@@ -131,12 +131,10 @@ const getUserDetails = (accountID) => {
                 },
                 "gv": () => {
                     return DptInsInfo.findOne({user: ObjectId(user._id)})
-                        .populate("division")
 
                 },
                 "sv": () => {
                     return StudentInfo.findOne({user: ObjectId(user._id)})
-                        .populate("speciality")
 
                 },
             };

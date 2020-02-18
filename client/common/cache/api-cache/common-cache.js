@@ -16,3 +16,7 @@ export const shiftsCache = createApiCache(() => schoolScheduleApi.getShiftsOverv
   return shifts;
 }));
 
+export const divisionsCache = createApiCache(() => commonApi.getDivisions().then((shifts) => {
+  return shifts;
+}));
+
