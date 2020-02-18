@@ -192,7 +192,17 @@ export default class SchoolScheduleRoute extends React.Component {
 
     render() {
         const api = (config) => schoolScheduleApi.getSchoolScheduleItems(config).then((data) => {
-            this.setState({...this.initState, list: data});
+            let newState = {
+                list: data
+            };
+            let info = userInfo.getState();
+            if (["pdt", "admin"].includes(info.role)) {
+               newState.checkBoxStatus = {
+                    all: false,
+                    checked: []
+                };
+            }
+            this.setState(newState);
             return {
                 list: data,
                 total: null,
