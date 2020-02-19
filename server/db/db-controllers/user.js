@@ -1,4 +1,4 @@
-import {userInfo} from "../../../client/common/states/common";
+
 
 const appDb = require("../../config/db").getDbs().appDb;
 const User = require("../model/user")(appDb);
