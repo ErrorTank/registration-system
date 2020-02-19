@@ -12,6 +12,7 @@ import {LoadingInline} from "../../../../common/loading-inline/loading-inline";
 import {KComponent} from "../../../../common/k-component";
 import {AdminPdtForm} from "../common-form/admin-pdt-form";
 import {InstructorForm} from "../common-form/instructor-form";
+import {StudentForm} from "../common-form/student-form";
 
 class AccountEditRoute extends KComponent {
     constructor(props) {
@@ -75,7 +76,7 @@ class AccountEditRoute extends KComponent {
                 isEdit
             />
         ),"sv": () => (
-            <AdminPdtForm
+            <StudentForm
                 form={this.infoForm}
                 isEdit
             />
@@ -130,8 +131,14 @@ class AccountEditRoute extends KComponent {
                             ) : (
                                 <MultipleTabWidget
                                     tabs={this.tabs}
+                                    initIndex={0}
                                 />
                             )}
+                            <div className="account-route-action">
+                                <button>
+                                    
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </AuthenLayoutTitle>

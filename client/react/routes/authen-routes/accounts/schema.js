@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import {appConfigCache} from "../../../../common/cache/api-cache/common-cache";
 
 const schemas = {
     "account": {
@@ -35,7 +36,7 @@ const schemas = {
     "gv": {
         schema: yup.object().shape({
             division: yup.string().required("Bộ môn là trường bắt buộc"),
-            canEditSchedule: yup.bool,
+            canEditSchedule: yup.bool(),
 
         }),
         getInitData: () => {
@@ -46,7 +47,24 @@ const schemas = {
 
         }
     },
-    "sv": {}
+    "sv": {
+        schema: yup.object().shape({
+            englishLevel: yup.string().oneOf(["a1", "a2", "b1", "b2", "c1", "c2", "d1", "d2", "e1", "e2", "g1", "g2"]),
+            active: yup.bool(),
+            speciality: yup.string().required("Chuyên ngành là trường bắt buộc"),
+            schoolYear: yup.number().min(1, "Niên khóa phải lớn hơn 1").required("Niên khóa là trường bắt buộc")
+
+        }),
+        getInitData: () => {
+            return {
+                englishLevel: "a1",
+                active: true,
+                speciality: "",
+                schoolYear: Number(appConfigCache.syncGet().latestSchoolYear)
+            }
+
+        }
+    }
 };
 
 

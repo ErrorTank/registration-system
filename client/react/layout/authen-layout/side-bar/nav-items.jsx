@@ -77,7 +77,7 @@ export const navItems = [
         roles: ["bm", "sv", "gv", "admin", "pdt"],
         // disabled: true
     },{
-        label: "Danh sách người dùng",
+        label: "Danh sách tài khoản",
         url: ["/manage/accounts", "/manage/account/new", /\/manage\/account\/(\w+)\/edit/gi],
         icon: <SupervisorAccountIcon
             fontSize={"inherit"}
