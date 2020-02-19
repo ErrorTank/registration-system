@@ -3,6 +3,8 @@ import {CommonInput} from "../../../../common/common-input/common-input";
 import {Select} from "../../../../common/select/select";
 import {years} from "../../../../../const/years";
 import {accountTypes} from "../../../../../const/account-types";
+import {DatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 export class AccountBasicForm extends Component {
 
@@ -137,6 +139,9 @@ export class AccountBasicForm extends Component {
 
                         )
                     }, true)}
+
+                </div>
+                <div className="form-row">
                     {form.enhanceComponent("identityID", ({error, onChange, onEnter, ...others}) => (
                         <CommonInput
                             className="pt-0 account-basic-input"
@@ -152,6 +157,30 @@ export class AccountBasicForm extends Component {
                             {...others}
                         />
                     ), true)}
+                    {form.enhanceComponent("dob", ({error, onChange, onEnter, ...others}) => {
+                        return (
+                            <div className="account-basic-input">
+                                <p className="form-label">Ngày sinh</p>
+                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                    <DatePicker
+                                        value={others.value}
+                                        onChange={(value) => {
+                                            let newDate = new Date(value);
+                                            onChange(newDate.toISOString())
+                                        }}
+                                        format="dd/MM/yyyy"
+                                        autoOk
+                                        ampm={false}
+
+                                    />
+
+                                </MuiPickersUtilsProvider>
+                                {error && (
+                                    <p className="form-error">{error.message}</p>
+                                )}
+                            </div>
+                        )
+                    }, true)}
                 </div>
             </div>
         );

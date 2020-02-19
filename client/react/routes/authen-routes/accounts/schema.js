@@ -17,6 +17,7 @@ const schemas = {
             phone: yup.string().required("SĐT không được để trống").isPhone("SĐT không hợp lệ"),
             email: yup.string().email("Email không hợp lệ").required("Email không được để trống"),
             identityID: yup.string().required("Mã định danh không được để trống"),
+            dob: yup.date().required("Ngày sinh không được để trống")
         }),
         getInitData: () => {
             return {

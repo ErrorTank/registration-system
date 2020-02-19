@@ -5,6 +5,7 @@ import {AuthenLayoutTitle} from "../../../../layout/authen-layout/authen-layout-
 import {userApi} from "../../../../../api/common/user-api";
 import {MultipleTabWidget} from "../../../../common/multiple-tab-widget/multiple-tab-widget";
 import pick from "lodash/pick";
+import omit from "lodash/omit";
 import {AccountBasicForm} from "../account-basic-form/account-basic-form";
 import {createSimpleForm} from "../../../../common/form-validator/form-validator";
 import {getAccountFormStructure} from "../schema";
@@ -13,6 +14,8 @@ import {KComponent} from "../../../../common/k-component";
 import {AdminPdtForm} from "../common-form/admin-pdt-form";
 import {InstructorForm} from "../common-form/instructor-form";
 import {StudentForm} from "../common-form/student-form";
+import {customHistory} from "../../../routes";
+import isEqual from "lodash/isEqual";
 
 class AccountEditRoute extends KComponent {
     constructor(props) {
@@ -27,8 +30,12 @@ class AccountEditRoute extends KComponent {
         let accountForm = getAccountFormStructure("account");
 
         this.fetchingData().then(data => {
+            let newDate = new Date(data.dob);
+            newDate.setSeconds(0);
+            newDate.setMilliseconds(0);
+            data.dob = newDate.toISOString();
             this.accountBasicForm = createSimpleForm(accountForm.schema, {
-                initData: pick(data, ["username", "password", "role", "name", "phone", "email", "identityID"])
+                initData: omit(data, "info")
             });
             this.infoForm = null;
             let infoForm = getAccountFormStructure(data.role);
@@ -102,8 +109,12 @@ class AccountEditRoute extends KComponent {
         },
     ];
 
+    handleUpdateAccount = (formData) => {
+        console.log(formData)
+    };
+
     render() {
-        let {fetching, draft, error} = this.state;
+        let {fetching, draft, error, loading} = this.state;
         if(!fetching){
             console.log(this.accountBasicForm.getData())
             console.log(this.accountBasicForm.getInvalidPaths())
@@ -113,10 +124,19 @@ class AccountEditRoute extends KComponent {
             }
 
         }
-        let disabledTabs = [];
-        if(!this.infoForm){
-            disabledTabs.push(1);
+
+
+        let formData = null;
+        if(this.accountBasicForm){
+            formData = {...this.accountBasicForm.getData()};
         }
+        if(this.infoForm){
+            formData.info = {...this.infoForm.getData()}
+        }
+        // console.log(formData)
+        // console.log(this.infoForm ? draft : omit(draft, ["info"]))
+        // console.log(isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData))
+        const canUpdate = !fetching ? (!this.accountBasicForm.getInvalidPaths().length && !error && !loading && !isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData) && (this.infoForm ? !this.infoForm.getInvalidPaths().length : true)) : false;
         return (
             <PageTitle
                 title={"Cập nhật người dùng"}
@@ -124,7 +144,7 @@ class AccountEditRoute extends KComponent {
                 <AuthenLayoutTitle
                     title={"Cập nhật người dùng"}
                 >
-                    <div className="account-edit-route">
+                    <div className="account-edit-route account-route">
                         <div className="common-route-wrapper">
                             {fetching ? (
                                 <LoadingInline/>
@@ -135,8 +155,19 @@ class AccountEditRoute extends KComponent {
                                 />
                             )}
                             <div className="account-route-action">
-                                <button>
-                                    
+                                <button className="btn btn-cancel"
+                                        onClick={() => customHistory.push("/manage/accounts")}
+                                >
+                                    Hủy bỏ
+                                </button>
+                                <button className="btn btn-next"
+                                        onClick={() => this.handleUpdateAccount(formData)}
+                                        disabled={!canUpdate}
+                                >
+                                    Cập nhật
+                                    {loading && (
+                                        <LoadingInline/>
+                                    )}
                                 </button>
                             </div>
                         </div>
