@@ -1,5 +1,3 @@
-
-
 const appDb = require("../../config/db").getDbs().appDb;
 const User = require("../model/user")(appDb);
 
@@ -16,7 +14,7 @@ const {getPrivateKey, getPublicKey} = require("../../authorization/keys/keys");
 const getUserEntity = role => {
     return ({
         "admin": {
-            findOne: filter => CommonUserInfo.findOne(filter).lean()
+            findOne: filter => CommonUserInfo.findOne(filter).lean(),
         }, "pdt": {
             findOne: filter => CommonUserInfo.findOne(filter).lean()
         }, "bm": {
@@ -102,7 +100,7 @@ const getAllAccounts = (config) => {
     }
 
 
-    if(keyword){
+    if (keyword) {
         pipeline.push({
             $match: {
                 $or: [
@@ -145,10 +143,43 @@ const getUserDetails = (accountID) => {
         })
 };
 
+const updateUser = (accountID, data) => {
+    const matcher = {
+        "admin": (userID) => CommonUserInfo.findOneAndUpdate({user: ObjectId(userID)}, {$set: {...data.info}}, {new: true}).lean(),
+        "pdt": (userID) => CommonUserInfo.findOneAndUpdate({user: ObjectId(userID)}, {$set: {...data.info}}, {new: true}).lean(),
+        "gv": (userID) => DptInsInfo.findOneAndUpdate({user: ObjectId(userID)}, {$set: {...data.info}}).lean(),
+        "sv": (userID) => StudentInfo.findOneAndUpdate({user: ObjectId(userID)}, {$set: {...data.info}}, {new: true}).lean(),
+    };
+    let updateFunc = matcher[data.role];
+    return User.findOneAndUpdate({_id: ObjectId(accountID)}, {$set: {...omit(data, "info")}}, {new: true}).lean()
+        .then(newAccount => {
+            return updateFunc(newAccount._id.toString())
+                .then(data => {
+                    console.log("d..it")
+                    console.log(data);
+                    return {
+                        ...newAccount,
+                        info: data
+                    };
+                })
+        }).catch(err => {
+            console.log("nehhh")
+            let dupKey = Object.keys(err.keyValue || [])[0];
+
+            console.log(dupKey)
+            return Promise.reject(new ApplicationError(dupKey ? "duplicate_" + dupKey : "others", {value: dupKey ? err.keyValue[dupKey] : null}));
+        })
+};
+
+const deleteAccount = accountID => {
+    return User.findOneAndDelete({_id: ObjectId(accountID)})
+};
 
 module.exports = {
     regularLogin,
     getAuthUserInfo,
     getAllAccounts,
-    getUserDetails
+    getUserDetails,
+    updateUser,
+    deleteAccount
 }

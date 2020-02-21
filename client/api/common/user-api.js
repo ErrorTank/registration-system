@@ -19,9 +19,15 @@ export const userApi = {
             keyword: keyword || null,
             accountType: accountType.value === "" ? null : accountType.value,
         };
-        return authenApi.get(`/account/all${urlUtils.buildParams(params)}`)
+        return authenApi.get(`/user/all${urlUtils.buildParams(params)}`)
     },
     getUserDetails(accountID){
-        return authenApi.get(`/account/${accountID}/details`)
+        return authenApi.get(`/user/${accountID}`)
+    },
+    updateUserInfo(accountID ,data){
+        return authenApi.put(`/user/${accountID}`, data)
+    },
+    deleteAccount(accountID){
+        return authenApi.delete(`/account/${accountID}`)
     }
 };

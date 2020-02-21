@@ -5,10 +5,10 @@ import remove from "lodash/remove";
 import classnames from "classnames"
 
 export const appModal = {
-  alert({text, title, btnText = "OK"}) {
+  alert({text, title, btnText = "OK", style}) {
     const modal = modals.openModal({
       content: (
-        <div className="alert-modal common-modal">
+        <div className={classnames("alert-modal common-modal", style + "-modal")}>
           <div className="modal-header">
             <div className="modal-title">
               {title}

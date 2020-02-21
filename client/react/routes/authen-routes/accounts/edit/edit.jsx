@@ -16,6 +16,8 @@ import {InstructorForm} from "../common-form/instructor-form";
 import {StudentForm} from "../common-form/student-form";
 import {customHistory} from "../../../routes";
 import isEqual from "lodash/isEqual";
+import {appModal} from "../../../../common/modal/modals";
+import {commonPopup} from "../../../../common/common-popup/common-popup";
 
 class AccountEditRoute extends KComponent {
     constructor(props) {
@@ -24,7 +26,8 @@ class AccountEditRoute extends KComponent {
             loading: false,
             error: null,
             draft: {},
-            fetching: true
+            fetching: true,
+            deleting: false
         };
 
         let accountForm = getAccountFormStructure("account");
@@ -109,21 +112,84 @@ class AccountEditRoute extends KComponent {
         },
     ];
 
+    getServerError = (error) => {
+        let errMatcher = {
+            "duplicate_identityID": () => `Mã định danh ${error.extra.value} đã tồn tại`,
+            "duplicate_email": () => `Email ${error.extra.value} đã tồn tại`,
+            "duplicate_phone": () => `Số điện thoại ${error.extra.value} đã tồn tại`,
+            "duplicate_username": () => `Tên đăng nhập ${error.extra.value} đã tồn tại`,
+        };
+        return errMatcher.hasOwnProperty(error.message) ? errMatcher[error.message]() : "Đã có lỗi xảy ra."
+    };
+
     handleUpdateAccount = (formData) => {
         console.log(formData)
+        this.setState({loading: true});
+        userApi.updateUserInfo(formData._id, omit(formData, "_id")).then((newInfo) => {
+            this.setState({loading: false, draft: {...newInfo}});
+            this.accountBasicForm.updateData(omit(newInfo, "info"));
+            if(this.infoForm){
+                this.infoForm.updateData({...newInfo.info});
+            }
+            commonPopup.publish({
+                "common-popup": (
+                    <div className="common-success-notify">
+                        Cập nhật thành công
+                    </div>
+
+                ),
+
+            });
+
+        }).catch(err => {
+            this.setState({loading: false});
+            console.log("dasd")
+            appModal.alert({
+                title: "Cập nhật thất bại",
+                text: this.getServerError(err),
+                btnText: "Ok",
+                style: "danger"
+            })
+        })
+    };
+
+    deleteAccount = accountID => {
+        return appModal.confirm({
+            title: "Xác nhận",
+            text: "Bạn muôn xóa tài khoản này?",
+            btnText: "Đồng ý",
+            cancelText: "Hủy bỏ"
+        }).then(result => {
+            if(result){
+                this.setState({deleting: true});
+                userApi.deleteAccount(accountID).then((data) => {
+                    customHistory.push(`/manage/accounts`);
+                    commonPopup.publish({
+                        "common-popup": (
+                            <div className="common-success-notify">
+                                Xóa tài khoản {data.username} thành công
+                            </div>
+
+                        ),
+
+                    });
+                })
+
+            }
+        })
     };
 
     render() {
-        let {fetching, draft, error, loading} = this.state;
-        if(!fetching){
-            console.log(this.accountBasicForm.getData())
-            console.log(this.accountBasicForm.getInvalidPaths())
-            if(this.infoForm){
-                console.log(this.infoForm.getData())
-                console.log(this.infoForm.getInvalidPaths())
-            }
-
-        }
+        let {fetching, draft, error, loading, deleting} = this.state;
+        // if(!fetching){
+        //     console.log(this.accountBasicForm.getData())
+        //     console.log(this.accountBasicForm.getInvalidPaths())
+        //     if(this.infoForm){
+        //         console.log(this.infoForm.getData())
+        //         console.log(this.infoForm.getInvalidPaths())
+        //     }
+        //
+        // }
 
 
         let formData = null;
@@ -133,10 +199,11 @@ class AccountEditRoute extends KComponent {
         if(this.infoForm){
             formData.info = {...this.infoForm.getData()}
         }
+        console.log(formData)
         // console.log(formData)
         // console.log(this.infoForm ? draft : omit(draft, ["info"]))
         // console.log(isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData))
-        const canUpdate = !fetching ? (!this.accountBasicForm.getInvalidPaths().length && !error && !loading && !isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData) && (this.infoForm ? !this.infoForm.getInvalidPaths().length : true)) : false;
+        const canUpdate = !fetching && !deleting && !loading && (!this.accountBasicForm.getInvalidPaths().length && !error && !loading && !isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData) && (this.infoForm ? !this.infoForm.getInvalidPaths().length : true)) ;
         return (
             <PageTitle
                 title={"Cập nhật người dùng"}
@@ -146,6 +213,7 @@ class AccountEditRoute extends KComponent {
                 >
                     <div className="account-edit-route account-route">
                         <div className="common-route-wrapper">
+
                             {fetching ? (
                                 <LoadingInline/>
                             ) : (
@@ -154,11 +222,23 @@ class AccountEditRoute extends KComponent {
                                     initIndex={0}
                                 />
                             )}
+
+
                             <div className="account-route-action">
+
                                 <button className="btn btn-cancel"
                                         onClick={() => customHistory.push("/manage/accounts")}
                                 >
                                     Hủy bỏ
+                                </button>
+                                <button className="btn btn-danger"
+                                        onClick={() => this.deleteAccount(formData._id)}
+                                        disabled={deleting}
+                                >
+                                    Xóa
+                                    {deleting && (
+                                        <LoadingInline/>
+                                    )}
                                 </button>
                                 <button className="btn btn-next"
                                         onClick={() => this.handleUpdateAccount(formData)}
