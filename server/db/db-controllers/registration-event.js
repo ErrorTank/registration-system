@@ -335,7 +335,7 @@ const deleteRegisterEvent = (rID, {events}) => {
         }
 
     }
-    return RegistrationEvent.findOneAndDelete({_id: ObjectId(rID)})
+    return RegistrationEvent.findOneAndDelete({_id: ObjectId(rID)}).lean()
 };
 
 const getActiveRegistrationEvent = () => {

@@ -14,6 +14,7 @@ import isEqual from "lodash/isEqual";
 import uniqid from "uniqid";
 import {appModal} from "../../../../common/modal/modals";
 import {StatisticPanel} from "../../../../common/statistic-panel/statistic-panel";
+import {commonPopup} from "../../../../common/common-popup/common-popup";
 
 class RegistrationEventEditRoute extends React.Component {
     constructor(props) {
@@ -106,18 +107,37 @@ class RegistrationEventEditRoute extends React.Component {
         //         btnText: "Đồng ý"
         //     })
         // }
-        return registrationEventApi.deleteRegistrationEvent(this.props.match.params.eventID, {
-            events: this.state.draft.childEvents.map(each => {
-                if (!each.delay) {
-                    each = omit(each, "delay");
-                } else {
-                    each.delay = each.delay.toString();
-                }
-                each = omit(each, ["id", "status"]);
-                return each;
-            })
-        }).then(() => {
-            customHistory.push("/manage/registration-events");
+        return  appModal.confirm({
+            title: "Xác nhận",
+            text: "Bạn muôn xóa đợt đăng ký này?",
+            btnText: "Đồng ý",
+            cancelText: "Hủy bỏ"
+        }).then(result => {
+            if(result){
+                return registrationEventApi.deleteRegistrationEvent(this.props.match.params.eventID, {
+                    events: this.state.draft.childEvents.map(each => {
+                        if (!each.delay) {
+                            each = omit(each, "delay");
+                        } else {
+                            each.delay = each.delay.toString();
+                        }
+                        each = omit(each, ["id", "status"]);
+                        return each;
+                    })
+                }).then((data) => {
+                    commonPopup.publish({
+                        "common-popup": (
+                            <div className="common-success-notify">
+                                Xóa đợt đăng ký học kì {data.semester + 1} nhóm {data.studentGroup} năm học {data.year.from} - {data.year.to} thành công
+                            </div>
+
+                        ),
+
+                    });
+                    customHistory.push("/manage/registration-events");
+                })
+            }
+            return ;
         })
     };
 
