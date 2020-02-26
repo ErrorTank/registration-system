@@ -122,7 +122,10 @@ export default class SchoolScheduleRoute extends React.Component {
 
         }, {
             label: "Giáo viên",
-            cellDisplay: (s) => s.instructor.user.name + `(${s.instructor.user.identityID})`
+            cellDisplay: (s) => {
+                console.log(s)
+                return s.instructor.user ? s.instructor.user.name + `(${s.instructor.user.identityID})` : "Unknown"
+            }
 
         }, {
             condition: () => ["pdt", "admin"].includes(userInfo.getState().role) && this.state.list && this.state.list.length,
