@@ -15,7 +15,10 @@ export default class AdminDashboard extends React.Component {
             overview: {}
         };
         let {currentYear, latestSchoolYear, currentSemester} = appConfigCache.syncGet();
-        registrationEventApi.getRegistrationEventFullOverview({semester: currentSemester, year: currentYear}).then(overview => this.setState({overview, loading: false}))
+        registrationEventApi.getRegistrationEventFullOverview({
+            semester: currentSemester,
+            year: currentYear
+        }).then(overview => this.setState({overview, loading: false}))
     };
 
     pieOptions = {
@@ -29,10 +32,10 @@ export default class AdminDashboard extends React.Component {
         },
         tooltips: {
             callbacks: {
-                title: function(tooltipItem, data) {
+                title: function (tooltipItem, data) {
                     return data['labels'][tooltipItem[0]['index']];
                 },
-                label: function(tooltipItem, data) {
+                label: function (tooltipItem, data) {
                     return data['datasets'][0]['data'][tooltipItem['index']] + " sinh viên";
                 },
             },
@@ -44,13 +47,25 @@ export default class AdminDashboard extends React.Component {
         }
     };
 
+    filterTypes = {
+        '>=15': 0,
+        ">=12": 1,
+        ">=10": 2,
+        "<10": 3
+    };
+
+    handleClickPieChart = (element) => {
+        console.log(element[0]._model.label)
+
+    };
+
     render() {
         let {loading, overview} = this.state;
         let {registerQuantity} = overview;
         let {currentYear, latestSchoolYear, currentSemester} = appConfigCache.syncGet();
         let data = {
             registerQuantity: {
-                labels: ['>=15 Tín', '>=12 Tín', '>=10 Tín', "<10 Tín"],
+                labels: Object.keys(this.filterTypes).map(each => `${each} Tín`),
                 datasets: [
                     {
                         data: registerQuantity ?
@@ -123,7 +138,12 @@ export default class AdminDashboard extends React.Component {
                                 {loading ? (
                                     <LoadingInline/>
                                 ) : (
-                                    <Pie data={data.registerQuantity} height={200} width={400} options={this.pieOptions}/>
+                                    <Pie data={data.registerQuantity}
+                                         height={200}
+                                         width={400}
+                                         options={this.pieOptions}
+                                         onElementsClick={this.handleClickPieChart}
+                                    />
                                 )}
 
                             </div>

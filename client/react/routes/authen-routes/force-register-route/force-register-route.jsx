@@ -19,7 +19,7 @@ export default class ForceRegisterRoute extends KComponent {
         };
 
         this.state = {...this.initData};
-        commonApi.getBriefStudents().then(students => this.setState({students, loadStudents: false}));
+        commonApi.getBriefStudents().then(students => this.setState({students: students.filter(each => each.identityID), loadStudents: false}));
 
     };
 
