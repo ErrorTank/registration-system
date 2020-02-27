@@ -6,6 +6,7 @@ import {mergeYear} from "../../../../common/utils/common";
 import {registrationEventApi} from "../../../../api/common/registration-event";
 import {Pie} from 'react-chartjs-2';
 import {LoadingInline} from "../../../common/loading-inline/loading-inline";
+import {studentListByCreditModal} from "../../../common/modal/student-list-by-credit-modal/student-list-by-credit-modal";
 
 export default class AdminDashboard extends React.Component {
     constructor(props) {
@@ -56,7 +57,10 @@ export default class AdminDashboard extends React.Component {
 
     handleClickPieChart = (element) => {
         console.log(element[0]._model.label)
-
+        studentListByCreditModal.open({
+            creditFilter: this.filterTypes[element[0]._model.label],
+            label: element[0]._model.label
+        })
     };
 
     render() {
