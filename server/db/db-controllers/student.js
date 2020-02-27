@@ -35,35 +35,46 @@ const getStudentsByCredit = ({credit, semester, year}) => {
         "year.to": Number(to),
         active: true,
         semester: Number(semester)
-    }).populate({
-        path: "list",
-        populate: [
+    }).populate(
+        [
             {
-                path: "class",
-                model: "Class",
+                path: "list",
                 populate: {
-                    path: "subject",
-                    model: "Subject"
+                    path: "class",
+                    model: "Class",
+                    populate: {
+                        path: "subject",
+                        model: "Subject"
+                    }
                 }
-            },
+            }
+            ,
             {
                 path: "owner",
                 model: "StudentInfo",
-                populate: {
-                    path: "user",
-                    model: "User",
-                    select: "-password"
-                }
+                populate: [
+                    {
+                        path: "user",
+                        model: "User",
+                        select: "-password"
+                    },{
+                        path: "speciality",
+                        model: "Speciality",
+
+                    }
+                ]
             }
         ]
-    }).then(schedules => {
+    ).then(schedules => {
         console.log(schedules.length)
         let newSchedules = schedules.map(each => {
             // console.log(each)
             return {
+                ...each.toObject(),
                 credits: each.list.reduce((total, cur) => total + cur.class.subject.credits, 0)
             }
         });
+        console.log(newSchedules)
         let matcher = {
             0: each => each.credits >= 15,
             1: each => each.credits >= 12 && each.credits < 15,

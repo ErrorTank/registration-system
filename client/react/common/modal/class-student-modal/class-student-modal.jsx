@@ -57,7 +57,7 @@ class ClassStudentModal extends React.Component {
     ];
 
     render() {
-        let {disabled,} = this.state;
+        let {disabled, list} = this.state;
         let {onClose, item} = this.props;
 
         return (
@@ -71,6 +71,9 @@ class ClassStudentModal extends React.Component {
                     />
                 </div>
                 <div className="modal-body">
+                    <div className="summary">
+                        Lớp gồm<span> {list.length} </span>sinh viên
+                    </div>
                     <ClassStudentInfo
                         ref={sInfo => this.sInfo = sInfo}
                         api={() => studentApi.getStudentsBySchoolScheduleItem(item).then((students) => {
@@ -119,11 +122,11 @@ export class ClassStudentInfo extends React.Component{
 
         }, {
             label: "Mã sinh viên",
-            cellDisplay: (s) => s.user.identityID,
+            cellDisplay: (s) => s.user ? s.user.identityID : "Unknown",
 
         }, {
             label: "Họ và tên",
-            cellDisplay: (s) => s.user.name,
+            cellDisplay: (s) => s.user ? s.user.name : "Unknown",
 
         }, {
             label: "Lớp",
@@ -138,9 +141,7 @@ export class ClassStudentInfo extends React.Component{
 
         return(
             <div className="class-student-info">
-                <div className="summary">
-                    Lớp gồm<span> {students.length} </span>sinh viên
-                </div>
+
                 <div className="table-container">
                     <CommonDataTable
                         className={"class-student-table"}

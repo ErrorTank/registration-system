@@ -58,8 +58,8 @@ export default class AdminDashboard extends React.Component {
     handleClickPieChart = (element) => {
         console.log(element[0]._model.label)
         studentListByCreditModal.open({
-            creditFilter: this.filterTypes[element[0]._model.label],
-            label: element[0]._model.label
+            creditFilter: this.filterTypes[element[0]._model.label.replace(" Tín", "")],
+            label: element[0]._model.label.replace(" Tín", "")
         })
     };
 
