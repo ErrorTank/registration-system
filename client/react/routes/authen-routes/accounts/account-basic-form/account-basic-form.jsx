@@ -18,7 +18,7 @@ export class AccountBasicForm extends Component {
 
 
     render() {
-        let {form, isEdit} = this.props;
+        let {form, isEdit, onChangeRole} = this.props;
         let matcher = {
             "pdt": "Nhân viên",
             "admin": "Nhân viên",
@@ -124,6 +124,7 @@ export class AccountBasicForm extends Component {
                                 getValue={each => each.value}
                                 onChange={e => {
                                     let newValue = accountTypes.find(sp => sp.value === e.target.value).value;
+                                    onChangeRole();
                                     onChange(newValue);
                                     let matcher = {
                                         "pdt": "PDT",

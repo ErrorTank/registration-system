@@ -29,5 +29,8 @@ export const userApi = {
     },
     deleteAccount(accountID){
         return authenApi.delete(`/account/${accountID}`)
+    },
+    createNewUser(data){
+        return authenApi.post(`/account/new`, data)
     }
 };

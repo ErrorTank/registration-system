@@ -38,13 +38,13 @@ class AccountEditRoute extends KComponent {
             newDate.setMilliseconds(0);
             data.dob = newDate.toISOString();
             this.accountBasicForm = createSimpleForm(accountForm.schema, {
-                initData: omit(data, "info")
+                initData: {...accountForm.getInitData() ,...omit(data, "info")}
             });
             this.infoForm = null;
             let infoForm = getAccountFormStructure(data.role);
             if(infoForm){
                 this.infoForm = createSimpleForm(infoForm.schema, {
-                    initData: {...data.info}
+                    initData: {...infoForm.getInitData() ,...data.info}
                 });
                 this.onUnmount(this.infoForm.on("change", (state) => {
                     this.state.error && this.setState({error: ""});

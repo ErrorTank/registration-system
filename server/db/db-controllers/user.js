@@ -171,6 +171,34 @@ const updateUser = (accountID, data) => {
         })
 };
 
+const createNewUser = (data) => {
+    const matcher = {
+        "admin": (info) => new CommonUserInfo(info).save(),
+        "pdt": (info) => new CommonUserInfo(info).save(),
+        "gv": (info) => new DptInsInfo(info).save(),
+        "sv": (info) => new StudentInfo(info).save(),
+    };
+    let createFunc = matcher[data.role];
+    return new User(omit(data, "info")).save()
+        .then(newAccount => {
+            newAccount = newAccount.toObject();
+            return createFunc({user: ObjectId(newAccount._id), ...(data.info ? data.info : {})})
+                .then(data => {
+                    console.log(data);
+                    return {
+                        ...newAccount,
+                        info: data.toObject()
+                    };
+                })
+        }).catch(err => {
+            console.log("nehhh")
+            let dupKey = Object.keys(err.keyValue || [])[0];
+
+            console.log(dupKey)
+            return Promise.reject(new ApplicationError(dupKey ? "duplicate_" + dupKey : "others", {value: dupKey ? err.keyValue[dupKey] : null}));
+        })
+};
+
 const deleteAccount = accountID => {
     return User.findOneAndDelete({_id: ObjectId(accountID)})
 };
@@ -181,5 +209,6 @@ module.exports = {
     getAllAccounts,
     getUserDetails,
     updateUser,
-    deleteAccount
+    deleteAccount,
+    createNewUser
 }

@@ -27,7 +27,8 @@ const schemas = {
                 name: "",
                 phone: "",
                 email: "",
-                identityID: ""
+                identityID: "",
+                dob: new Date().toISOString()
             }
 
         }

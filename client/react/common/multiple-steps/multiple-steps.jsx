@@ -40,7 +40,10 @@ export class MultipleSteps extends React.Component{
                         ))}
                 </div>
                 <div className="step-details">
-                    <h3 className="step-title">{title}</h3>
+                    {title && (
+                        <h3 className="step-title">{title}</h3>
+                    )}
+
                     {render()}
                     <div className="step-actions">
                         {!hideCancel() && (
