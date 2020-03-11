@@ -54,16 +54,6 @@ export const navItems = [
         url: "/manage/instructors",
         icon: <LocalLibraryIcon fontSize={"inherit"}/>,
         roles: ["admin", "pdt"]
-    },{
-        label: "Danh sách giảng viên",
-        url: "/manage/students",
-        icon: <SupervisedUserCircleIcon fontSize={"inherit"}/>,
-        roles: ["admin", "pdt"]
-    },{
-        label: "Danh sách sinh viên",
-        url: "/manage/students",
-        icon: <LocalLibraryIcon fontSize={"inherit"}/>,
-        roles: ["admin", "pdt"]
     }, {
         label: "Bảng điểm",
         url: "/bang-diem",

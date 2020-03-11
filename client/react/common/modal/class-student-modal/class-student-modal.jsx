@@ -72,7 +72,7 @@ class ClassStudentModal extends React.Component {
                 </div>
                 <div className="modal-body">
                     <div className="summary">
-                        Lớp gồm<span> {list.length} </span>sinh viên
+                        Lớp gồm<span> {list?.length} </span>sinh viên
                     </div>
                     <ClassStudentInfo
                         ref={sInfo => this.sInfo = sInfo}
