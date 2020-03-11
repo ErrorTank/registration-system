@@ -11,6 +11,8 @@ import PeopleIcon from '@material-ui/icons/People';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import ClassIcon from '@material-ui/icons/Class';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import {userInfo} from "../../../../common/states/common";
 
 export const navItems = [
@@ -46,6 +48,21 @@ export const navItems = [
         label: "Import dữ liệu",
         url: "/manage/import",
         icon: <PublishIcon fontSize={"inherit"}/>,
+        roles: ["admin", "pdt"]
+    },{
+        label: "Danh sách giảng viên",
+        url: "/manage/instructors",
+        icon: <LocalLibraryIcon fontSize={"inherit"}/>,
+        roles: ["admin", "pdt"]
+    },{
+        label: "Danh sách giảng viên",
+        url: "/manage/students",
+        icon: <SupervisedUserCircleIcon fontSize={"inherit"}/>,
+        roles: ["admin", "pdt"]
+    },{
+        label: "Danh sách sinh viên",
+        url: "/manage/students",
+        icon: <LocalLibraryIcon fontSize={"inherit"}/>,
         roles: ["admin", "pdt"]
     }, {
         label: "Bảng điểm",

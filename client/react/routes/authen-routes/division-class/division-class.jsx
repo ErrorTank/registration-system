@@ -69,7 +69,7 @@ export default class DivisionClassRoute extends React.Component {
 
         }, {
             label: "Giáo viên",
-            cellDisplay: (s) => s.instructor.user.name + `(${s.instructor.user.identityID})`
+            cellDisplay: (s) => s.instructor.user ? s.instructor.user.name + `(${s.instructor.user.identityID})` : "Không rõ"
 
         }
     ];

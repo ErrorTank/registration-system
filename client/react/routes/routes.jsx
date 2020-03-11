@@ -11,6 +11,7 @@ import {delayLoad} from "../../common/utils/common";
 import {RoleFilterRoute} from "./route-types/role-filter-route";
 import {CustomSwitch} from "./route-types/custom-switch";
 import {userInfo} from "../../common/states/common";
+import {InstructorForm} from "./authen-routes/accounts/common-form/instructor-form";
 
 const LoginRoute = lazy(delayLoad(() => import("./guest-routes/login/login")));
 const Dashboard = lazy(delayLoad(() => import("./authen-routes/dashboard/dashboard")));
@@ -31,6 +32,7 @@ const ForceRegisterRoute = lazy(delayLoad(() => import("./authen-routes/force-re
 const RegistrationRoute = lazy(delayLoad(() => import("./authen-routes/registration-route/registration-route")));
 const ScheduleRoute = lazy(delayLoad(() => import("./authen-routes/schedule-route/schedule-route")));
 const DivisionClassRoute = lazy(delayLoad(() => import("./authen-routes/division-class/division-class")));
+const InstructorsRoute = lazy(delayLoad(() => import("./authen-routes/instructors-route/instructors-route")));
 
 class App extends React.Component {
     constructor(props) {
@@ -119,6 +121,14 @@ class App extends React.Component {
                                                     component={props =>
                                                         <AccountNewRoute  {...authenProps} {...props}/>}
                                                     roles={["admin"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/instructors"}
+                                                    component={props =>
+                                                        <InstructorsRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin", "pdt"]}
                                                 />
                                             </CustomSwitch>
 

@@ -71,6 +71,14 @@ const structures = {
                     label: <span className="label">Import</span>
                 },
                 {
+                    url: "/manage/instructors",
+                    label: <span className="label">Danh sách giảng viên</span>
+                },
+                {
+                    url: "/manage/students",
+                    label: <span className="label">Danh sách sinh viên</span>
+                },
+                {
                     url: "/manage/registration-events",
                     label: <span className="label">Đợt đăng ký học</span>,
                     childrens: [
