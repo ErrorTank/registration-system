@@ -80,8 +80,7 @@ class ClassStudentModal extends React.Component {
                             this.setState({disabled: !!!students.length});
                             return {
                                 list: students,
-                                total: null
-                            };
+                                total: null};
                         })}
                     />
                 </div>
