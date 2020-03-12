@@ -85,7 +85,71 @@ const getStudentsByCredit = ({credit, semester, year}) => {
     })
 };
 
+const getAllStudents = ({keyword, englishLevel, active, schoolYear, speciality}) => {
+
+    let pipeline = [];
+    let query = {};
+    if(englishLevel){
+        query.englishLevel = englishLevel;
+    }
+    if(active){
+        query.active = !!Number(active);
+    }
+    if(schoolYear){
+        query["schoolYear"] = Number(schoolYear);
+    }
+    if (speciality) {
+        query.speciality = ObjectId(speciality);
+
+    }
+    if(Object.keys(query).length){
+        pipeline.push({
+            $match: query
+
+        });
+    }
+
+    pipeline = pipeline.concat([
+        {$lookup: {from: 'users', localField: 'user', foreignField: '_id', as: "user"}},
+        {$lookup: {from: 'specialities', localField: 'speciality', foreignField: '_id', as: "speciality"}},
+        {
+            $addFields: {
+                'user': {
+                    $arrayElemAt: ["$user", 0]
+                },
+                'speciality': {
+                    $arrayElemAt: ["$speciality", 0]
+                }
+            }
+        },
+    ]);
+
+    if (keyword) {
+        pipeline.push({
+            $match: {
+                $or: [
+                    {"user.identityID": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"user.name": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"user.email": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                    {"user.phone": {$regex: new RegExp('.*' + keyword.toLowerCase() + '.*', "i")}},
+                ]
+            }
+        });
+    }
+
+    return (pipeline.length > 3 ? StudentInfo.aggregate(pipeline) : StudentInfo.find({}).populate([
+        {
+            path: "user",
+            model: "User"
+        },{
+            path: "speciality",
+            model: "Speciality"
+        },
+    ]))
+};
+
 module.exports = {
     getStudentsBySchoolScheduleItem,
-    getStudentsByCredit
+    getStudentsByCredit,
+    getAllStudents
 };

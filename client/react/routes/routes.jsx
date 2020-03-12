@@ -33,6 +33,7 @@ const RegistrationRoute = lazy(delayLoad(() => import("./authen-routes/registrat
 const ScheduleRoute = lazy(delayLoad(() => import("./authen-routes/schedule-route/schedule-route")));
 const DivisionClassRoute = lazy(delayLoad(() => import("./authen-routes/division-class/division-class")));
 const InstructorsRoute = lazy(delayLoad(() => import("./authen-routes/instructors-route/instructors-route")));
+const StudentsRoute = lazy(delayLoad(() => import("./authen-routes/students-route/students-route")));
 
 class App extends React.Component {
     constructor(props) {
@@ -128,6 +129,14 @@ class App extends React.Component {
                                                     path={props.match.path + "/instructors"}
                                                     component={props =>
                                                         <InstructorsRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/students"}
+                                                    component={props =>
+                                                        <StudentsRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                             </CustomSwitch>
