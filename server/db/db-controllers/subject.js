@@ -1,5 +1,4 @@
 const appDb = require("../../config/db").getDbs().appDb;
-const User = require("../model/user")(appDb);
 const Class = require("../model/class")(appDb);
 const Subject = require("../model/subject")(appDb);
 const mongoose = require("mongoose");
