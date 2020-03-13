@@ -11,6 +11,7 @@ export class Select extends React.Component {
 
     render() {
         let {className, label, id, options, value, onChange, displayAs = null, getValue = null, disabled = false, error} = this.props;
+
         return (
             <div className={classnames("form-group common-select m-0", className, {error: !!error})}>
                 {label && (

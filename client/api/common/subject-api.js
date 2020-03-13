@@ -4,9 +4,7 @@ import {userInfo} from "../../common/states/common";
 import {urlUtils} from "../../common/utils/url-utils";
 
 export const subjectApi = {
-    getAll() {
-        return authenApi.get("/specialities");
-    },
+
     getAllSubjects(config){
         let {filter} = config;
         let {keyword, division, credit, coefficient} = filter || {};
@@ -20,5 +18,8 @@ export const subjectApi = {
     },
     getSubjectDetail(subjectID){
         return authenApi.get(`/subject/${subjectID}`)
+    },
+    getSubjectsBriefByDivision(divisionID){
+        return authenApi.get(`/subjects/division/${divisionID}/brief`)
     }
 };

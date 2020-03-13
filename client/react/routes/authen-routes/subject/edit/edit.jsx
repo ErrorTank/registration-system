@@ -44,11 +44,10 @@ class SubjectEditRoute extends KComponent {
         //         classes: []
         // }
         this.fetchingData().then(([data, divisions]) => {
-            let division = divisions.find(each => each._id === data.division);
             this.form = createSimpleForm(subjectSchema, {
                 initData: {
                     ...data,
-                    division: division || divisions[0],
+                    division: data.division || divisions[0].value,
                 }
             });
 
@@ -66,19 +65,17 @@ class SubjectEditRoute extends KComponent {
     }
 
     fetchingData = () => {
-        return Promise.all([subjectApi.getSubjectDetail(this.props.match.params.subjectID)], divisionsCache.get().then((divisions) => {
+        return Promise.all([subjectApi.getSubjectDetail(this.props.match.params.subjectID), divisionsCache.get().then((divisions) => {
             let newDivisions = [
                 {
-                    label: "Tất cả bộ môn",
+                    label: "Chọn bộ môn",
                     value: ""
                 }
             ];
             return newDivisions.concat(divisions.map(each => ({label: each.name, value: each._id})));
 
 
-        })).then(data => {
-            return data;
-        })
+        })])
     };
 
     tabs = [
@@ -88,6 +85,7 @@ class SubjectEditRoute extends KComponent {
                 return <SubjectBasicForm
                     form={this.form}
                     isEdit
+                    divisions={this.state.divisions}
                 />
             }
         },{

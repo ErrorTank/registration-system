@@ -66,7 +66,7 @@ const getAllSubjects = ({keyword, division, credit, coefficient}) => {
 
 const getSubjectDetail = subjectID => {
     return Promise.all([
-        Subject.findOne({_id: ObjectId(subjectID)}, "-__v").populate("division"),
+        Subject.findOne({_id: ObjectId(subjectID)}, "-__v"),
         Class.find({subject: ObjectId(subjectID)}, "-unique -__v").lean()
     ]).then(([subject, classes]) => {
         return {
@@ -76,7 +76,12 @@ const getSubjectDetail = subjectID => {
     })
 };
 
+const getSubjectsBriefByDivision = divisionID => {
+    return Subject.find({division: ObjectId(divisionID)}, "_id name subjectID").lean()
+};
+
 module.exports = {
     getSubjectDetail,
-    getAllSubjects
+    getAllSubjects,
+    getSubjectsBriefByDivision
 };
