@@ -13,6 +13,7 @@ import ClassIcon from '@material-ui/icons/Class';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import FaceIcon from '@material-ui/icons/Face';
+import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 import {userInfo} from "../../../../common/states/common";
 
 export const navItems = [
@@ -73,6 +74,13 @@ export const navItems = [
             fontSize={"inherit"}
         />,
         roles: ["sv"]
+    },{
+        label: "Quản lý học phần",
+        url: "/manage/subjects",
+        icon: <ImportContactsIcon
+            fontSize={"inherit"}
+        />,
+        roles: ["pdt", "admin"]
     }, {
         label: "Thời khóa biểu",
         url: "/tkb",

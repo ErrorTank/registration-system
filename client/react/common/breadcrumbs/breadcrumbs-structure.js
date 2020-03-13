@@ -91,6 +91,19 @@ const structures = {
                         }
 
                     ]
+                }, {
+                    url: "/manage/subjects",
+                    label: <span className="label">Danh sách học phần</span>,
+                    childrens: [
+                        {
+                            url: "/manage/subject/new",
+                            label: <span className="label">Tạo mới</span>,
+                        }, {
+                            regex: /\/manage\/subject\/(\w+)\/edit/gi,
+                            label: <span className="label">Cập nhật</span>,
+                        }
+
+                    ]
                 },
             ]
         },

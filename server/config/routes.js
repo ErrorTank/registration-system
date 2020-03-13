@@ -11,5 +11,6 @@ module.exports = (db, namespacesIO) => {
   router.use('/api', require("../controllers/registration-event")(db));
   router.use('/api', require("../controllers/schedule")(db, namespacesIO));
   router.use('/api', require("../controllers/student")(db, namespacesIO));
+  router.use('/api', require("../controllers/subject")(db, namespacesIO));
   return router;
 };
