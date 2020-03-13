@@ -74,6 +74,28 @@ yup.addMethod(yup.string, "notEqualTo", function (ref, message) {
   })
 });
 
+yup.addMethod(yup.number, "maxGtMin", function (message) {
+
+  return this.test({
+    name: "maxGtMin",
+    exclusive: false,
+    message,
+    // params: {
+    //   reference: ref.path
+    // },
+    test: function (val) {
+      const item = this.parent;
+      // const index = parseInt(this.path.split("[")[1].split("]")[0], 10);
+      // console.log(index)
+      // console.log(this.resolve(this.path))
+      // console.log(this.path)
+      // this.resolve(ref)
+      // console.log(item)
+      return val > item.min;
+    }
+  })
+});
+
 yup.addMethod(yup.date, "notReach", function (message) {
 
   return this.test({

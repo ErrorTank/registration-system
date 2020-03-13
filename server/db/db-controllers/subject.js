@@ -1,6 +1,6 @@
 const appDb = require("../../config/db").getDbs().appDb;
 const User = require("../model/user")(appDb);
-const Schedule = require("../model/schedule")(appDb);
+const Class = require("../model/class")(appDb);
 const Subject = require("../model/subject")(appDb);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
@@ -18,7 +18,7 @@ const getAllSubjects = ({keyword, division, credit, coefficient}) => {
         query.division = ObjectId(division);
     }
     if(credit){
-        query.credit = Number(credit);
+        query.credits = Number(credit);
     }
     if (coefficient) {
         let [from, to] = coefficient.split("-");
@@ -39,8 +39,8 @@ const getAllSubjects = ({keyword, division, credit, coefficient}) => {
         {$lookup: {from: 'divisions', localField: 'division', foreignField: '_id', as: "division"}},
         {
             $addFields: {
-                'speciality': {
-                    $arrayElemAt: ["$speciality", 0]
+                'division': {
+                    $arrayElemAt: ["$division", 0]
                 }
             }
         },
@@ -57,7 +57,7 @@ const getAllSubjects = ({keyword, division, credit, coefficient}) => {
         });
     }
 
-    return (pipeline.length > 3 ? Subject.aggregate(pipeline) : Subject.find({}).populate([
+    return (pipeline.length > 2 ? Subject.aggregate(pipeline) : Subject.find({}).populate([
        {
             path: "division",
             model: "Division"
@@ -65,7 +65,19 @@ const getAllSubjects = ({keyword, division, credit, coefficient}) => {
     ]))
 };
 
-module.exports = {
+const getSubjectDetail = subjectID => {
+    return Promise.all([
+        Subject.findOne({_id: ObjectId(subjectID)}, "-__v").populate("division"),
+        Class.find({subject: ObjectId(subjectID)}, "-unique -__v").lean()
+    ]).then(([subject, classes]) => {
+        return {
+            ...subject.toObject(),
+            classes
+        }
+    })
+};
 
+module.exports = {
+    getSubjectDetail,
     getAllSubjects
 };

@@ -17,5 +17,8 @@ export const subjectApi = {
             coefficient: coefficient.value === "" ? null : coefficient.value,
         };
         return authenApi.get(`/subjects/all${urlUtils.buildParams(params)}`)
+    },
+    getSubjectDetail(subjectID){
+        return authenApi.get(`/subject/${subjectID}`)
     }
 };

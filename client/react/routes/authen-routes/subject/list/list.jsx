@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {appConfigCache, divisionsCache, specialitiesCache} from "../../../../common/cache/api-cache/common-cache";
 import {subjectApi} from "../../../../../api/common/subject-api";
 import {PageTitle} from "../../../../common/page-title/page-title";
 import {AuthenLayoutTitle} from "../../../../layout/authen-layout/authen-layout-title";
@@ -7,23 +6,11 @@ import {SearchInput} from "../../../../common/search-input/search-input";
 import {Select} from "../../../../common/select/select";
 import {subjectCredit} from "../../../../../const/subject-credit";
 import {subjectCoefficient} from "../../../../../const/subject-coefficient";
+import {divisionsCache} from "../../../../../common/cache/api-cache/common-cache";
+import {CommonDataTable} from "../../../../common/common-data-table/common-data-table";
+import {customHistory} from "../../../routes";
 
-const schoolYears = Array.from(Array(appConfigCache.syncGet().latestSchoolYear), (x, i) => i + 1).map(each => ({
-    value: each,
-    label: "K" + each
-}));
-const studentStates = [
-    {
-        value: "",
-        label: "Tất cả"
-    } , {
-        value: 0,
-        label: "Đã thôi học"
-    }, {
-        value: 1,
-        label: "Đang học"
-    }
-];
+
 
 class StudentsRoute extends Component {
     constructor(props) {
@@ -76,7 +63,7 @@ class StudentsRoute extends Component {
 
         },{
             label: "Bộ môn",
-            cellDisplay: (s) => s.division.name,
+            cellDisplay: (s) => s.division ? s.division.name : "Chưa xác định",
 
         },
     ];
@@ -113,7 +100,7 @@ class StudentsRoute extends Component {
                                     <i className="fal fa-plus"></i>
 
 
-                                    Tạo giảng viên
+                                    Tạo môn học
                                 </button>
                             </div>
                             <div className="schedule-items">
@@ -170,35 +157,21 @@ class StudentsRoute extends Component {
                                                 />
 
                                             </div>
-                                            <div className="spec-select">
-                                                <span className="label">Trạng thái</span>
-                                                <Select
-                                                    options={studentStates}
-                                                    value={active}
-                                                    displayAs={(each) => each.label}
-                                                    getValue={each => each.value}
-                                                    onChange={e => {
-                                                        let value = e.target.value === "" ? "" : Number(e.target.value);
-                                                        this.setState({active: studentStates.find(sp => sp.value === value)})
-                                                    }}
-                                                />
 
-                                            </div>
                                         </div>
                                         <CommonDataTable
                                             className={"result-table"}
                                             api={api}
                                             filter={{
                                                 keyword,
-                                                speciality,
-                                                englishLevel,
-                                                schoolYear,
-                                                active,
+                                                division ,
+                                                coefficient,
+                                                credit,
                                             }}
-                                            rowLinkTo={(e, row) => row.user ? customHistory.push(`/manage/account/${row.user._id}/edit`) : null}
+                                            rowLinkTo={(e, row) => customHistory.push(`/manage/subject/${row._id}/edit`)}
                                             columns={this.columns}
                                             rowTrackBy={(row, i) => row._id}
-                                            emptyNotify={"Không có sinh viên nào"}
+                                            emptyNotify={"Không có môn học nào"}
                                         />
                                     </>
                                 )}

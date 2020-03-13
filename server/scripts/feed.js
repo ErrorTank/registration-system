@@ -18,7 +18,7 @@ module.exports =  (appDb) => {
     const mongoose = require("mongoose");
     const ObjectId = mongoose.Types.ObjectId;
     const SubjectLesson = require("../db/model/subject-lesson")(appDb);
-
+    // SchoolScheduleItems.findById("5e22c27e0809a23264588a95").then(s => console.log(s))
     // SchoolScheduleItems.updateMany({studentGroup: 1}, {studentGroup: 2}).then(() => {
     //     console.log("cac")
     // })

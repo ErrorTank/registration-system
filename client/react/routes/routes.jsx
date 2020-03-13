@@ -34,6 +34,9 @@ const ScheduleRoute = lazy(delayLoad(() => import("./authen-routes/schedule-rout
 const DivisionClassRoute = lazy(delayLoad(() => import("./authen-routes/division-class/division-class")));
 const InstructorsRoute = lazy(delayLoad(() => import("./authen-routes/instructors-route/instructors-route")));
 const StudentsRoute = lazy(delayLoad(() => import("./authen-routes/students-route/students-route")));
+const SubjectListRoute = lazy(delayLoad(() => import("./authen-routes/subject/list/list")));
+const SubjectEditRoute = lazy(delayLoad(() => import("./authen-routes/subject/edit/edit")));
+// const SubjectNewRoute = lazy(delayLoad(() => import("./authen-routes/subject/new/new")));
 
 class App extends React.Component {
     constructor(props) {
@@ -129,6 +132,30 @@ class App extends React.Component {
                                                     path={props.match.path + "/instructors"}
                                                     component={props =>
                                                         <InstructorsRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/subjects"}
+                                                    component={props =>
+                                                        <SubjectListRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
+                                                {/*<RoleFilterRoute*/}
+                                                {/*    {...props}*/}
+                                                {/*    exact*/}
+                                                {/*    path={props.match.path + "/subject/new"}*/}
+                                                {/*    component={props =>*/}
+                                                {/*        <InstructorsRoute  {...authenProps} {...props}/>}*/}
+                                                {/*    roles={["admin", "pdt"]}*/}
+                                                {/*/>*/}
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/subject/:subjectID/edit"}
+                                                    component={props =>
+                                                        <SubjectEditRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute

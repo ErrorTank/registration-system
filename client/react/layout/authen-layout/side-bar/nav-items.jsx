@@ -76,10 +76,11 @@ export const navItems = [
         roles: ["sv"]
     },{
         label: "Quản lý học phần",
-        url: "/manage/subjects",
+        url: ["/manage/subjects", "/manage/subject/new", /\/manage\/subject\/(\w+)\/edit/gi],
         icon: <ImportContactsIcon
             fontSize={"inherit"}
         />,
+        defaultUrl: "/manage/subjects",
         roles: ["pdt", "admin"]
     }, {
         label: "Thời khóa biểu",
