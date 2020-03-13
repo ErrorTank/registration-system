@@ -55,7 +55,7 @@ class SubjectEditRoute extends KComponent {
                 this.state.error && this.setState({error: ""});
                 this.forceUpdate();
             }));
-
+            this.form.validateData();
             this.setState({
                 draft: {...data, division: data.division || divisions[0].value},
                 fetching: false,
@@ -166,6 +166,10 @@ class SubjectEditRoute extends KComponent {
         })
     };
 
+    refreshData = () => {
+        this.form.updateData({...this.state.draft});
+    };
+
     render() {
         let {fetching, draft, error, loading, deleting} = this.state;
 
@@ -179,6 +183,8 @@ class SubjectEditRoute extends KComponent {
             console.log(draft)
             console.log(this.form.getData())
         }
+
+
 
         const canUpdate = !fetching && !deleting && !loading && !this.form.getInvalidPaths().length && !error && !isEqual(draft, this.form.getData()) ;
         return (
@@ -202,7 +208,12 @@ class SubjectEditRoute extends KComponent {
 
 
                             <div className="account-route-action">
-
+                                <button className="btn btn-refresh"
+                                        onClick={this.refreshData}
+                                        disabled={this.form ? isEqual(draft, this.form.getData()) : true}
+                                >
+                                    <i className="far fa-sync-alt"></i>
+                                </button>
                                 <button className="btn btn-cancel"
                                         onClick={() => customHistory.push("/manage/subjects")}
                                 >

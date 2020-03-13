@@ -5,11 +5,10 @@ import classnames from "classnames"
 import isEmpty from "lodash/isEmpty";
 import {customHistory} from "../../routes/routes";
 import {LoadingInline} from "../loading-inline/loading-inline";
-import {wait} from "../../../common/utils/common";
 import io from "socket.io-client";
 import {Tooltip} from "../tooltip/tooltip";
 
-export class CommonDataTable extends React.Component {
+export class SimpleDataTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

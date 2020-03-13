@@ -18,7 +18,7 @@ export class SubjectBasicForm extends Component {
         if(props.form.getPathData("division")){
             this.loadBrief(props.form.getPathData("division")).then(brief => {
                 this.setState({loading: false, brief});
-                this.props.form.validateData();
+
             });
         }
 
@@ -99,7 +99,7 @@ export class SubjectBasicForm extends Component {
                                 label={"Hệ số"}
                                 placeholder={"Nhập hê số"}
                                 onChange={e => {
-                                    onChange(parseFloat(e.target.value));
+                                    onChange(e.target.value ? parseFloat(e.target.value) : 0);
                                 }}
                                 {...others}
                             />
