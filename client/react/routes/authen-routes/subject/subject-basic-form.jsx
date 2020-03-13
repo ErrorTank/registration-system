@@ -25,7 +25,7 @@ export class SubjectBasicForm extends Component {
     }
 
     loadBrief = (divisionID) => {
-        this.setState({loading: true});
+
         return subjectApi.getSubjectsBriefByDivision(divisionID);
     };
 
@@ -40,7 +40,7 @@ export class SubjectBasicForm extends Component {
         return (
             <div className="subject-basic-form common-form">
                 <div className="form-title">
-                    Thông tin môn học cơ bản
+                    Thông tin học phần cơ bản
                 </div>
                 <>
                     <div className="form-row">
@@ -140,6 +140,7 @@ export class SubjectBasicForm extends Component {
                                         onChange(value);
                                         form.updatePathData("subjectsRequired", []);
                                         if(value){
+                                            this.setState({loading: true});
                                             this.loadBrief(value).then(brief => {
                                                 this.setState({loading: false, brief});
 

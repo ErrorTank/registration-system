@@ -57,7 +57,7 @@ class SubjectEditRoute extends KComponent {
             }));
 
             this.setState({
-                draft: {...data},
+                draft: {...data, division: data.division || divisions[0].value},
                 fetching: false,
                 divisions
             });
@@ -175,6 +175,11 @@ class SubjectEditRoute extends KComponent {
         // console.log(formData)
         // console.log(this.infoForm ? draft : omit(draft, ["info"]))
         // console.log(isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData))
+        if(this.form){
+            console.log(draft)
+            console.log(this.form.getData())
+        }
+
         const canUpdate = !fetching && !deleting && !loading && !this.form.getInvalidPaths().length && !error && !isEqual(draft, this.form.getData()) ;
         return (
             <PageTitle
