@@ -20,6 +20,7 @@ import {divisionsCache} from "../../../../../common/cache/api-cache/common-cache
 import {SubjectBasicForm} from "../subject-basic-form";
 import {SubjectClassForm} from "../subject-class-form";
 import {subjectApi} from "../../../../../api/common/subject-api";
+import {SimpleDataTable} from "../../../../common/common-data-table/simple-data-table";
 
 class SubjectEditRoute extends KComponent {
     constructor(props) {
@@ -140,26 +141,140 @@ class SubjectEditRoute extends KComponent {
         })
     };
 
-    deleteSubject = accountID => {
+    deleteSubject = () => {
+        let subjectID = this.props.match.params.subjectID;
         return appModal.confirm({
             title: "Xác nhận",
-            text: "Bạn muôn xóa tài khoản này?",
+            text: (
+                <div className="alert-confirm">
+                    <p className="alert-title">Bạn có muốn xóa học phần này? Học phần sẽ chỉ bị xóa nếu:</p>
+                    <div className="prerequisites">
+                        <p>- Không có lớp học phần nào thuộc thời khóa biểu toàn trường</p>
+                        <p>- Học phần không thuộc chương trình học nào</p>
+                        <p>- Không có lớp học phần nào đã được đăng ký trước đó (Kết quả đã nằm trong bảng điểm của sinh viên)</p>
+                    </div>
+                    <p className="alert-sub">Các lớp và nhóm lớp học phần liên quan sẽ bị xóa khi xóa học phần này. Các học phần khác có điều kiện tiên quyết bao gồm học phần này sẽ không còn hiệu lực.</p>
+                </div>
+            ),
             btnText: "Đồng ý",
             cancelText: "Hủy bỏ"
         }).then(result => {
             if(result){
                 this.setState({deleting: true});
-                userApi.deleteAccount(accountID).then((data) => {
-                    customHistory.push(`/manage/accounts`);
+                subjectApi.deleteSubject(subjectID).then((data) => {
+                    customHistory.push(`/manage/subjects`);
                     commonPopup.publish({
                         "common-popup": (
                             <div className="common-success-notify">
-                                Xóa tài khoản {data.username} thành công
+                                Xóa học phần {data.name}({data.subjectID}) thành công
                             </div>
 
                         ),
 
                     });
+                }).catch(err => {
+                    let { items,
+                        programs,
+                        results} = err.extra;
+                    this.setState({deleting: false});
+                    appModal.alert({
+                        title: "Xóa học phần thất bại",
+                        text: (
+                            <div className="err-reason">
+                                {!!items.length && (
+                                    <div className="err-section">
+                                        <p className="err-title">Thời khóa biểu toàn trường</p>
+                                        <SimpleDataTable
+                                            className={"err-table"}
+                                            list={items}
+                                            columns={[
+                                                {
+                                                    label: "STT",
+                                                    cellDisplay: (s, i) => i + 1,
+
+                                                },  {
+                                                    label: "Tên lớp",
+                                                    cellDisplay: (s) => s.class.name
+                                                    ,
+
+                                                }, {
+                                                    label: "Thứ",
+                                                    cellDisplay: (s) => s.dayOfWeek + 1,
+
+                                                }, {
+                                                    label: "Ca",
+                                                    cellDisplay: (s) => s.from.name + "-" + s.to.name
+
+                                                }, {
+                                                    label: "Phòng học",
+                                                    cellDisplay: (s) => s.classRoom.name
+
+                                                },  {
+                                                    label: "Giảng viên viên",
+                                                    cellDisplay: (s) => {
+                                                        return s.instructor.user ? s.instructor.user.name + `(${s.instructor.user.identityID})` : "Unknown"
+                                                    }
+
+                                                }
+                                            ]}
+                                            rowTrackBy={(row, i) => row._id}
+                                        />
+                                    </div>
+                                )}
+                                {!!programs.length && (
+                                    <div className="err-section">
+                                        <p className="err-title">Chương trình học</p>
+                                        <SimpleDataTable
+                                            className={"err-table"}
+                                            list={programs}
+                                            columns={[
+                                                {
+                                                    label: "STT",
+                                                    cellDisplay: (s, i) => i + 1,
+
+                                                },  {
+                                                    label: "Tên chuyên ngành",
+                                                    cellDisplay: (s) => s.speciality.name
+                                                    ,
+
+                                                },
+                                            ]}
+                                            rowTrackBy={(row, i) => row._id}
+                                        />
+                                    </div>
+                                )}
+                                {!!results.length && (
+                                    <div className="err-section">
+                                        <p className="err-title">Bảng điểm</p>
+                                        <SimpleDataTable
+                                            className={"err-table"}
+                                            list={results}
+                                            columns={[
+                                                {
+                                                    label: "STT",
+                                                    cellDisplay: (s, i) => i + 1,
+
+                                                },  {
+                                                    label: "Sinh viên",
+                                                    cellDisplay: (s) => s.owner.user ? s.owner.user.name + `(${s.owner.user.identityID})` : "Unknown"
+                                                    ,
+
+                                                },{
+                                                    label: "Tên chuyên ngành",
+                                                    cellDisplay: (s) => s.speciality.name
+                                                    ,
+
+                                                },
+                                            ]}
+                                            rowTrackBy={(row, i) => row._id}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        ),
+                        btnText: "Ok",
+                        style: "danger"
+                    })
                 })
 
             }
@@ -223,7 +338,7 @@ class SubjectEditRoute extends KComponent {
                                     Hủy bỏ
                                 </button>
                                 <button className="btn btn-danger"
-                                        onClick={() => this.deleteSubject(formData._id)}
+                                        onClick={this.deleteSubject}
                                         disabled={deleting}
                                 >
                                     Xóa
@@ -232,7 +347,7 @@ class SubjectEditRoute extends KComponent {
                                     )}
                                 </button>
                                 <button className="btn btn-next"
-                                        onClick={() => this.handleUpdateSubject(formData)}
+                                        onClick={this.handleUpdateSubject}
                                         disabled={!canUpdate}
                                 >
                                     Cập nhật

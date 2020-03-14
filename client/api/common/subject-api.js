@@ -21,5 +21,8 @@ export const subjectApi = {
     },
     getSubjectsBriefByDivision(divisionID){
         return authenApi.get(`/subjects/division/${divisionID}/brief`)
+    },
+    deleteSubject(subjectID){
+        return authenApi.delete(`/subject/${subjectID}`)
     }
 };

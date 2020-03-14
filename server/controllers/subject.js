@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {authorization, createAuthToken} = require("../authorization/auth");
-const {getAllSubjects, getSubjectDetail, getSubjectsBriefByDivision} = require("../db/db-controllers/subject");
+const {getAllSubjects, getSubjectDetail, getSubjectsBriefByDivision, deleteSubject} = require("../db/db-controllers/subject");
 const {getPublicKey, getPrivateKey} = require("../authorization/keys/keys");
 
 const authMiddleware = authorization(getPublicKey(), {expiresIn: "1 day", algorithm: ["RS256"]});
@@ -22,6 +22,12 @@ module.exports = () => {
     });
     router.get("/subjects/division/:divisionID/brief", authMiddleware ,(req, res, next) => {
         return getSubjectsBriefByDivision(req.params.divisionID).then((data) => {
+            return res.status(200).json(data);
+        }).catch(err => next(err));
+
+    });
+    router.delete("/subject/:subjectID", authMiddleware ,(req, res, next) => {
+        return deleteSubject(req.params.subjectID).then((data) => {
             return res.status(200).json(data);
         }).catch(err => next(err));
 
