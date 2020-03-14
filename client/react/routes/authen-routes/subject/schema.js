@@ -8,5 +8,5 @@ export const subjectSchema = yup.object().shape({
     subjectsRequired: yup.array(),
     creditsRequired:  yup.number(),
     division: yup.string().required("Bộ môn là bắt buộc"),
-    classes: yup.array()
+    classes: yup.array().min(1)
 });

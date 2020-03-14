@@ -153,14 +153,14 @@ const updateSubject = (sID, data) => {
 
     return Subject.findOne({_id: {$ne: ObjectId(sID)}, subjectID: data.subjectID}).lean()
         .then((subject) => {
-            if(subject){
+            if (subject) {
                 return Promise.reject(new ApplicationError("duplicate_subjectID", subject));
             }
-            return Promise.all([Class.find({subject: ObjectId(sID)}).lean(),Subject.findOne({_id:  ObjectId(sID)}).lean() ]);
+            return Promise.all([Class.find({subject: ObjectId(sID)}).lean(), Subject.findOne({_id: ObjectId(sID)}).lean()]);
         })
         .then(([classes, subject]) => {
 
-            let deletedClasses = classes.filter(each => !data.classes.find(old => old._id && old._id.toString()=== each._id.toString()));
+            let deletedClasses = classes.filter(each => !data.classes.find(old => old._id && old._id.toString() === each._id.toString()));
             let deletedIds = deletedClasses.map(each => ObjectId(each._id));
             console.log(deletedClasses)
             return SchoolScheduleItems.find({class: {$in: deletedIds}}).populate([
@@ -186,12 +186,12 @@ const updateSubject = (sID, data) => {
                 }
             ]).then(items => {
 
-                if(items.length){
+                if (items.length) {
                     return Promise.reject(new ApplicationError("un_deletable_classes", items));
                 }
                 let newClasses = data.classes.filter(each => !each._id);
                 let updatedClasses = data.classes.filter(each => {
-                    if(each._id){
+                    if (each._id) {
                         let raw = pick(classes.find(cl => cl._id.toString() === each._id.toString()), ["_id", "capacity", "name"]);
                         return !isEqual(raw, pick(each, ["_id", "capacity", "name"]))
                     }
@@ -205,16 +205,16 @@ const updateSubject = (sID, data) => {
                     Class.deleteMany({_id: {$in: deletedIds}}),
                     Subject.findOneAndUpdate({_id: ObjectId(sID)}, {$set: omit(data, ["classes"])}),
                     Class.insertMany(newClasses.map(each => ({...each, subject: ObjectId(sID)}))),
-                    ...updatedClasses.map(each => Class.findOneAndUpdate({_id: ObjectId(each._id)}, {$set: pick(each,  ["capacity", "name"])}))
+                    ...updatedClasses.map(each => Class.findOneAndUpdate({_id: ObjectId(each._id)}, {$set: pick(each, ["capacity", "name"])}))
                 ];
-                if(data.subjectID !== subject.subjectID){
+                if (data.subjectID !== subject.subjectID) {
                     promises.push(Subject.updateMany({subjectsRequired: subject.subjectID}, {
                         $push: {
                             subjectsRequired: data.subjectID
                         },
 
                     }).then(() => {
-                       return Subject.updateMany({subjectsRequired: subject.subjectID}, {
+                        return Subject.updateMany({subjectsRequired: subject.subjectID}, {
                             $pull: {
                                 subjectsRequired: subject.subjectID
                             },
@@ -238,8 +238,27 @@ const updateSubject = (sID, data) => {
         })
 
 
+};
 
-
+const createSubject = data => {
+    return Subject.findOne({subjectID: data.subjectID}).lean()
+        .then((subject) => {
+            if (subject) {
+                return Promise.reject(new ApplicationError("duplicate_subjectID", subject));
+            }
+            return new Subject({
+                ...omit(data, "classes")
+            }).save().then(sub => Class.insertMany(data.classes.map(each => ({
+                ...each,
+                subject: sub.toObject()._id
+            })))
+                .then(classes => {
+                    return {
+                        ...sub.toObject(),
+                        classes
+                    }
+                }))
+        })
 };
 
 module.exports = {
@@ -247,5 +266,6 @@ module.exports = {
     getAllSubjects,
     getSubjectsBriefByDivision,
     deleteSubject,
-    updateSubject
+    updateSubject,
+    createSubject
 };

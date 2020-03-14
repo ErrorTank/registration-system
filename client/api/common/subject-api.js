@@ -27,5 +27,8 @@ export const subjectApi = {
     },
     updateSubject(subjectID, updatedData){
         return authenApi.put(`/subject/${subjectID}`, updatedData)
+    },
+    createNewSubject(data){
+        return authenApi.post(`/subject`, data)
     }
 };

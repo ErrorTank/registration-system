@@ -36,7 +36,7 @@ const InstructorsRoute = lazy(delayLoad(() => import("./authen-routes/instructor
 const StudentsRoute = lazy(delayLoad(() => import("./authen-routes/students-route/students-route")));
 const SubjectListRoute = lazy(delayLoad(() => import("./authen-routes/subject/list/list")));
 const SubjectEditRoute = lazy(delayLoad(() => import("./authen-routes/subject/edit/edit")));
-// const SubjectNewRoute = lazy(delayLoad(() => import("./authen-routes/subject/new/new")));
+const SubjectNewRoute = lazy(delayLoad(() => import("./authen-routes/subject/new/new")));
 
 class App extends React.Component {
     constructor(props) {
@@ -142,14 +142,14 @@ class App extends React.Component {
                                                         <SubjectListRoute  {...authenProps} {...props}/>}
                                                     roles={["admin", "pdt"]}
                                                 />
-                                                {/*<RoleFilterRoute*/}
-                                                {/*    {...props}*/}
-                                                {/*    exact*/}
-                                                {/*    path={props.match.path + "/subject/new"}*/}
-                                                {/*    component={props =>*/}
-                                                {/*        <InstructorsRoute  {...authenProps} {...props}/>}*/}
-                                                {/*    roles={["admin", "pdt"]}*/}
-                                                {/*/>*/}
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={props.match.path + "/subject/new"}
+                                                    component={props =>
+                                                        <SubjectNewRoute  {...authenProps} {...props}/>}
+                                                    roles={["admin", "pdt"]}
+                                                />
                                                 <RoleFilterRoute
                                                     {...props}
                                                     exact
