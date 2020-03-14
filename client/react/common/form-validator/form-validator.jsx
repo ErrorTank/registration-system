@@ -49,6 +49,7 @@ export const createSimpleForm = (schema, _options) => {
       await schema.validateAt(path, state);
       delete errors[path];
     } catch (_e) {
+      console.log(_e)
       errors[path] = _e;
     }
   };

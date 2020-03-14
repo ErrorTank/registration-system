@@ -179,14 +179,17 @@ class SubjectEditRoute extends KComponent {
         // console.log(formData)
         // console.log(this.infoForm ? draft : omit(draft, ["info"]))
         // console.log(isEqual(this.infoForm ? draft : omit(draft, ["info"]), formData))
-        if(this.form){
-            console.log(draft)
-            console.log(this.form.getData())
-        }
+
 
 
 
         const canUpdate = !fetching && !deleting && !loading && !this.form.getInvalidPaths().length && !error && !isEqual(draft, this.form.getData()) ;
+        if(this.form){
+            console.log(isEqual(draft, this.form.getData()))
+            console.log(this.form.getData())
+            console.log(this.form.getInvalidPaths())
+            console.log(this.form.getErrorPath(this.form.getInvalidPaths()[0]))
+        }
         return (
             <PageTitle
                 title={"Cập nhật môn học"}

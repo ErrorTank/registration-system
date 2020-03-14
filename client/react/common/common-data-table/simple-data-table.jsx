@@ -25,12 +25,12 @@ export class SimpleDataTable extends React.Component {
         return maxItem;
     }
 
-    clickRow = (e, row) => {
+    clickRow = (e, row, index) => {
         let {rowLinkTo, onClickRow} = this.props;
         if (rowLinkTo) {
             customHistory.push(rowLinkTo(e, row));
         } else if (onClickRow) {
-            onClickRow(e, row);
+            onClickRow(e, row, index);
         }
     };
 
@@ -59,7 +59,7 @@ export class SimpleDataTable extends React.Component {
                         ) : list.map((row, rIndex) => (
                             <tr
                                 key={rowTrackBy(row, rIndex)}
-                                onClick={(onClickRow == null && rowLinkTo == null) ? () => null : e => this.clickRow(e, row)}
+                                onClick={(onClickRow == null && rowLinkTo == null) ? () => null : e => this.clickRow(e, row, rIndex)}
                                 className={classnames({clickable: onClickRow != null || rowLinkTo != null}, rowClassName)}
                                 onMouseEnter={() => {
                                     if(onMouseEnterRow){

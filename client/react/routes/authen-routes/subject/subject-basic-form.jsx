@@ -35,8 +35,7 @@ export class SubjectBasicForm extends Component {
 
     render() {
         let {form, isEdit, divisions} = this.props;
-        console.log(this.state.brief.filter(each => form.getPathData("subjectsRequired").includes(each.subjectID)))
-        console.log(form.getPathData("division"))
+
         return (
             <div className="subject-basic-form common-form">
                 <div className="form-title">

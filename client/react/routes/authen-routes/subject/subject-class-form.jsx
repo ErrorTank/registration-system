@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {SimpleDataTable} from "../../../common/common-data-table/simple-data-table";
 import {CommonDataTable} from "../../../common/common-data-table/common-data-table";
+import {classModal} from "../../../common/modal/class-modal/class-modal";
+import update from "lodash/update"
 
 export class SubjectClassForm extends Component {
     constructor(props) {
@@ -11,13 +13,35 @@ export class SubjectClassForm extends Component {
 
     }
 
-    addNewClass = () => {
 
+
+    addNewClass = () => {
+        classModal.open({
+            classInfo: null,
+        }).then(data => {
+            if(data){
+
+                this.props.form.updatePathData("classes", this.props.form.getPathData("classes").concat(data));
+            }
+        })
     };
 
 
-    handleClickRow = (cl) => {
+    handleClickRow = (e, cl, i) => {
+        classModal.open({
+            classInfo: cl,
+        }).then(data => {
+            if(data){
+                let newClasses = this.props.form.getPathData("classes").map(each => {
+                   if(each._id === cl._id){
+                       return {...cl, ...data};
+                   }
+                   return each;
+                });
 
+                this.props.form.updatePathData("classes", newClasses);
+            }
+        })
     };
 
     handleDeleteClass = cl => {
@@ -45,7 +69,10 @@ export class SubjectClassForm extends Component {
         },{
             label: "",
             cellDisplay: (s) => (
-                <button className="btn delete-btn" onClick={() => this.handleDeleteClass(s)}><i className="fal fa-trash-alt"></i></button>
+                <button className="btn delete-btn" onClick={(e) => {
+                    e.stopPropagation();
+                    this.handleDeleteClass(s)
+                }}><i className="fal fa-trash-alt"></i></button>
             ),
 
         },
@@ -53,6 +80,7 @@ export class SubjectClassForm extends Component {
 
     render() {
         let classes = this.props.form.getPathData("classes");
+
         return (
             <div className="subject-class-form common-form">
                 <div className="form-title">
@@ -63,7 +91,7 @@ export class SubjectClassForm extends Component {
                     {classes.length ? (
                         <div className="classes-table">
                             <div className="table-actions">
-                                <button className="btn add-btn">
+                                <button className="btn add-btn" onClick={this.addNewClass}>
                                     <i className="fal fa-plus"></i> Tạo lớp học phần
                                 </button>
                             </div>
@@ -72,7 +100,7 @@ export class SubjectClassForm extends Component {
                                 list={classes}
                                 ref={table => this.table = table}
                                 columns={this.columns}
-                                rowTrackBy={(row, i) => row._id}
+                                rowTrackBy={(row, i) => row._id + new Date().getTime()}
                                 onClickRow={this.handleClickRow}
                             />
                         </div>
