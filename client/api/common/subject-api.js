@@ -24,5 +24,8 @@ export const subjectApi = {
     },
     deleteSubject(subjectID){
         return authenApi.delete(`/subject/${subjectID}`)
+    },
+    updateSubject(subjectID, updatedData){
+        return authenApi.put(`/subject/${subjectID}`, updatedData)
     }
 };

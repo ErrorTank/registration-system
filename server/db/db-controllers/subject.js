@@ -9,7 +9,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const {ApplicationError} = require("../../utils/error/error-types");
 const omit = require("lodash/omit");
 const pick = require("lodash/pick");
-
+const isEqual = require("lodash/isEqual");
 
 const getAllSubjects = ({keyword, division, credit, coefficient}) => {
 
@@ -149,9 +149,103 @@ const deleteSubject = subjectID => {
 
 };
 
+const updateSubject = (sID, data) => {
+
+    return Subject.findOne({_id: {$ne: ObjectId(sID)}, subjectID: data.subjectID}).lean()
+        .then((subject) => {
+            if(subject){
+                return Promise.reject(new ApplicationError("duplicate_subjectID", subject));
+            }
+            return Promise.all([Class.find({subject: ObjectId(sID)}).lean(),Subject.findOne({_id:  ObjectId(sID)}).lean() ]);
+        })
+        .then(([classes, subject]) => {
+
+            let deletedClasses = classes.filter(each => !data.classes.find(old => old._id && old._id.toString()=== each._id.toString()));
+            let deletedIds = deletedClasses.map(each => ObjectId(each._id));
+            console.log(deletedClasses)
+            return SchoolScheduleItems.find({class: {$in: deletedIds}}).populate([
+                {
+                    path: "class",
+                    model: "Class"
+                }, {
+                    path: "classRoom",
+                    model: "ClassRoom"
+                }, {
+                    path: "instructor",
+                    model: "DptInsInfo",
+                    populate: {
+                        path: "user",
+                        model: "User"
+                    }
+                }, {
+                    path: "from",
+                    model: "Shift"
+                }, {
+                    path: "to",
+                    model: "Shift"
+                }
+            ]).then(items => {
+
+                if(items.length){
+                    return Promise.reject(new ApplicationError("un_deletable_classes", items));
+                }
+                let newClasses = data.classes.filter(each => !each._id);
+                let updatedClasses = data.classes.filter(each => {
+                    if(each._id){
+                        let raw = pick(classes.find(cl => cl._id.toString() === each._id.toString()), ["_id", "capacity", "name"]);
+                        return !isEqual(raw, pick(each, ["_id", "capacity", "name"]))
+                    }
+                    return false;
+
+                });
+                console.log(newClasses.length)
+                console.log(updatedClasses.length)
+
+                let promises = [
+                    Class.deleteMany({_id: {$in: deletedIds}}),
+                    Subject.findOneAndUpdate({_id: ObjectId(sID)}, {$set: omit(data, ["classes"])}),
+                    Class.insertMany(newClasses.map(each => ({...each, subject: ObjectId(sID)}))),
+                    ...updatedClasses.map(each => Class.findOneAndUpdate({_id: ObjectId(each._id)}, {$set: pick(each,  ["capacity", "name"])}))
+                ];
+                if(data.subjectID !== subject.subjectID){
+                    promises.push(Subject.updateMany({subjectsRequired: subject.subjectID}, {
+                        $push: {
+                            subjectsRequired: data.subjectID
+                        },
+
+                    }).then(() => {
+                       return Subject.updateMany({subjectsRequired: subject.subjectID}, {
+                            $pull: {
+                                subjectsRequired: subject.subjectID
+                            },
+
+                        })
+                    }))
+                }
+                return Promise.all(promises)
+                    .then(() => {
+                        return Promise.all([
+                            Subject.findOne({_id: ObjectId(sID)}, "-__v"),
+                            Class.find({subject: ObjectId(sID)}, "-unique -__v").lean()
+                        ]).then(([subject, classes]) => {
+                            return {
+                                ...subject.toObject(),
+                                classes
+                            }
+                        })
+                    })
+            })
+        })
+
+
+
+
+};
+
 module.exports = {
     getSubjectDetail,
     getAllSubjects,
     getSubjectsBriefByDivision,
-    deleteSubject
+    deleteSubject,
+    updateSubject
 };

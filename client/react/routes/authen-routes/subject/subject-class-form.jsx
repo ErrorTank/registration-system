@@ -3,7 +3,7 @@ import {SimpleDataTable} from "../../../common/common-data-table/simple-data-tab
 import {CommonDataTable} from "../../../common/common-data-table/common-data-table";
 import {classModal} from "../../../common/modal/class-modal/class-modal";
 import update from "lodash/update"
-
+import {uid} from 'react-uid';
 export class SubjectClassForm extends Component {
     constructor(props) {
         super(props);
@@ -20,7 +20,7 @@ export class SubjectClassForm extends Component {
             classInfo: null,
         }).then(data => {
             if(data){
-
+                console.log(this.props.form.getPathData("classes").concat(data))
                 this.props.form.updatePathData("classes", this.props.form.getPathData("classes").concat(data));
             }
         })
@@ -44,8 +44,8 @@ export class SubjectClassForm extends Component {
         })
     };
 
-    handleDeleteClass = cl => {
-        let newClasses = this.props.form.getPathData("classes").filter(each => each._id !== cl._id);
+    handleDeleteClass = (cl, index) => {
+        let newClasses = this.props.form.getPathData("classes").filter((each, i) => i !== index);
         this.props.form.updatePathData("classes", newClasses);
     };
 
@@ -68,10 +68,10 @@ export class SubjectClassForm extends Component {
 
         },{
             label: "",
-            cellDisplay: (s) => (
+            cellDisplay: (s, index) => (
                 <button className="btn delete-btn" onClick={(e) => {
                     e.stopPropagation();
-                    this.handleDeleteClass(s)
+                    this.handleDeleteClass(s, index)
                 }}><i className="fal fa-trash-alt"></i></button>
             ),
 
@@ -100,7 +100,7 @@ export class SubjectClassForm extends Component {
                                 list={classes}
                                 ref={table => this.table = table}
                                 columns={this.columns}
-                                rowTrackBy={(row, i) => row._id + new Date().getTime()}
+                                rowTrackBy={(row, i) => row._id || uid(row)}
                                 onClickRow={this.handleClickRow}
                             />
                         </div>

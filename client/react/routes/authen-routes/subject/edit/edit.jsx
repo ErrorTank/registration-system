@@ -90,7 +90,7 @@ class SubjectEditRoute extends KComponent {
                 />
             }
         },{
-            label: "Cài đặt lớp học",
+            label: "Cài đặt lớp học phần",
             render: () => {
                 return <SubjectClassForm
                     form={this.form}
@@ -102,23 +102,62 @@ class SubjectEditRoute extends KComponent {
 
     getServerError = (error) => {
         let errMatcher = {
-            "duplicate_identityID": () => `Mã định danh ${error.extra.value} đã tồn tại`,
-            "duplicate_email": () => `Email ${error.extra.value} đã tồn tại`,
-            "duplicate_phone": () => `Số điện thoại ${error.extra.value} đã tồn tại`,
-            "duplicate_username": () => `Tên đăng nhập ${error.extra.value} đã tồn tại`,
+            "duplicate_subjectID": () => `Mã môn ${error.extra.subjectID} (${error.extra.name}) đã tồn tại`,
+            "un_deletable_classes": () => (
+                <div className="err-reason">
+                    <div className="err-section">
+                        <p className="err-title">Lớp học phần nằm trong TKB toàn trường</p>
+                        <SimpleDataTable
+                            className={"err-table"}
+                            list={error.extra}
+                            columns={[
+                                {
+                                    label: "STT",
+                                    cellDisplay: (s, i) => i + 1,
+
+                                },  {
+                                    label: "Tên lớp",
+                                    cellDisplay: (s) => s.class.name
+                                    ,
+
+                                }, {
+                                    label: "Thứ",
+                                    cellDisplay: (s) => s.dayOfWeek + 1,
+
+                                }, {
+                                    label: "Ca",
+                                    cellDisplay: (s) => s.from.name + "-" + s.to.name
+
+                                }, {
+                                    label: "Phòng học",
+                                    cellDisplay: (s) => s.classRoom.name
+
+                                },  {
+                                    label: "Giảng viên",
+                                    cellDisplay: (s) => {
+                                        return s.instructor.user ? s.instructor.user.name + `(${s.instructor.user.identityID})` : "Unknown"
+                                    }
+
+                                }
+                            ]}
+                            rowTrackBy={(row, i) => row._id}
+                        />
+                    </div>
+                </div>
+            ),
         };
         return errMatcher.hasOwnProperty(error.message) ? errMatcher[error.message]() : "Đã có lỗi xảy ra."
     };
 
-    handleUpdateSubject = (formData) => {
-        console.log(formData)
+    handleUpdateSubject = () => {
         this.setState({loading: true});
-        userApi.updateUserInfo(formData._id, omit(formData, "_id")).then((newInfo) => {
-            this.setState({loading: false, draft: {...newInfo}});
-            this.accountBasicForm.updateData(omit(newInfo, "info"));
-            if(this.infoForm){
-                this.infoForm.updateData({...newInfo.info});
-            }
+        let updatedData = this.form.getData();
+        subjectApi.updateSubject(updatedData._id, updatedData).then((data) => {
+            let newData = {...data, division: data.division || this.state.divisions[0].value,};
+            this.setState({
+                draft:  {...newData},
+                loading: false,
+            });
             commonPopup.publish({
                 "common-popup": (
                     <div className="common-success-notify">
@@ -128,17 +167,22 @@ class SubjectEditRoute extends KComponent {
                 ),
 
             });
+            this.form.updateData({...newData});
+
 
         }).catch(err => {
+            console.log("dsa")
             this.setState({loading: false});
-            console.log("dasd")
             appModal.alert({
                 title: "Cập nhật thất bại",
                 text: this.getServerError(err),
                 btnText: "Ok",
                 style: "danger"
+            }).then(() => {
+                this.refreshData();
             })
-        })
+        });
+
     };
 
     deleteSubject = () => {
@@ -210,7 +254,7 @@ class SubjectEditRoute extends KComponent {
                                                     cellDisplay: (s) => s.classRoom.name
 
                                                 },  {
-                                                    label: "Giảng viên viên",
+                                                    label: "Giảng viên",
                                                     cellDisplay: (s) => {
                                                         return s.instructor.user ? s.instructor.user.name + `(${s.instructor.user.identityID})` : "Unknown"
                                                     }
