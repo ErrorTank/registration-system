@@ -40,18 +40,18 @@ class ProfileRoute extends Component {
             ...this.basicInfo,
             {
                 label: "Chuyên ngành",
-                render: item => item.speciality.name,
+                render: item => item.info.speciality.name,
             },
             {
                 label: "Lớp",
-                render: item => `${item.speciality.shortName}${item.schoolYear}${item.englishLevel}`,
+                render: item => `${item.info.speciality.shortName}${item.info.schoolYear}${item.info.englishLevel}`,
             },
             {
                 label: "Khóa",
-                render: item => item.schoolYear,
+                render: item => item.info.schoolYear,
             }, {
                 label: "Tình trạng",
-                render: item => item.active ? "Đang theo học" : "Đã ra trường",
+                render: item => item.info.active ? "Đang theo học" : "Đã ra trường",
             },
         ],
         "gv": [
@@ -62,7 +62,7 @@ class ProfileRoute extends Component {
             ...this.basicInfo,
             {
                 label: "Bộ môn",
-                render: item => item.division ? item.division.name : "Không xác định",
+                render: item => item.info.division ? item.info.division.name : "Không xác định",
             },
         ],
         "admin": [

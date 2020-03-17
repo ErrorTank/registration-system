@@ -20,9 +20,9 @@ const getUserEntity = role => {
         }, "bm": {
             findOne: filter => DptInsInfo.findOne(filter).populate("division").lean()
         }, "gv": {
-            findOne: filter => DptInsInfo.findOne(filter).populate("division").lean()
+            findOne: filter => DptInsInfo.findOne(filter).populate("division").populate("division")
         }, "sv": {
-            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName department").lean()
+            findOne: filter => StudentInfo.findOne(filter).populate("speciality", "_id name shortName department").populate("speciality")
         }
     })[role]
 };
@@ -45,7 +45,7 @@ const regularLogin = ({username, password}) => {
                 .then(([token, info]) => {
                     let user = {
                         ...omit(data, ["password"]),
-                        info
+                        info: {...info.toObject()}
                     };
 
                     return {
@@ -73,7 +73,7 @@ const getAuthUserInfo = userID => {
         })
         .then(data => {
             return getUserEntity(data.role).findOne({user: data._id}).then((info) => ({
-                ...data, info
+                ...data, info: {...info.toObject()}
             }))
         })
         .then((user) =>
