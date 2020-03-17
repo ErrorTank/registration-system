@@ -66,7 +66,7 @@ export class UserSection extends React.Component{
                                      key={item.label}
                                      onClick={() => {
                                          if(item.url){
-                                             customHistory.push(url);
+                                             customHistory.push(item.url);
                                          }else{
                                              item.onClick();
                                          }

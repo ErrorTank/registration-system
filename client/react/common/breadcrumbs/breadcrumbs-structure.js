@@ -21,6 +21,9 @@ const structures = {
                     url: "/tkb",
                     label: <span className="label">Thời khóa biểu</span>
                 }, {
+                    url: "/profile",
+                    label: <span className="label">Thông tin cá nhân</span>
+                }, {
                     url: "/bang-diem",
                     label: <span className="label">Bảng điểm</span>
                 }, {

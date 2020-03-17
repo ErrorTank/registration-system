@@ -1,0 +1,36 @@
+.profile-route{
+  .action{
+    margin-top 15px
+    button{
+      font-size 1.4rem !important
+      margin auto
+    }
+  }
+  .user-info{
+    padding 20px 0
+    width 500px
+    margin auto
+    .info-row{
+      margin-bottom 10px
+      font-size 1.5rem
+      white-space nowrap
+      & > div{
+        display inline-block
+        vertical-align top
+
+        &.label{
+          width 180px
+          color inverse
+        }
+        &.value{
+          width 320px
+          overflow hidden
+          white-space nowrap
+          text-overflow ellipsis
+          color info
+          font-weight 500
+        }
+      }
+    }
+  }
+}

@@ -153,7 +153,7 @@ const updateUser = (accountID, data) => {
     let updateFunc = matcher[data.role];
     return User.findOneAndUpdate({_id: ObjectId(accountID)}, {$set: {...omit(data, "info")}}, {new: true}).lean()
         .then(newAccount => {
-            return updateFunc(newAccount._id.toString())
+            return data.info ? updateFunc(newAccount._id.toString())
                 .then(data => {
                     console.log("d..it")
                     console.log(data);
@@ -161,7 +161,7 @@ const updateUser = (accountID, data) => {
                         ...newAccount,
                         info: data
                     };
-                })
+                }) : newAccount
         }).catch(err => {
             console.log("nehhh")
             let dupKey = Object.keys(err.keyValue || [])[0];

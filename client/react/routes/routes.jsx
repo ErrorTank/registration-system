@@ -37,6 +37,7 @@ const StudentsRoute = lazy(delayLoad(() => import("./authen-routes/students-rout
 const SubjectListRoute = lazy(delayLoad(() => import("./authen-routes/subject/list/list")));
 const SubjectEditRoute = lazy(delayLoad(() => import("./authen-routes/subject/edit/edit")));
 const SubjectNewRoute = lazy(delayLoad(() => import("./authen-routes/subject/new/new")));
+const ProfileRoute = lazy(delayLoad(() => import("./authen-routes/profile-route/profile-route")));
 
 class App extends React.Component {
     constructor(props) {
@@ -214,6 +215,12 @@ class App extends React.Component {
                                                         let info = userInfo.getState();
                                                         return info ? info.role === "gv" ? info.info.canEditSchedule : true : false;
                                                     }}
+                                                />
+                                                <RoleFilterRoute
+                                                    {...props}
+                                                    exact
+                                                    path={"/profile"}
+                                                    component={props => <ProfileRoute  {...authenProps} {...props}/>}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
