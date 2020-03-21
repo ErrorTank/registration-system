@@ -43,9 +43,10 @@ const regularLogin = ({username, password}) => {
                 algorithm: "RS256"
             }), getUserEntity(data.role).findOne({user: ObjectId(data._id)})])
                 .then(([token, info]) => {
+                    console.log(info)
                     let user = {
                         ...omit(data, ["password"]),
-                        info: {...info.toObject()}
+                        info: {...(info.toObject ? info.toObject() : info)}
                     };
 
                     return {
@@ -59,6 +60,7 @@ const regularLogin = ({username, password}) => {
             return Promise.reject(err)
         })
 };
+
 const getAuthUserInfo = userID => {
 
     return User.findOne({_id: mongoose.Types.ObjectId(userID)}).lean()
@@ -73,7 +75,7 @@ const getAuthUserInfo = userID => {
         })
         .then(data => {
             return getUserEntity(data.role).findOne({user: data._id}).then((info) => ({
-                ...data, info: {...info.toObject()}
+                ...data, info: {...(info.toObject ? info.toObject() : info)}
             }))
         })
         .then((user) =>
