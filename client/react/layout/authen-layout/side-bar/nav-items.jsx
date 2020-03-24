@@ -51,12 +51,12 @@ export const navItems = [
         icon: <PublishIcon fontSize={"inherit"}/>,
         roles: ["admin", "pdt"]
     },{
-        label: "Danh sách giảng viên",
+        label: "Quản lý giảng viên",
         url: "/manage/instructors",
         icon: <LocalLibraryIcon fontSize={"inherit"}/>,
         roles: ["admin", "pdt"]
     },{
-        label: "Danh sách sinh viên",
+        label: "Quản lý sinh viên",
         url: "/manage/students",
         icon: <FaceIcon fontSize={"inherit"}/>,
         roles: ["admin", "pdt"]
