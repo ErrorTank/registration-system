@@ -89,7 +89,8 @@ const getAuthUserInfo = userID => {
         })
 };
 
-const getAllAccounts = (config) => {
+const getAllAccounts = (config, role) => {
+    console.log(role)
     let {keyword, accountType} = config;
     let pipeline = [];
     if (accountType) {
@@ -99,6 +100,26 @@ const getAllAccounts = (config) => {
             }
 
         });
+    }else{
+        if(role === "pdt"){
+            pipeline.push({
+                $match: {
+                    $and: [
+                        {
+                            role: {
+                                $ne: "pdt"
+                            }
+                        },
+                        {
+                            role: {
+                                $ne: "admin"
+                            }
+                        },
+                    ]
+                }
+
+            });
+        }
     }
 
 

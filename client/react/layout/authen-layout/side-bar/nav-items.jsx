@@ -103,7 +103,7 @@ export const navItems = [
         icon: <SupervisorAccountIcon
             fontSize={"inherit"}
         />,
-        roles: ["admin"],
+        roles: ["admin", "pdt"],
         defaultUrl: "/manage/accounts"
         // disabled: true
     }, {

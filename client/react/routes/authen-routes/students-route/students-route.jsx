@@ -100,10 +100,10 @@ class StudentsRoute extends Component {
         } = this.state;
         return (
             <PageTitle
-                title={"Tra cứu giảng viên"}
+                title={"Tra cứu sinh viên"}
             >
                 <AuthenLayoutTitle
-                    title={"Tra cứu giảng viên"}
+                    title={"Tra cứu sinh viên"}
                 >
                     <div className="registration-events manage-list-route">
                         <div className="common-route-wrapper">

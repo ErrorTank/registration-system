@@ -23,7 +23,7 @@ module.exports = () => {
 
     });
     router.get("/user/all", authMiddleware ,(req, res, next) => {
-        return getAllAccounts(req.query).then((data) => {
+        return getAllAccounts(req.query, req.user.role).then((data) => {
             return res.status(200).json(data);
         }).catch(err => next(err));
 

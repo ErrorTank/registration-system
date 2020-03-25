@@ -109,7 +109,7 @@ class App extends React.Component {
                                                     path={props.match.path + "/accounts"}
                                                     component={props =>
                                                         <AccountListRoute  {...authenProps} {...props}/>}
-                                                    roles={["admin"]}
+                                                    roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
@@ -117,7 +117,7 @@ class App extends React.Component {
                                                     path={props.match.path + "/account/:accountID/edit"}
                                                     component={props =>
                                                         <AccountEditRoute  {...authenProps} {...props}/>}
-                                                    roles={["admin"]}
+                                                    roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}
@@ -125,7 +125,7 @@ class App extends React.Component {
                                                     path={props.match.path + "/account/new"}
                                                     component={props =>
                                                         <AccountNewRoute  {...authenProps} {...props}/>}
-                                                    roles={["admin"]}
+                                                    roles={["admin", "pdt"]}
                                                 />
                                                 <RoleFilterRoute
                                                     {...props}

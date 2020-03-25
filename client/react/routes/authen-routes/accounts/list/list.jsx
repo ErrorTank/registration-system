@@ -7,6 +7,7 @@ import {Select} from "../../../../common/select/select";
 import {CommonDataTable} from "../../../../common/common-data-table/common-data-table";
 import {PageTitle} from "../../../../common/page-title/page-title";
 import {SearchInput} from "../../../../common/search-input/search-input";
+import {userInfo} from "../../../../../common/states/common";
 
 class AccountListRoute extends Component {
     constructor(props) {
@@ -53,6 +54,7 @@ class AccountListRoute extends Component {
             keyword,
             accountType
         } = this.state;
+        let isAdmin = userInfo.getState().role === "admin";
         return (
             <PageTitle
                 title={"Quản lý tài khoản"}
@@ -88,7 +90,7 @@ class AccountListRoute extends Component {
                                             <div className="spec-select">
                                                 <span className="label">Loại tài khoản</span>
                                                 <Select
-                                                    options={accountTypes}
+                                                    options={isAdmin ? accountTypes : accountTypes.filter(each => each.value !== "admin" && each.value !== "pdt")}
                                                     value={accountType}
                                                     displayAs={(each) => each.label}
                                                     getValue={each => each.value}
