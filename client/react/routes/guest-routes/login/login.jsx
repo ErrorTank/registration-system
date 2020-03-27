@@ -56,7 +56,7 @@ class LoginForm extends KComponent {
                 userInfo.setState({...user}),
                 appConfigCache.get()
             ]).then(() => customHistory.push(prevLocation ? prevLocation : mapRoleToDefaultPath[userInfo.getState().role]));
-        }).catch(err => this.setState({loading: false, error: err.message}));
+        }).catch(err => this.setState({loading: false, error: err?.message}));
     };
 
     renderServerError = () => {
